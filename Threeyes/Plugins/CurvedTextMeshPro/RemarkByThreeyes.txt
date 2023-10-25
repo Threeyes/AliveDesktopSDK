@@ -1,0 +1,6 @@
+Source：https://github.com/TonyViT/CurvedTextMeshPro
+Version：96767f3
+License：(MIT) https://github.com/TonyViT/CurvedTextMeshPro/blob/master/LICENSE
+
+Bug：
+-如果字体太少，则会出现间隔太大（ToFIx：研究如何固定字体间距）
