@@ -6,11 +6,12 @@ using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
 using Threeyes.Persistent;
-using Threeyes.Editor;
 using Threeyes.Steamworks;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Threeyes.Core;
+using Threeyes.Core.Editor;
 /// <summary>
 /// 功能：检查场景设置是否正确
 ///
@@ -20,73 +21,63 @@ using UnityEngine;
 /// 
 /// Ref:TanksModTools.ModSceneValidatorProcessor
 /// </summary>
-[UModBuildProcessor(".unity", -100)]
+[UModBuildProcessor(".unity", -100)]//仅处理Scene文件
 public class AD_ModSceneValidatorProcessor : BuildEngineProcessor
 {
     public override void ProcessAsset(BuildContext context, BuildPipelineAsset asset)
     {
-        if (!asset.FullPath.Contains(SOWorkshopItemInfo.SceneName))//只处理与ItemScene名称相关
-            return;
+        ///ToAdd:
+        ///-判断当前WorkshopItemInfo.itemType，如果不是Scene则忽略下述的判断
 
-        // Load the scene into the editor
-        Scene scene = EditorSceneManager.OpenScene(asset.FullPath);
         bool validScene = true;
         string errorInfo = null;
-        //——AD——
-        var arrayAD = scene.GetComponents<AD_AliveDesktop>();
-        if (arrayAD.Count() == 0 || arrayAD.Count() > 1)
+        //# 场景ModdScene
+        if (asset.FullPath.GetFileNameWithoutExtension() == SOWorkshopItemInfo.SceneName)//只处理与ItemScene名称相关（如果Model里面包含场景，只要不是与Scene同名，则不会被处理）
         {
-            validScene = false;
-            errorInfo += $"-One and only one [{nameof(AD_AliveDesktop)}] Component should exists in scene!\r\n";
-        }
-        else
-        {
-            AD_AliveDesktop aliveDesktop = arrayAD.FirstOrDefault();
-            if (aliveDesktop)
+            // Load the scene into the editor
+            Scene scene = EditorSceneManager.OpenScene(asset.FullPath);
+
+            //——AD_AliveDesktop——
+            var arrayAD = scene.GetComponents<AD_AliveDesktop>();
+            if (arrayAD.Count() == 0 || arrayAD.Count() > 1)
             {
-                if (aliveDesktop.soAssetPack == null)
+                validScene = false;
+                errorInfo += $"-One and only one [{nameof(AD_AliveDesktop)}] Component should exists in scene!\r\n";
+            }
+            //——IAD_FileSystemController——
+            if (scene.GetComponents<IAD_ShellController>().Count() != 1)
+            {
+                validScene = false;
+                errorInfo += $"-One and only one component that inherits [{nameof(IAD_ShellController)}] should exists in scene!\r\n";
+            }
+
+            //——IAD_DecorationController——
+            if (scene.GetComponents<IAD_DecorationController>().Count() != 1)
+            {
+                validScene = false;
+                errorInfo += $"-One and only one component that inherits [{nameof(IAD_DecorationController)}] should exists in scene!\r\n";
+            }
+
+            //——ThreeyesPlugins——
+            //PD:
+            //1.检查重复的Key (PS: PDController会忽略无效的Key，而且PD会提醒，因此不需要检查）
+            Dictionary<string, IPersistentData> dicKeyPD = new Dictionary<string, IPersistentData>();
+            foreach (IPersistentData pd in scene.GetComponents<IPersistentData>(true))
+            {
+                if (!dicKeyPD.ContainsKey(pd.Key))
+                {
+                    dicKeyPD[pd.Key] = pd;
+                }
+                else
                 {
                     validScene = false;
-                    errorInfo += $"-{nameof(AD_AliveDesktop)}'s [soAssetPack] field is null!\r\n";
+                    IPersistentData pdCorrupt = dicKeyPD[pd.Key];
+
+                    errorInfo += $"-Same PD Key [{pd.Key}] in gameobjects:  {(pdCorrupt as Component)?.gameObject.name} & {(pd as Component)?.gameObject.name}!\r\n";
+                    break;
                 }
             }
         }
-
-        //——IAD_FileSystemController——
-        if (scene.GetComponents<IAD_FileSystemController>().Count() != 1)
-        {
-            validScene = false;
-            errorInfo += $"-One and only one component that inherits [{nameof(IAD_FileSystemController)}] should exists in scene!\r\n";
-        }
-
-        //——IAD_DecorationController——
-        if (scene.GetComponents<IAD_DecorationController>().Count() != 1)
-        {
-            validScene = false;
-            errorInfo += $"-One and only one component that inherits [{nameof(IAD_DecorationController)}] should exists in scene!\r\n";
-        }
-
-
-        //——ThreeyesPlugins——
-        //PD:
-        //1.检查重复的Key (PS: PDController会忽略无效的Key，而且PD会提醒，因此不需要检查）
-        Dictionary<string, IPersistentData> dicKeyPD = new Dictionary<string, IPersistentData>();
-        foreach (IPersistentData pd in scene.GetComponents<IPersistentData>(true))
-        {
-            if (!dicKeyPD.ContainsKey(pd.Key))
-            {
-                dicKeyPD[pd.Key] = pd;
-            }
-            else
-            {
-                validScene = false;
-                IPersistentData pdCorrupt = dicKeyPD[pd.Key];
-
-                errorInfo += $"-Same PD Key [{pd.Key}] in gameobjects:  {(pdCorrupt as Component)?.gameObject.name} & {(pd as Component)?.gameObject.name}!\r\n";
-                break;
-            }
-        }
-
         // Check for valid scene
         if (validScene == false)
         {

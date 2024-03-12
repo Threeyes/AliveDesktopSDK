@@ -1,0 +1,1 @@
+Use online tool to create Normal map: https://cpetry.github.io/NormalMap-Online/

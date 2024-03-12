@@ -5,7 +5,6 @@ namespace Threeyes.UI
 {
     /// <summary>
     /// 标记继承该接口的组件可以触发下拉菜单
-    /// 
     /// 用途：
     /// -方便Raycast检测
     /// </summary>
@@ -18,6 +17,10 @@ namespace Threeyes.UI
     /// </summary>
     public interface IContextMenuProvider : IContextMenuTrigger
     {
+        /// <summary>
+        /// 自定义对应的下拉菜单，方便Manager做多语言
+        /// </summary>
+        /// <returns></returns>
         List<ToolStripItemInfo> GetContextMenuInfo();
     }
 }

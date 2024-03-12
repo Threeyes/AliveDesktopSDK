@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Threeyes.Config;
+using Threeyes.Core;
 using Threeyes.Persistent;
 using UnityEngine;
 using UnityEngine.Events;
@@ -20,8 +21,7 @@ public abstract class AD_SerializableItemInfo : SerializableDataBase, IAD_Serial
     /// </summary>
     [JsonIgnore] public bool IsBaseType { get; set; }//【Runtime】【Don't Copy】
 
-    public event UnityAction<PersistentChangeState> PersistentChanged { add { _PersistentChanged += value; } remove { _PersistentChanged -= value; } }//PS：声明为Property是为了使用接口
-    [JsonIgnore] UnityAction<PersistentChangeState> _PersistentChanged;
+    [JsonIgnore] public UnityAction<PersistentChangeState> actionPersistentChanged;
 
     public abstract void CopyBaseMembersFrom(object otherInst);
     public virtual void CopyAllMembersFrom(object otherInst)
@@ -29,6 +29,17 @@ public abstract class AD_SerializableItemInfo : SerializableDataBase, IAD_Serial
         CopyBaseMembersFrom(otherInst);
         //子类继续拷贝剩余字段...
     }
+    #endregion
+
+    #region Virtual
+    /// <summary>
+    /// 清空用户自定义部分
+    /// </summary>
+    public virtual void ResetUserCustomData()
+    {
+
+    }
+
     #endregion
 
     #region IDisposable
@@ -50,7 +61,7 @@ public abstract class AD_SerializableItemInfo : SerializableDataBase, IAD_Serial
     #region Callback
     void OnPersistentChanged(PersistentChangeState persistentChangeState)
     {
-        _PersistentChanged.Execute(persistentChangeState);
+        actionPersistentChanged.Execute(persistentChangeState);
     }
 
     #endregion

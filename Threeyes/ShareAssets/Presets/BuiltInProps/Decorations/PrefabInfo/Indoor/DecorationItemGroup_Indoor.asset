@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5143bc4da72b445bd078ac0b24d5a1, type: 3}
+  m_Name: DecorationItemGroup_Indoor
+  m_EditorClassIdentifier: 
+  listData:
+  - {fileID: 11400000, guid: 22625e646e8bace419bf394bce71a371, type: 2}
+  - {fileID: 11400000, guid: 13c040f79b9d79c44849345363611b68, type: 2}
+  - {fileID: 11400000, guid: 3296ea7a7cb0a7844b3786f3dbbb08eb, type: 2}
+  - {fileID: 11400000, guid: 54b3adcd238c7e648bbb5c1398b1a155, type: 2}
+  - {fileID: 11400000, guid: 8882b4fb6af9f71459421c464d7baaea, type: 2}
+  - {fileID: 11400000, guid: 079f120da02bbbe43ac4dc1e5079b43f, type: 2}
+  - {fileID: 11400000, guid: f446f2b600461df448ab59124cc41909, type: 2}
+  - {fileID: 11400000, guid: e626d0cd61258e64b94fc76b62af8d99, type: 2}
+  - {fileID: 11400000, guid: 3e65455ec4384614eb670048fc3d4dc7, type: 2}
+  - {fileID: 11400000, guid: ec6d612a8ab6a384e88480b9100236b6, type: 2}
+  - {fileID: 11400000, guid: 494bbb55184025242a753ecb82d1b1d1, type: 2}
+  - {fileID: 11400000, guid: 9155c945f75687f48a2010cbf3930adc, type: 2}
+  - {fileID: 11400000, guid: 56bc80eeae757d74a9bab488db0db71e, type: 2}
+  - {fileID: 11400000, guid: 2f96c82feab0c9c43b9caf2865d05a56, type: 2}
+  - {fileID: 11400000, guid: fa29334635ef0f54086a5ef56a6e8342, type: 2}
+  - {fileID: 11400000, guid: a1eb0d98069a532419b3fc808a15bacb, type: 2}
+  - {fileID: 11400000, guid: 4947e0f6e9379a445ab66edd02508754, type: 2}
+  - {fileID: 11400000, guid: 325bd7aca1cc14842bf7ed309963cfc7, type: 2}
+  - {fileID: 11400000, guid: 16ee3c07452f79640a63b287f1a40fdb, type: 2}
+  - {fileID: 11400000, guid: 9e0d445b2aad0f94e8fd027c3e4102d9, type: 2}
+  - {fileID: 11400000, guid: 1a1bc24a3461abe498d8b428914383f5, type: 2}
+  remark: Indoor Objects
+  title: '[BuiltIn] Indoor'

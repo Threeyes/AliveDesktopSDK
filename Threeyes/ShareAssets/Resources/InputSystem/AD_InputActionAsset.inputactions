@@ -1,5 +1,5 @@
 {
-    "name": "DefaultInputActions_Ex",
+    "name": "AD_InputActionAsset",
     "maps": [
         {
             "name": "Player",
@@ -36,6 +36,24 @@
                     "name": "Secondary",
                     "type": "Button",
                     "id": "a10dcb60-438e-4969-beed-0492f9fc068c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Speed Up",
+                    "type": "Button",
+                    "id": "06ae0f93-c72e-4ed2-a014-eb76d9707a9f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "669625a4-fe80-48df-b1ab-63f8380028bd",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -304,6 +322,39 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "Secondary",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "148269c3-0055-4630-9ef3-d3b1e6988a0e",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Speed Up",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "573746ce-a293-43b9-b678-b26fc3218723",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Speed Up",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b24287a8-95fb-4d27-a4c3-563d64d9b05b",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

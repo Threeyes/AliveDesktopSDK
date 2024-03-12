@@ -1,16 +1,17 @@
 using System;
+using Threeyes.Core;
 using UnityEngine;
 namespace Threeyes.Decoder
 {
-	/// <summary>
-	/// 
-	/// PS:
-	/// 1.使用Texture而不是Texture2D，因为很多场景都需要Texture（如RawImage），如果需要可以将值转为原来的Texture2D
-	///
-	/// Warning: 
-	/// 1.图片使用完成后要Destory，否则会导致多余的内存占用
-	/// </summary>
-	public class TextureDecoder : DecoderBase<Texture>
+    /// <summary>
+    /// 
+    /// PS:
+    /// 1.使用Texture而不是Texture2D，因为很多场景都需要Texture（如RawImage），如果需要可以将值转为原来的Texture2D
+    ///
+    /// Warning: 
+    /// 1.图片使用完成后要Destory，否则会导致多余的内存占用
+    /// </summary>
+    public class TextureDecoder : DecoderBase<Texture>
 	{
 		#region Interface
 		public override DecodeResult<Texture> DecodeEx(byte[] data, IDecodeOption option = null)
@@ -38,9 +39,9 @@ namespace Threeyes.Decoder
 				try
 				{
 					bool markNonReadable = option.markNonReadable && !option.compress;//(Will force make texture readable if compress is on, )
-					bool canLoad = ImageConversion.LoadImage(tempTex, data, markNonReadable);//(https://docs.unity3d.com/ScriptReference/ImageConversion.LoadImage.html)
+					bool canLoad = ImageConversion.LoadImage(tempTex, data, markNonReadable);//Loads PNG or JPG image byte array into a texture.(https://docs.unity3d.com/ScriptReference/ImageConversion.LoadImage.html)
 
-					if(!canLoad)
+					if (!canLoad)
 					{
 						decodeResult.errorInfo = $"Can't load image!";
 					}

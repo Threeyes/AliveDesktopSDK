@@ -10,6 +10,9 @@ using UnityEngine.Rendering.Universal;
 ///
 /// Note:
 /// 1.只提供最常见且URP可用的Effect，如有特定需求，请重新定义一个Controller
+/// 
+/// ToAdd:
+/// -提炼出通用的PPController，可以直接基于本Controller进行修改。测试主题：Ocean的UnderWaterPP
 /// </summary>
 
 [AddComponentMenu(AD_EditorDefinition.ComponentMenuPrefix_Root_Mod_Controller + "AD_DefaultPostProcessingController")]
@@ -214,7 +217,7 @@ public partial class AD_DefaultPostProcessingController : PostProcessingControll
     [UnityEditor.MenuItem(AD_EditorDefinition.HierarchyMenuPrefix_Root_Mod_Controller_PostProcessing + "Default", false)]
     public static void CreateInst()
     {
-        Threeyes.Editor.EditorTool.CreateGameObjectAsChild<AD_DefaultPostProcessingController>(instName);
+        Threeyes.Core.Editor.EditorTool.CreateGameObjectAsChild<AD_DefaultPostProcessingController>(instName);
     }
 #endif
     #endregion

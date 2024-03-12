@@ -7,28 +7,40 @@ using UnityEngine.Events;
 using Threeyes.RuntimeEditor;
 using Threeyes.Data;
 using Threeyes.Persistent;
-
+using System;
+using Threeyes.Core;
 //——Item——
-public interface IAD_SerializableItem : IRuntimeEditable
+public interface IAD_SerializableItem :
+    IRuntimeEditable,
+    IRuntimeSerializableComponent
 {
     IAD_SerializableItemInfo BaseData { get; }
-    RuntimeSerialization_GameObject RuntimeSerialization_GameObject { get; }
+    RuntimeSerializable_GameObject RuntimeSerialization_GameObject { get; }
+    /// <summary>
+    /// 延迟激活特性，此类组件可以默认为disable的状态，如：
+    /// -socket等Interactor，如果在初始化时激活会意外吸取其他组件
+    /// </summary>
+    void DelayActiveFeature(float delayTime);
 
-    void InitRuntimeEdit(FilePathModifier filePathModifier);
+    /// <summary>
+    /// 主动通知更新（用于Simulator）
+    /// </summary>
+    void UpdateSetting();
 }
 public interface IAD_SerializableItemWithContextMenu : IAD_SerializableItem
-    //, IContextMenuTrigger//由Manager提供ContextMenu（如敏感方法）（PS:IContextMenuProvider已经继承该方法）
     , IContextMenuProvider//由自身提供ContextMenu
 { }
 public interface IAD_FileSystemItem : IAD_SerializableItemWithContextMenu
+    , IRuntimeEditorSelectable//运行时可选
 {
 }
 public interface IAD_DecorationItem : IAD_SerializableItemWithContextMenu
+    , IRuntimeEditorSelectable//运行时可选
 {
 }
 
 //——ItemInfo——
-public interface IAD_SerializableItemInfo : System.IDisposable
+public interface IAD_SerializableItemInfo : IDisposable
 {
     bool IsDestroyRuntimeAssetsOnDispose { get; set; }
     bool IsBaseType { get; set; }
@@ -63,49 +75,129 @@ public interface IAD_SerializableItemInfo : System.IDisposable
 
 //——ItemController——
 
+/// <summary>
+/// 存储所有预制物信息的配置
+/// </summary>
+[System.Serializable]
+public class AD_PrefabConfigInfo
+{
+    public List<AD_SOShellPrefabInfoGroup> ListSOPrefabInfoGroup { get { return listSOPrefabInfoGroup; } set { listSOPrefabInfoGroup = value; } }
+    [SerializeField] List<AD_SOShellPrefabInfoGroup> listSOPrefabInfoGroup = new List<AD_SOShellPrefabInfoGroup>();
+
+    public AD_PrefabConfigInfo()
+    {
+    }
+
+    //ToAdd：将常用方法放到这里
+
+    /// <summary>
+    /// 返回所有符合条件的子元素
+    /// </summary>
+    /// <param name="predicate">可选的匹配方法，空则返回全部</param>
+    /// <returns></returns>
+    public List<AD_SOPrefabInfo> FindAllPrefabInfo(Predicate<AD_SOPrefabInfo> match = null)
+    {
+        List<AD_SOPrefabInfo> listResult = new List<AD_SOPrefabInfo>();
+        foreach (var soGroup in listSOPrefabInfoGroup)
+        {
+            if (match != null)
+                listResult.AddRange(soGroup.ListData.FindAll(match));
+            else
+                listResult.AddRange(soGroup.ListData);
+        }
+        return listResult;
+    }
+}
+
+[Serializable]
+public class AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>
+    where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
+    where TSOPrefabInfo : AD_SOPrefabInfo
+{
+    public bool HasElement
+    {
+        get
+        {
+            return listSOPrefabInfoGroup.Count > 0;
+        }
+    }
+    public List<TSOPrefabInfoGroup> ListSOPrefabInfoGroup { get { return listSOPrefabInfoGroup; } set { listSOPrefabInfoGroup = value; } }
+    [SerializeField] List<TSOPrefabInfoGroup> listSOPrefabInfoGroup = new List<TSOPrefabInfoGroup>();
+
+    public AD_PrefabConfigInfo()
+    {
+    }
+
+    //public AD_PrefabConfigInfo(List<TSOPrefabInfoGroup> listSOPrefabInfoGroup)
+    //{
+    //    this.listSOPrefabInfoGroup = listSOPrefabInfoGroup;
+    //}
+
+    public List<TSOPrefabInfo> FindAllPrefabInfo(Predicate<TSOPrefabInfo> match = null)
+    {
+        List<TSOPrefabInfo> listResult = new List<TSOPrefabInfo>();
+        foreach (var soGroup in listSOPrefabInfoGroup)
+        {
+            if (match != null)
+                listResult.AddRange(soGroup.ListData.FindAll(match));
+            else
+                listResult.AddRange(soGroup.ListData);
+        }
+        return listResult;
+    }
+
+
+}
+
 public interface IAD_SerializableItemController :
     IElementGroup,
     IModControllerHandler,
     IFilePathModifierHolder
 {
-    public RuntimeSerialization_GameObject RuntimeSerialization_GameObjectRoot { get; }
-    IAD_SerializableItemControllerConfigInfo BaseConfig { get; }
+    public RuntimeSerializable_GameObject RuntimeSerialization_GameObjectRoot { get; }
 
     void RelinkElemets();
     void InitExistElements();
 
     /// <summary>
-    /// 
+    /// 使用相同的预制物替换原物体
     /// </summary>
     /// <param name="oldInst"></param>
     /// <param name="prefab"></param>
     /// <param name="actRebind">针对新旧物体的替换回调，第一个参数为旧，第二个参数为新</param>
     /// <returns></returns>
-    IAD_SerializableItem ReCreateElement(IAD_SerializableItem oldInst, GameObject prefab, UnityAction<GameObject, GameObject> actRebind);
+    IAD_SerializableItem ChangeElementStyle(IAD_SerializableItem oldInst, GameObject prefab, UnityAction<GameObject, GameObject> actRebind);
     void DeleteElement(IAD_SerializableItem item);
 
-    /// <summary>
-    /// 获取所有可用的PrefaibInfo
-    /// </summary>
-    /// <param name="eleData"></param>
-    /// <param name="matchingCondition"></param>
-    /// <returns></returns>
-    List<AD_SOPrefabInfoBase> GetAllValidPrefabInfos(IAD_SerializableItemInfo eleData, bool matchingCondition);
-
-    /// <summary>
-    /// 尝试查找实例所使用的PrefaibInfo
-    /// </summary>
-    /// <param name="runtimeSerialization_GameObject"></param>
-    /// <returns>如果rts_GO为空或者无法找到，就返回null</returns>
-    AD_SOPrefabInfoBase GetRelatedPrefabInfo(IAD_SerializableItem item);
 }
 
-public interface IAD_SerializableItemController<TBaseEleData> : IAD_SerializableItemController
+public interface IAD_SerializableItemController<TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData> : IAD_SerializableItemController
+    where TPrefabConfigInfo : AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>, new()
+    where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
+    where TSOPrefabInfo : AD_SOPrefabInfo
 {
+    public TPrefabConfigInfo PrefabConfigInfo { get; }
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="listBaseEleData"></param>
     /// <param name="isClear">true:清空; false:叠加</param>
     void InitBase(List<TBaseEleData> listBaseEleData, bool isClear);
+
+
+    /// <summary>
+    /// 获取所有可用的PrefabInfo
+    /// </summary>
+    /// <param name="eleData"></param>
+    /// <param name="matchingCondition"></param>
+    /// <returns></returns>
+    List<TSOPrefabInfo> GetAllValidPrefabInfos(IAD_SerializableItemInfo eleData, bool matchingCondition);
+
+    /// <summary>
+    /// 是否包含与给定SOAssetPack相关的实例
+    /// </summary>
+    /// <param name="sOAssetPack"></param>
+    /// <returns></returns>
+    bool HasAnyRelatedInstance(SOAssetPack sOAssetPack);
 }

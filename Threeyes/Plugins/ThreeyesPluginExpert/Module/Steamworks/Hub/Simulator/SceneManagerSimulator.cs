@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Threeyes.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,6 +10,8 @@ namespace Threeyes.Steamworks
 {
     public class SceneManagerSimulator : HubSceneManagerBase<SceneManagerSimulator>
     {
+        public bool HasSceneLoaded { get { return hasSceneLoaded; } }
+        bool hasSceneLoaded = false;
         protected virtual void Start()
         {
             InitAsync();
@@ -42,6 +45,7 @@ namespace Threeyes.Steamworks
                 return;
             }
             InitMod(modEntry);
+            hasSceneLoaded = true;
         }
     }
 }

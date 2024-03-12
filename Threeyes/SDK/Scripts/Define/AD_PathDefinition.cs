@@ -12,17 +12,17 @@ public static class AD_PathDefinition
     /// 目录实例：
     /// Data
     /// ——Save
-    /// ————Setting【Program Setting】
-    /// ————Log【存储各Mod的Log文件】
-    /// ——————（Mod ID）
     /// ————Item【存储Mod的持久化数据】
     /// ——————（Mod ID）
     /// ————————Persistent
-    /// ————Item_Local【存储Mod的持久化数据】【仅保存到本地，不上传】
+    /// 
+    /// ————Item_Local【存储Mod的持久化数据】【仅保存到本地，不上传】（PS：因为用户每台电脑的应用数量、类型不一致，且装饰有可能与应用绑定（如Socket），所以两者不应该进行云同步）
     /// ——————（Mod ID）
     /// ————————Persistent
     /// ——————————Directory【存储不同文件夹的信息】
-    /// ————System【System info】
-    /// ——————Cursor
-    /// ————————CursorTheme.json
+    /// 
+    /// ————Setting【Program Setting】
+    /// 
+    /// ————Log【存储各Mod的Log文件】
+    /// ——————（Mod ID）
 }

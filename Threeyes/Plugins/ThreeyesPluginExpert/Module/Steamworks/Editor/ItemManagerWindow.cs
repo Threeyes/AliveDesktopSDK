@@ -11,7 +11,6 @@ using UMod.ModTools.Export;
 using UMod.BuildEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using Threeyes.Editor;
 using Newtonsoft.Json;
 using Threeyes.Decoder;
 using Threeyes.IO;
@@ -21,6 +20,8 @@ using UMod.Shared;
 using UnityEditor.PackageManager;
 using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 using UnityEditor.PackageManager.Requests;
+using Threeyes.Core;
+using Threeyes.Core.Editor;
 
 namespace Threeyes.Steamworks
 {
@@ -58,15 +59,16 @@ namespace Threeyes.Steamworks
         VisualElement visualElementSOWorkshopItemInfoGroup;
         VisualElement visualElementPreviewArea;
         Label labelPreviewRemark;
-        HelpBox helpBoxPreview;//提示框
+        HelpBox helpBoxPreview;//预览图提示框
 
 
         //——Interaction Group——
         //Edit
         Button buttonSelectItemDirButton;
-        Button buttonEditScene;
+        protected Button buttonEditScene;//Create/Edit Scene
 
         //Build
+        HelpBox helpBoxBuild;//打包提示框
         TextField textFieldExePath;
         Button buttonSelectExe;
         Button buttonItemBuild;
@@ -89,15 +91,28 @@ namespace Threeyes.Steamworks
 
         //——Runtime——
         public List<TSOItemInfo> listValidItemInfo = new List<TSOItemInfo>();//扫描到的信息
-        TSOItemInfo curSOWorkshopItemInfo;
+        protected TSOItemInfo curSOWorkshopItemInfo;
         protected static readonly Vector2 k_MinWindowSize = new Vector2(450, 600);
 
         private void OnEnable()
         {
             uxmlAsset = Resources.Load<VisualTreeAsset>(info.WindowAssetPath);
             uxmlAsset.CloneTree(rootVisualElement);
+            InitUXMLField();
 
-            //##Setup UIf
+            //InitUI
+            InitUI(SOManagerInst.CurWorkshopItemInfo);
+
+
+            //版本提示。ToAdd：增加Package更新后执行
+            InitSDKVersionUI();
+        }
+
+        /// <summary>
+        /// 初始化UXML的相关元素
+        /// </summary>
+        protected virtual void InitUXMLField()
+        {
             //——Item Manager Group——
             visualElementItemManagerGroup = rootVisualElement.Q<VisualElement>("ItemManagerGroup");
             dropdownFieldActiveItem = rootVisualElement.Q<DropdownField>("ActiveItemDropdownField");
@@ -127,7 +142,7 @@ namespace Threeyes.Steamworks
             var togglePlayGif = rootVisualElement.Q<Toggle>("PlayGifToggle");
             togglePlayGif.value = SOManagerInst.ItemWindow_IsPreviewGif;
             togglePlayGif.RegisterCallback<ChangeEvent<bool>>(OnPlayGifToggleChanged);
-            helpBoxPreview = rootVisualElement.Q<HelpBox>("PreviewHelpBox");//Todo:改为全局
+            helpBoxPreview = rootVisualElement.Q<HelpBox>("PreviewHelpBox");
 
             //Tags
             Foldout foldoutItemTags = rootVisualElement.Q<Foldout>("ItemTagsFoldout");
@@ -138,11 +153,18 @@ namespace Threeyes.Steamworks
             buttonEditScene = rootVisualElement.Q<Button>("EditSceneButton");
             buttonEditScene.RegisterCallback<ClickEvent>(OnEditSceneButtonClick);
 
+            //Build
+            helpBoxBuild = rootVisualElement.Q<HelpBox>("BuildHelpBox");
             textFieldExePath = rootVisualElement.Q<TextField>("ExePathTextField");
             textFieldExePath.value = SOManagerInst.ItemWindow_ExePath;
             textFieldExePath.RegisterCallback<ChangeEvent<string>>(OnExePathTextFieldChanged);
             buttonSelectExe = rootVisualElement.Q<Button>("SelectExeButton");
             buttonSelectExe.RegisterCallback<ClickEvent>(OnSelectExeButtonClick);
+
+            Toggle toggleShowOutputDirectory = rootVisualElement.Q<Toggle>("ShowOutputDirectoryToggle");
+            toggleShowOutputDirectory.value = SOManagerInst.ItemWindow_ShowOutputDirectory;
+            toggleShowOutputDirectory.RegisterCallback<ChangeEvent<bool>>(OnShowOutputDirectoryToggleChanged);
+
             buttonItemBuild = rootVisualElement.Q<Button>("ItemBuildButton");
             buttonItemBuild.RegisterCallback<ClickEvent>(OnBuildButtonClick);
             buttonItemBuildAndRun = rootVisualElement.Q<Button>("ItemBuildAndRunButton");
@@ -170,14 +192,8 @@ namespace Threeyes.Steamworks
             labelSDKVersion = rootVisualElement.Q<Label>("SDKVersionLabel");
             buttonUpdateSDK = rootVisualElement.Q<Button>("UpdateSDKButton");
             buttonUpdateSDK.RegisterCallback<ClickEvent>(OnUpdateSDKButtonClick);
-
-            //InitUI
-            InitUI(SOManagerInst.CurWorkshopItemInfo);
-
-
-            //版本提示。ToAdd：增加Package更新后执行
-            InitSDKVersionUI();
         }
+
         private void Update()
         {
             Update_CreateScreenshot();
@@ -282,7 +298,7 @@ namespace Threeyes.Steamworks
         /// <summary>
         /// 刷新ItemInfoGroupUI状态（适用于修改信息后进行局部更新，如上传、打包）
         /// </summary>
-        void RefreshItemInfoGroupUIState()
+        protected virtual void RefreshItemInfoGroupUIState()
         {
             UpdatePreviewStateFunc();
             UpdatePreviewHelperBoxStateFunc();
@@ -442,6 +458,11 @@ namespace Threeyes.Steamworks
             UpdatePreviewStateFunc();
         }
 
+        private void OnShowOutputDirectoryToggleChanged(ChangeEvent<bool> evt)
+        {
+            SOManagerInst.ItemWindow_ShowOutputDirectory = evt.newValue;
+        }
+
         private void OnAgreementLabelClick(ClickEvent evt)
         {
             //https://partner.steamgames.com/doc/features/workshop/implementation#Legal
@@ -519,6 +540,7 @@ namespace Threeyes.Steamworks
                     {
                         infoInst = CreateInstance<TSOItemInfo>();
                         infoInst.itemName = itemName;
+                        infoInst.GenerateNewIDIfNull();//创建唯一ID
                         infoInst.Title = itemName;//设置默认Title
 
                         curSOWorkshopItemInfo = infoInst;//主动更新，避免OnProjectChange被调用，导致下拉框无法更新
@@ -534,12 +556,18 @@ namespace Threeyes.Steamworks
                     }
                     AssetDatabase.Refresh();
                     InitUI(infoInst);//重新创建
+                    AfterCreateItem(infoInst);//文件创建成功后
                 }
                 catch (System.Exception e)
                 {
                     Debug.LogError("Create Item failed with error:\r\n" + e);
                 }
             }
+        }
+
+        protected virtual void AfterCreateItem(TSOItemInfo infoInst)
+        {
+
         }
 
         void SetItemManagerHelpBoxInfoFunc(bool isShow, string content = "")
@@ -750,7 +778,7 @@ namespace Threeyes.Steamworks
                     FileInfo fileInfoPreview = new FileInfo(previewFilePath);
                     if (fileInfoPreview.Length > SOWorkshopItemInfo.MaxPreviewFileSize)
                     {
-                        SetPreviewHelpBoxInfo($"The size of the preview file can't be larger than {SOWorkshopItemInfo.MaxPreviewFileSize / 1024 }KB!\r\n Cur file size: {fileInfoPreview.Length / 1024 }KB.");
+                        SetPreviewHelpBoxInfo($"The size of the preview file can't be larger than {SOWorkshopItemInfo.MaxPreviewFileSize / 1024}KB!\r\n Cur file size: {fileInfoPreview.Length / 1024}KB.");
                     }
                     else
                     {
@@ -781,8 +809,16 @@ namespace Threeyes.Steamworks
             }
 
             //PS:这里调用的函数涉及FileInfo，所以要尽量减少调用频率
-            buttonItemBuild.SetInteractable(curSOWorkshopItemInfo.IsBuildValid); // 确保Build前所有必填内容都有效，否则禁用
-            buttonItemBuildAndRun.SetInteractable(curSOWorkshopItemInfo.IsBuildValid && IsExePathValid(SOManagerInst.ItemWindow_ExePath));//在上面的基础上，需要确定exe已经配置完成
+            string errorLog = "";
+            bool isBuildValid = curSOWorkshopItemInfo.CheckIfBuildValid(out errorLog);
+
+            //在HelpBox上提示待完成事项
+            helpBoxBuild.Show(!isBuildValid);
+            if (!isBuildValid)
+                helpBoxBuild.text = errorLog;
+
+            buttonItemBuild.SetInteractable(isBuildValid); // 确保Build前所有必填内容都有效，否则禁用
+            buttonItemBuildAndRun.SetInteractable(isBuildValid && IsExePathValid(SOManagerInst.ItemWindow_ExePath));//在上面的基础上，需要确定exe已经配置完成
             buttonItemRun.SetInteractable(IsExePathValid(SOManagerInst.ItemWindow_ExePath) && curSOWorkshopItemInfo.IsExported);//确认exe已经Mod是否存在
 
             textFieldChangeLog.Show(curSOWorkshopItemInfo.IsItemUploaded);
@@ -884,7 +920,7 @@ namespace Threeyes.Steamworks
                 }
                 ///#2 Asset文件夹中，有以下2种存在形式：
                 ///——Hub程序中的位置
-                ///——Samples中【Assets/Samples/AliveCursorSDK/X.X.X/HubSimulator/AliveCursorHub_Simulator.unity】
+                ///——Samples中【如Assets/Samples/AliveCursorSDK/X.X.X/HubSimulator/AliveCursorHub_Simulator.unity】
                 if (simulatorSceneAssetRealPath.IsNullOrEmpty())
                 {
                     string sceneAssetInAsset = listSceneAssetPath.FirstOrDefault();
@@ -901,7 +937,7 @@ namespace Threeyes.Steamworks
                                 string curSDKVersion = packageInfoSDK.version;
                                 if (curSDKVersion != assetVersion)//如果Asset/Samples中的版本与Package中的版本不一致，则不报错，通过Warning提示更新。（Modder在PackageManager中点击Update后，会自动升级到最新版本并删除旧版本）
                                 {
-                                    Debug.LogWarning($"[AliveCursor] Simulator assets obsolete! Please open PackageManager window and update AliveCursorSDK/Samples to latest version [{curSDKVersion}]!");
+                                    Debug.LogWarning($"{SORuntimeManagerInst.productName}'s Simulator assets obsolete! Please open PackageManager window and update '{SORuntimeManagerInst.sdkName}/Samples' to latest version [{curSDKVersion}]!");
                                 }
                             }
                         }
@@ -933,7 +969,7 @@ namespace Threeyes.Steamworks
         /// <summary>
         /// 项目文件夹中导入的Samples资源
         /// </summary>
-        static string ProjectSamplesSDKPath { get { return "Assets/Samples/" + SORuntimeManagerInst.productName; } }
+        static string ProjectSamplesSDKPath { get { return "Assets/Samples/" + SORuntimeManagerInst.sdkName; } }
         /// <summary>
         /// 返回缓存到Packages中的SDK信息
         /// </summary>
@@ -1102,7 +1138,7 @@ namespace Threeyes.Steamworks
             {
                 if (GetActiveExportProfileSettings(sOWorkshopItemInfo) != null)
                 {
-                    //info.BeforeBuild(ref sOWorkshopItemInfo);//进行打包前的预处理（如更新SOAssetPack）[临时注释，看是不是这个导致Ocean无法导出代码]
+                    info.BeforeBuild(ref sOWorkshopItemInfo);//进行打包前的预处理（如更新SOAssetPack）
 
                     //检查或创建文件夹
                     string exportDirPath = sOWorkshopItemInfo.ExportItemDirPath;
@@ -1111,7 +1147,7 @@ namespace Threeyes.Steamworks
                     //开始打包
                     ExportSettings activeExportSettings = ExportSettings.Active;
                     activeExportSettings.ClearConsoleOnBuild = false;//避免意外清空错误信息
-                    //activeExportSettings.ShowOutputDirectory = false;//可以避免打包完成后打开文件夹
+                    activeExportSettings.ShowOutputDirectory = SOManagerInst.ItemWindow_ShowOutputDirectory;//可以避免打包完成后打开文件夹
                     EditorUtility.SetDirty(activeExportSettings);//确保修改的设置被保存
 
 
@@ -1288,8 +1324,6 @@ namespace Threeyes.Steamworks
             }
             return null;
         }
-
-
         #endregion
 
         #region Utility
@@ -1395,7 +1429,7 @@ namespace Threeyes.Steamworks
     }
 
     /// <summary>
-    /// Todo:生成独立类
+    /// Todo:生成独立类，放到ThreeyesPlugin，使用宏定义封装
     /// </summary>
     public static class UIToolkitLazyExtension
     {

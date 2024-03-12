@@ -1,9 +1,10 @@
-﻿#if UNITY_EDITOR
+#if UNITY_EDITOR
 using System.Text;
+using Threeyes.Core;
 using UnityEditor;
 using UnityEngine;
 
-namespace Threeyes.Editor
+namespace Threeyes.Core.Editor
 {
     /// <summary>
     /// PS:因为是通用插件的一部分，所以不依赖于HierarchyViewManager
@@ -42,7 +43,14 @@ namespace Threeyes.Editor
             Rect remainRect = selectionRect;
             Rect rectEle = remainRect.GetAvaliableRect(EditorDrawerTool.buttonSize);
             if (EditorDrawerTool.DrawButton(rectEle, EditorDrawerTool.TexArrRightIcon))
-                comp.SetNext();
+            {
+                //Ctrl+左键：调用ActiveAndSetNext
+                if (Event.current.control)
+                    comp.ActiveAndSetNext();
+                else
+                    comp.SetNext();
+
+            }
             rectEle = remainRect.GetRemainRect(rectEle).GetAvaliableRect(EditorDrawerTool.buttonSize);
             if (EditorDrawerTool.DrawButton(rectEle, EditorDrawerTool.TexArrLeftIcon))
                 comp.SetPrevious();

@@ -8,7 +8,7 @@ namespace Threeyes.XRI
 {
     public static class XRITool
     {
-        static TeleportationProvider teleportationProvider
+        public static TeleportationProvider teleportationProvider
         {
             get
             {
@@ -27,7 +27,7 @@ namespace Threeyes.XRI
         /// <param name="position"></param>
         /// <param name="rotation"></param>
         /// <param name="matchOrientation">Set to None if you don't want to change the rotation</param>
-        public static void TeleportTo(Vector3 position, Quaternion rotation, MatchOrientation matchOrientation)
+        public static bool TeleportTo(Vector3 position, Quaternion rotation, MatchOrientation matchOrientation)
         {
             //Ref：UnityEngine.XR.Content.Walkthrough.WalkthroughStep.SetCameraPosition的实现（其中MatchOrientation为None）
 
@@ -42,7 +42,7 @@ namespace Threeyes.XRI
                 destinationRotation = rotation
             };
 
-            teleportationProvider.QueueTeleportRequest(request);
+            return teleportationProvider.QueueTeleportRequest(request);// if successfully queued. Otherwise, returns <see langword="false"/>
         }
     }
 }

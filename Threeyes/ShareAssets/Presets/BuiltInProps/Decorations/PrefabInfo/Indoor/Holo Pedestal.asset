@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e5fb1fb3feded6459e6e20499dcdb7a, type: 3}
+  m_Name: Holo Pedestal
+  m_EditorClassIdentifier: 
+  remark: 
+  title: Holo Pedestal
+  prefab: {fileID: 6881734438188019964, guid: 046e8bc10e5e02c41b3c073c6d31cc98, type: 3}
+  preview: {fileID: 2800000, guid: 283cdbb3364dc444eaae79a2d632837d, type: 3}
+  description: 
+  tooltip: 

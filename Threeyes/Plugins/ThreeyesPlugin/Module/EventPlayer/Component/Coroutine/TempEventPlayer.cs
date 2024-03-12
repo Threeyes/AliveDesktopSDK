@@ -2,8 +2,10 @@ using System.Collections;
 using UnityEngine;
 using System.Text;
 using Threeyes.Coroutine;
+using Threeyes.Core.Editor;
+using Threeyes.Core;
 #if UNITY_EDITOR
-using Threeyes.Editor;
+using UnityEditor;
 #endif
 
 namespace Threeyes.EventPlayer
@@ -119,12 +121,17 @@ namespace Threeyes.EventPlayer
 
         //——MenuItem——
         static string instName = "TempEP ";
-        [UnityEditor.MenuItem(strMenuItem_RootCoroutine + "TempEventPlayer", false, intCoroutineMenuOrder + 2)]
+        [MenuItem(strMenuItem_RootCoroutine + "TempEventPlayer", false, intCoroutineMenuOrder + 2)]
         public static void CreateTempEventPlayer()
         {
             EditorTool.CreateGameObjectAsChild<TempEventPlayer>(instName);
         }
-
+        [MenuItem(strMenuItem_Root_Collection + "TempEPG Child", false, intCollectionMenuOrder + 6)]
+        public static void CreateTempEventPlayerGroupChild()
+        {
+            var eventPlayer = EditorTool.CreateGameObjectAsChild<TempEventPlayer>("TempEPG ");
+            eventPlayer.IsGroup = true;
+        }
         //——Hierarchy GUI——
         public override string ShortTypeName { get { return "T"; } }
         /// <summary>

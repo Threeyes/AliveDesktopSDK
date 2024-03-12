@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Threeyes.Core;
 using Threeyes.RuntimeEditor;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -27,7 +28,7 @@ public class AD_SunEntity : MonoBehaviour
     public bool IsEditing { get { return isEditing; } }
     private bool isEditing = false;
 
-    public XRBaseInteractable interactableSunEntity;//[Optional] The real sun that user can drag, which will affect sunSourceLight. (PS: Place it very far away to avoid parallax issues during movement. Set Procedural Skybox Material's [SunSize] to zero to avoid two sun)
+    public XRBaseInteractable interactable;//[Optional] The real sun that user can drag, which will affect sunSourceLight. (PS: Place it very far away to avoid parallax issues during movement. Set Procedural Skybox Material's [SunSize] to zero to avoid two sun)
     public Renderer rendererMesh;
     public string shaderProperty_BaseColorName= "_BaseColor";
     public string shaderProperty_EmissionColorName = "_EmissionColor";
@@ -37,10 +38,10 @@ public class AD_SunEntity : MonoBehaviour
     int emissionColorID;
     private void Awake()
     {
-        if (interactableSunEntity)
+        if (interactable)
         {
-            interactableSunEntity.selectEntered.AddListener(OnSunEntitySelectEntered);
-            interactableSunEntity.selectExited.AddListener(OnSunEntitySelectExited);
+            interactable.selectEntered.AddListener(OnSunEntitySelectEntered);
+            interactable.selectExited.AddListener(OnSunEntitySelectExited);
         }
 
         //缓存ID
@@ -70,9 +71,10 @@ public class AD_SunEntity : MonoBehaviour
     #region XRI
     public virtual void SetInteractable(bool isEnable)
     {
-        interactableSunEntity.enabled = isEnable;
+        interactable.enabled = isEnable;
     }
 
+    //被任意Interactor或Socket控制时，都代表在编辑中
     void OnSunEntitySelectEntered(SelectEnterEventArgs args)
     {
         isEditing = true;
@@ -84,11 +86,11 @@ public class AD_SunEntity : MonoBehaviour
     #endregion
 
     #region RuntimeEditor
-    public void OnRuntimeEditorSelectEnter(BaseEventArgs args)
+    public void OnRuntimeEditorSelectEntered(RESelectEnterEventArgs args)
     {
         isEditing = true;
     }
-    public void OnRuntimeEditorSelectExit(BaseEventArgs args)
+    public void OnRuntimeEditorSelectExited(RESelectExitEventArgs args)
     {
         isEditing = false;
     }

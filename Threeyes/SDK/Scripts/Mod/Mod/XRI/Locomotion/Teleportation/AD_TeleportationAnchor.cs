@@ -1,10 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
-using Threeyes.Pool;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using System.Reflection;
 using Threeyes.XRI;
+using Threeyes.Coroutine;
+using Threeyes.Core;
 /// <summary>
 /// 
 /// Todo:
@@ -21,15 +21,44 @@ public class AD_TeleportationAnchor : TeleportationAnchor
 
     #endregion
 
+    #region Fix uMod Deserialize Problem
     protected override void Awake()
     {
         base.Awake();
 
+        if (UModTool.IsUModGameObject(this))
+            CoroutineManager.StartCoroutineEx(IEReInit());
+        else
+            InitFunc();
+    }
+    IEnumerator IEReInit()
+    {
+        yield return null;//等待UMod初始化完成
+        yield return null;//等待UMod初始化完成
+
+        //ReInit
+        base.Awake();
+        OnDisable();
+        OnEnable();
+        interactionLayers = UModTool.FixSerializationCallbackReceiverData(interactionLayers);//修复Lyaers反序列化出错导致无法交互的Bug
+
+        InitFunc();
+    }
+
+    protected virtual void InitFunc()
+    {
         if (isHideOnEnter)
         {
-            teleporting.AddListener(args => HideThis());
+            teleporting.AddListener(args => Hide());
         }
     }
+    protected override void OnDestroy()
+    {
+        /////PS:以下方法可以避免物体被销毁时，XRInteractionManager 报错（https://github.com/Unity-Technologies/XR-Interaction-Toolkit-Examples/issues/26）
+        base.OnDestroy();
+        OnDisable();//手动调用 UnregisterWithInteractionManager，避免InteractionManager检测不到该物体而报错
+    }
+    #endregion
 
     /// <summary>
     /// Manual teleport to this anchor
@@ -40,7 +69,7 @@ public class AD_TeleportationAnchor : TeleportationAnchor
     /// -隐藏后仍能正常调用
     /// </summary>
     [ContextMenu("TeleportToThis")]
-    public void TeleportToThis()
+    public void Teleport()
     {
         //确保即使该物体从未显示，也能够正常传送
         TeleportationProvider m_TeleportationProvider = teleportationProvider;
@@ -89,7 +118,7 @@ public class AD_TeleportationAnchor : TeleportationAnchor
         teleportRequest = (TeleportRequest)args[1];//PS:因为UpdateTeleportRequestRotation中的teleportRequest参数被标记为ref，所以需要获取修改后的值并更新输入值
     }
 
-    void HideThis()
+    public void Hide()
     {
         gameObject.SetActive(false);
     }

@@ -5,6 +5,7 @@ using NaughtyAttributes;
 using System.Reflection;
 using System.Collections.Generic;
 using Threeyes.Config;
+using Threeyes.Core;
 
 namespace Threeyes.Steamworks
 {
@@ -81,7 +82,6 @@ namespace Threeyes.Steamworks
         protected abstract void InitUI();
 
         #region Data
-
         public virtual void ResetAllDataToDefault()
         {
             try
@@ -203,7 +203,6 @@ namespace Threeyes.Steamworks
             }
         }
         #endregion
-
     }
 
     #region Define

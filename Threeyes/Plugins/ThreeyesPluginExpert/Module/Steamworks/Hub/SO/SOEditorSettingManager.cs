@@ -2,6 +2,7 @@
 using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
+using Threeyes.Core;
 using UnityEditor;
 using UnityEngine;
 namespace Threeyes.Steamworks
@@ -14,7 +15,7 @@ namespace Threeyes.Steamworks
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="TSOSDKManagerInfo"></typeparam>
     /// <typeparam name="TSOItemInfo"></typeparam>
-    public abstract class SOEditorSettingManager<T, TSOItemInfo> : SOInstacneBase<T, SOEditorSettingManagerInfo>
+    public abstract class SOEditorSettingManager<T, TSOItemInfo> : SOInstanceBase<T, SOEditorSettingManagerInfo>
         where T : SOEditorSettingManager<T, TSOItemInfo>
         where TSOItemInfo : SOWorkshopItemInfo
     {
@@ -55,12 +56,25 @@ namespace Threeyes.Steamworks
                 EditorUtility.SetDirty(Instance);
             }
         }
+        public bool ItemWindow_ShowOutputDirectory
+        {
+            get
+            {
+                return itemWindow_ShowOutputDirectory;
+            }
+            set
+            {
+                itemWindow_ShowOutputDirectory = value;
+                EditorUtility.SetDirty(Instance);
+            }
+        }
 
         [Expandable] [SerializeField] protected TSOItemInfo curWorkshopItemInfo;
 
         [Header("ItemManagerWindow")]
         [SerializeField] protected string itemWindow_ExePath = "";
         [SerializeField] protected bool itemWindow_IsPreviewGif = false;
+        [SerializeField] protected bool itemWindow_ShowOutputDirectory = true;//Show Output Directory after built success
 
         #endregion
     }

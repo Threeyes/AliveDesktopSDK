@@ -1,7 +1,8 @@
 #if UNITY_EDITOR
+using Threeyes.Core;
 using UnityEngine;
 
-namespace Threeyes.Editor
+namespace Threeyes.Core.Editor
 {
     public static class EditorPathTool
     {
@@ -44,7 +45,7 @@ namespace Threeyes.Editor
             }
             else
             {
-                Debug.LogError("The path is not inside this Unity Project!\r\n" + absPath);
+                Debug.LogError("The path is not inside this Unity Project:\r\n" + absPath);
             }
             return relativepath;
         }

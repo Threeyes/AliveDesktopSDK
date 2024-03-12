@@ -10,12 +10,12 @@ public static class AD_ManagerHolder
 
     //——Setting——
     public static IAD_CommonSettingManager CommonSettingManager { get; internal set; }
-    //public static IAD_InputManager InputManager { get; internal set; }
+    public static IAD_InputManager InputManager { get; internal set; }
 
     //——Mod——
-
+    public static IAD_ModelManager ModelManager { get; internal set; }
     public static IAD_XRManager XRManager { get; internal set; }
-    public static IAD_FileSystemManager FileSystemManager { get; internal set; }
+    public static IAD_ShellManager ShellManager { get; internal set; }
     public static IAD_DecorationManager DecorationManager { get; internal set; }
     public static IAD_EnvironmentManager EnvironmentManager { get; internal set; }
     public static IAD_PostProcessingManager PostProcessingManager { get; internal set; }

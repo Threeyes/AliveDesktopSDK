@@ -14,6 +14,11 @@ public abstract class AD_CommonSettingManagerBase<T> : HubSettingManagerBase<T, 
         Config.fileSystemSetting_TargetPhysicsSpeicalFolder.actionValueChangedEx += OnDataTargetPhysicsSpeicalFolderChangedEx;
         Config.fileSystemSetting_CustomPhysicsSpeicalFolderPath.actionValueChangedEx += OnDataCustomPhysicsSpeicalFolderPathChangedEx;
 
+        Config.windowSetting_CoverAllMonitor.actionValueChangedEx += OnDataCoverAllMonitorChangedEx;
+        Config.windowSetting_TargetMonitor.actionValueChangedEx += OnData_TargetMonitorChangedEx;
+
+
+
         Config.generalSetting_IsRunAtStartUp.actionValueChanged += OnDataIsRunAtStartUpChanged;
         Config.generalSetting_IsVSyncActive.actionValueChanged += OnDataIsVSyncActiveChanged;
         Config.generalSetting_TargetFrameRate.actionValueChanged += OnDataTargetFrameRateChanged;
@@ -22,12 +27,11 @@ public abstract class AD_CommonSettingManagerBase<T> : HubSettingManagerBase<T, 
         Config.generalSetting_ProcessPriority.actionValueChanged += OnDataProcessPriorityChanged;
     }
 
-    protected virtual void OnDataTargetPhysicsSpeicalFolderChangedEx(string speicalFolderEnumValue, BasicDataState basicDataState)
-    {
-    }
-    protected virtual void OnDataCustomPhysicsSpeicalFolderPathChangedEx(string customFolderDir, BasicDataState basicDataState)
-    {
-    }
+    protected virtual void OnDataTargetPhysicsSpeicalFolderChangedEx(string speicalFolderEnumValue, BasicDataState basicDataState) { }
+    protected virtual void OnDataCustomPhysicsSpeicalFolderPathChangedEx(string customFolderDir, BasicDataState basicDataState) { }
+
+    protected virtual void OnDataCoverAllMonitorChangedEx(bool value, BasicDataState basicDataState) { }
+    protected virtual void OnData_TargetMonitorChangedEx(string value, BasicDataState basicDataState) { }
 
 
     protected virtual void OnDataIsRunAtStartUpChanged(bool value)
@@ -93,6 +97,9 @@ public class AD_CommonSettingConfigInfo : HubSettingConfigInfoBase
     public StringData fileSystemSetting_TargetPhysicsSpeicalFolder = new StringData("Desktop");//目标文件夹，对应 AD_PhysicsSpeicalFolder（Todo：要考虑多文件夹多场景共存的情况）（Todo：可以直接在界面上切换）
     public StringData fileSystemSetting_CustomPhysicsSpeicalFolderPath = new StringData("");//自定义文件夹路径（当上述设置为Custom时，对应的目标路径）
 
+    [Header("Window Setting")]//窗口设置
+    public BoolData windowSetting_CoverAllMonitor = new BoolData(false);//是否覆盖所有屏幕
+    public StringData windowSetting_TargetMonitor = new StringData("");//（当CoverAllMonitor为false时有效）目标显示屏幕，默认为主屏幕
 
     [Header("General Setting")]//PS:(以下Option不能用枚举代替，因为可能会有变化（如多语言））
     //public BoolData generalSetting_IsAliveDesktopActive = new BoolData(true);//启用AD【先不使用】

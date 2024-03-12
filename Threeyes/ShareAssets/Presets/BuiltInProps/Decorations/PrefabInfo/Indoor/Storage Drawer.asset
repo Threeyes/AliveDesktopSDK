@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e5fb1fb3feded6459e6e20499dcdb7a, type: 3}
+  m_Name: Storage Drawer
+  m_EditorClassIdentifier: 
+  remark: 
+  title: Storage Drawer
+  prefab: {fileID: 195182538570461045, guid: 98cc03e4b209e8b4286041c589a6af08, type: 3}
+  preview: {fileID: 2800000, guid: 8824f978153d3be408c194f07787779d, type: 3}
+  description: 
+  tooltip: 

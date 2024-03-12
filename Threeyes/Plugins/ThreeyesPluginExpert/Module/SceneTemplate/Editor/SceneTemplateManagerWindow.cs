@@ -3,7 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Threeyes.Editor;
+using Threeyes.Core;
+using Threeyes.Core.Editor;
 using UnityEditor;
 using UnityEditor.SceneTemplate;
 using UnityEditor.UIElements;
@@ -41,6 +42,12 @@ namespace Threeyes.SceneTemplate
 
         private static readonly GUIContent k_WindowTitle = new GUIContent("Select Template...");
         private static readonly Vector2 k_MinWindowSize = new Vector2(600, 600);
+        /// <summary>
+        /// ToAdd：
+        /// -增加参数：指定的List<SceneTemplateAsset>，更加通用
+        /// </summary>
+        /// <param name="targetSceneFilePath"></param>
+        /// <returns></returns>
         public static SceneTemplateManagerWindow ShowWindow(string targetSceneFilePath)
         {
             curTargetSceneFilePath = targetSceneFilePath;

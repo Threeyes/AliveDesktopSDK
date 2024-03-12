@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Linq;
+using Threeyes.Core;
 using Threeyes.Persistent;
 using Threeyes.Steamworks;
 using Threeyes.XRI;
 using UnityEngine;
+using UnityEngine.Animations;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation;
 using UnityEngine.XR.Management;
 /// <summary>
 /// 管理Rig及Camera的行为
@@ -18,29 +19,6 @@ using UnityEngine.XR.Management;
 public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_XRController, AD_DefaultXRController>, IAD_XRManager
         where T : AD_XRManagerBase<T>
 {
-
-    /// <summary>
-    /// PS:为了避免其他Manager在ActivePlatformMode尚未初始化时需要检查模式，所以直接提供该方法
-    /// </summary>
-    public static bool IsCommandVRMode
-    {
-        get
-        {
-#if UNITY_EDITOR
-            if (Application.isEditor)//【编辑器模式】读取Resource的配置并初始化
-            {
-                return AD_SOEditorSettingManager.Instance.PlatformMode == AD_PlatformMode.PCVR;
-            }
-            else
-#endif
-            {
-                string[] args = Environment.GetCommandLineArgs();
-                return args.ToList().Contains(commandArg_VRMode);
-            }
-        }
-    }
-    const string commandArg_VRMode = "-vrMode";
-
     #region Interface
     public Transform TfCameraRigParent { get { return tfCameraRigParent; } }
     public Transform TfCameraRig { get { return tfCameraRig; } }
@@ -50,10 +28,13 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     public Transform TfRightController { get { return tfRightController; } }
     public ActionBasedController LeftController { get { return leftController; } }
     public ActionBasedController RightController { get { return rightController; } }
-    public AD_DynamicMoveProvider DynamicMoveProvider { get { return dynamicMoveProvider; } }
-    public XRDeviceSimulator xRDeviceSimulator;
-    public AD_PlatformMode ActivePlatformMode = AD_PlatformMode.PC;//Todo：通过AD_Entry读取配置并设置该字段
 
+    public bool EnableLocomotion { get => dynamicMoveProvider.enabled; }
+    public bool EnableFly { get => dynamicMoveProvider.enableFly; protected set => dynamicMoveProvider.enableFly = value; }
+    public bool UseGravity { get => dynamicMoveProvider.useGravity; protected set => dynamicMoveProvider.useGravity = value; }
+
+    //public AD_DynamicMoveProvider DynamicMoveProvider { get { return dynamicMoveProvider; } }//PS：暂不提供，等后续用户有需要自定义再公开
+    public AD_XRDeviceSimulator xRDeviceSimulator;
     //#Runtime
     [SerializeField] Transform tfCameraRigParent;//[XR Interaction Setup]
     [SerializeField] Transform tfCameraRig;//[XR Origin(XR Rig)]
@@ -63,22 +44,172 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     [SerializeField] Transform tfRightController;
     [SerializeField] ActionBasedController leftController;
     [SerializeField] ActionBasedController rightController;
-
     [SerializeField] AD_DynamicMoveProvider dynamicMoveProvider;
-
-    public void TeleportTo(Vector3 position, Quaternion rotation, MatchOrientation matchOrientation)
+    [SerializeField] CharacterController characterController;
+    public virtual void SetLocomotion(bool isEnable)
     {
-        XRITool.TeleportTo(position, rotation, matchOrientation);
+        //PS:不调用ActionBasedControllerManager.UpdateLocomotionActions/DisableLocomotionActions，是因为该实现不需要反射，且确保相关Action正常运行（比如用于驾驶）
+        if (dynamicMoveProvider)//避免程序退出时该实例被销毁导致报错
+            dynamicMoveProvider.enabled = isEnable;
     }
 
-    public void ResetPose()
+    public void SetMovementType(bool enableFly, bool isPenetrateOnFly, bool useGravity)
     {
-        ActiveController.ResetPose();
+        //在Rig附着时，临时禁止修改移动方式
+        if (IsRigAttaching)
+        {
+            Debug.LogWarning("RigAttaching! Ignore SetMovementType!");
+            return;
+        }
+
+        SetMovementTypeFunc(enableFly, isPenetrateOnFly, useGravity);
+    }
+
+    protected virtual void SetMovementTypeFunc(bool enableFly, bool isPenetrateOnFly, bool useGravity)
+    {
+        characterController.excludeLayers = enableFly && isPenetrateOnFly ? -1 : 0;//如果在飞行时需要忽略碰撞体，则将excludeLayers设置为Everything；否则设置为Nothing；
+        EnableFly = enableFly;
+        UseGravity = useGravity;
+    }
+
+    public void TeleportTo(Vector3 position, Quaternion rotation, MatchOrientation matchOrientation, AD_XRDestinationRigPart destinationRigPart = AD_XRDestinationRigPart.Foot)
+    {
+        Vector3 targetPos = position;
+        if (destinationRigPart == AD_XRDestinationRigPart.Head)
+        {
+            //让头与目标点位于同一高度
+            Vector3 eyeOffset = TfCameraRig.position - TfCameraEye.position;
+            targetPos += eyeOffset;
+        }
+
+        XRITool.TeleportTo(targetPos, rotation, matchOrientation);
+    }
+
+    public void SetCameraPose(Vector3? localPosition = null, Quaternion? rotation = null)
+    {
+        if (AD_ManagerHolderManager.ActivePlatformMode == AD_PlatformMode.PCVR)//VR模式由设备控制相机，所以可以直接忽略
+            return;
+
+        xRDeviceSimulator.SetCamera(localPosition, rotation);
+    }
+    #endregion
+
+    #region Attach and follow Target
+    /// <summary>
+    /// 需要确保目标有效（避免因为重置或切换场景导致目标丢失）
+    /// </summary>
+    public virtual bool IsRigAttaching { get { return tfCurAttachTarget != null; } }
+    //public ParentConstraint parentConstraintRigParent;//【Bug】：ParentConstraint不是即时计算的，改用LateUpdate自行更新！
+    protected Transform tfCurAttachTarget;//当前附着的物体
+    public void TeleportAndAttachTo(AD_RigAttachable rigAttachable)
+    {
+        //#0 初始化Locomotion设定，临时设置为无重力模式
+        SetMovementTypeFunc(true, true, false);
+
+        //#2 使用Parent Constraints来将tfCameraRigParent附着到目标
+        Transform attachTransform = rigAttachable.attachTransform;
+        tfCameraRigParent.SetPositionAndRotation(attachTransform.position, attachTransform.rotation);
+
+        //#3 把Rig传送到AD_XR Interaction Setup的原点
+        TeleportTo(tfCameraRigParent.position, tfCameraRigParent.rotation, MatchOrientation.TargetUpAndForward, rigAttachable.destinationRigPart);
+
+        //Cache
+        tfCurAttachTarget = rigAttachable.attachTransform;
+
+        SetAttachState(true);
+    }
+
+    protected bool IsAttachingTo(AD_RigAttachable rigAttachable)
+    {
+        if (rigAttachable == null || tfCurAttachTarget == null)
+            return false;
+        return rigAttachable.attachTransform == tfCurAttachTarget;
+    }
+
+    public Pose PoseCameraRig { get { return poseCameraRig; } }
+    public Pose PoseLocalCameraEye { get { return poseLocalCameraEye; } }
+    public Pose PoseCameraEye { get { return poseCameraEye; } }
+    Quaternion CameraRotation { get { return AD_ManagerHolderManager.ActivePlatformMode == AD_PlatformMode.PCVR ? tfCameraEye.rotation : xRDeviceSimulator.CameraRotation; } }
+
+    Pose poseCameraRig;
+    Pose poseLocalCameraEye;
+    Pose poseCameraEye;
+    protected virtual void LateUpdate()
+    {
+        if (tfCurAttachTarget)//Attaching中：让XRRig跟随目标。（因为此时CameraRigParent灯物体的位置有变化，所以不应该保存其信息）
+        {
+            tfCameraRigParent.position = tfCurAttachTarget.position;
+            tfCameraRigParent.rotation = tfCurAttachTarget.rotation;
+        }
+        else//非Attaching中：保存当前有效的位置信息(ToUpdate：降低更新频次，如1秒1次)
+        {
+            poseCameraRig = new Pose(tfCameraRig.position, tfCameraRig.rotation);
+            poseLocalCameraEye = new Pose(tfCameraEye.localPosition, tfCameraEye.localRotation);
+            poseCameraEye = new Pose(tfCameraEye.position, CameraRotation);
+        }
+    }
+
+    bool IsTeleportDone
+    {
+        get
+        {
+            var locomotionPhase = XRITool.teleportationProvider.locomotionPhase;
+
+            return locomotionPhase == LocomotionPhase.Idle || locomotionPhase == LocomotionPhase.Done;//Idle也算是完成的状态
+        }
+    }
+
+    protected void TryDetach()
+    {
+        if (IsRigAttaching)
+            Detach();
+    }
+
+    protected virtual void Detach()
+    {
+        //#0 缓存Rig的Pose，用于后续还原
+        Pose rigPose = new Pose(tfCameraRig.position, tfCameraRig.rotation);
+
+        //#3 还原RigParent的位置/旋转
+        ResetRigParentPose();
+
+        //#2 恢复Mod的Locomotion设定
+        ActiveController.UpdateLocomotionSetting();
+
+        //#3 还原Rig的位置/旋转，避免出现与Attach时不一致的瞬移
+        TeleportTo(rigPose.position, rigPose.rotation, MatchOrientation.TargetUpAndForward, AD_XRDestinationRigPart.Foot);
+
+        //Clear Data
+        tfCurAttachTarget = null;
+        SetAttachState(false);
+    }
+
+    protected virtual void ResetRigPose()
+    {
+        TryDetach();//先取消附着（Bug：因为TeleportRequest要在Update中进行更新，此时Controller.OnModControllerDeinit保存的位置会报错。解决办法：应该是保存Attach之前的位置（可以自行保存），而不是当前的位置信息）
+
+        ResetRigParentPose();
+        ActiveController.ResetRigPose();
+
+        //重新激活Locomotion，避免因为驾驶车辆出错导致无法移动
+        SetLocomotion(true);
+    }
+
+    protected virtual void SetAttachState(bool isAttaching)
+    {
+
+    }
+
+    /// <summary>
+    /// //重置RigParent位置及朝向，可避免因为Attach到墙上物体导致相机偏转出错的Bug
+    /// </summary>
+    void ResetRigParentPose()
+    {
+        tfCameraRigParent.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
     }
     #endregion
 
     #region Init
-
     /// <summary>
     /// 在程序初始化时调用
     /// </summary>
@@ -97,28 +228,25 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
         //    tfRightController = rightController?.transform;
         //}
 
-        //根据命令行参数初始化平台模式
-        ActivePlatformMode = IsCommandVRMode ? AD_PlatformMode.PCVR : AD_PlatformMode.PC;
-        SetupPlatformMode(ActivePlatformMode);
+        InitPlatform();
     }
 
 
     private void OnApplicationQuit()
     {
-        //VR模式退出时要Stop，否则会卡住
-        if (ActivePlatformMode == AD_PlatformMode.PCVR)
-            StopXR();
+        DeinitPlatform();
     }
     /// <summary>
-    /// 切换VR模式
+    /// 根据平台类型进行初始化
     /// 
     /// PS:暂时只能在启动时设置
     /// Todo：
     /// 【V2】后期查找如何在运行时切换模式（如缓存InputSystem.devices中所有的XRHMD）
     /// </summary>
     /// <param name="platformMode"></param>
-    public void SetupPlatformMode(AD_PlatformMode platformMode)
+    void InitPlatform()
     {
+        AD_PlatformMode platformMode = AD_ManagerHolderManager.ActivePlatformMode;
         xRDeviceSimulator.enabled = platformMode == AD_PlatformMode.PC;//XRDeviceSimulator会在OnEnable时，自动移除其他VR设备
 
         //如果OpenXR没有设置为InitializeXRonStartup，则需要手动调用此方法来初始化OpenXR
@@ -126,6 +254,13 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
         {
             StartXR();
         }
+    }
+
+    void DeinitPlatform()
+    {
+        //VR模式退出时要Stop，否则再次进入会卡住
+        if (AD_ManagerHolderManager.ActivePlatformMode == AD_PlatformMode.PCVR)
+            StopXR();
     }
 
     #region Utility
@@ -176,26 +311,28 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
         Debug.LogError(errorInfo);
     }
     #endregion
+
     #endregion
 
-
-    #region Callback
-    public void OnModInit(Scene scene, ModEntry modEntry)
+    #region IHubManagerModInitHandler
+    public virtual void OnModInit(Scene scene, ModEntry modEntry)
     {
+        //Reset
+        SetLocomotion(true);
+
         modController = scene.GetComponents<IAD_XRController>().FirstOrDefault();
         defaultController.gameObject.SetActive(modController == null);
 
         ActiveController.OnModControllerInit();//初始化
-        ManagerHolderManager.Instance.SetGlobalControllerConfigState<IAD_SOXRControllerConfig>(modController == null);//设置对应的全局Config是否可用
+        ManagerHolderManager.Instance.FireGlobalControllerConfigStateEvent<IAD_SOXRControllerConfig>(modController == null);//设置对应的全局Config是否可用
     }
 
-    public void OnModDeinit(Scene scene, ModEntry modEntry)
+    public virtual void OnModDeinit(Scene scene, ModEntry modEntry)
     {
-        modController?.OnModControllerDeinit();//仅DeinitMod的Controller
+        modController?.OnModControllerDeinit();//仅Deinit Mod的Controller
         modController = null;
     }
     #endregion
-
 
     #region Controller Callback
     protected virtual void OnPersistentChanged(PersistentChangeState persistentChangeState)

@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
+using Threeyes.Core;
+
 namespace Threeyes.Steamworks
 {
     /// <summary>
@@ -14,7 +16,7 @@ namespace Threeyes.Steamworks
     /// -放在SDK目录下，一般禁止用户修改
     /// </summary>
     [CreateAssetMenu(menuName = Steamworks_EditorDefinition.AssetMenuPrefix_Root + "RuntimeSetting", fileName = "SteamworksRuntimeSetting")]//Warning:这里的名称不能有符号（如.），否则会报错。
-    public sealed class SORuntimeSettingManager : SOInstacneBase<SORuntimeSettingManager, SORuntimeSettingManagerInfo>
+    public sealed class SORuntimeSettingManager : SOInstanceBase<SORuntimeSettingManager, SORuntimeSettingManagerInfo>
     {
         ///ToAdd:
         ///-部分非通用子类，可以通过名称组合获得其对应的类名，并通过反射获得其实例（如AC_ManagerHolder）
@@ -24,10 +26,17 @@ namespace Threeyes.Steamworks
         /// 项目全称（无空格）。如：AliveCursor
         /// </summary>
         public string productName;
+
+        /// <summary>
+        /// SDK的名称，如AliveCursorSDK
+        /// </summary>
+        public string sdkName;
+
         /// <summary>
         /// 项目缩写，可用于接口标识。如：AC
         /// </summary>
         public string productNameForShort;
+
         /// <summary>
         /// Steam中该应用的唯一id
         /// </summary>

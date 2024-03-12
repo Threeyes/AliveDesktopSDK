@@ -1,0 +1,2 @@
+Source：https://github.com/tabler/tabler-icons
+MIT License：https://github.com/tabler/tabler-icons/blob/master/LICENSE

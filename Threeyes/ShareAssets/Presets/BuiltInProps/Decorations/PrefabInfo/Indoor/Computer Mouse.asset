@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e5fb1fb3feded6459e6e20499dcdb7a, type: 3}
+  m_Name: Computer Mouse
+  m_EditorClassIdentifier: 
+  remark: 
+  title: Computer Mouse
+  prefab: {fileID: 8284277561943544800, guid: 7eca1ae6556b0b648919eb7f5141cc0e, type: 3}
+  preview: {fileID: 2800000, guid: 1861c7b907d24714e98609a71bdbec08, type: 3}
+  description: 
+  tooltip: 

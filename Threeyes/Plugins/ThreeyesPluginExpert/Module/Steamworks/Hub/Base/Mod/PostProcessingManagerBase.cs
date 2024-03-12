@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Threeyes.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -43,7 +44,7 @@ namespace Threeyes.Steamworks
             }
 
             ActiveController.OnModControllerInit();//初始化
-            ManagerHolderManager.Instance.SetGlobalControllerConfigState<TSOControllerConfigInterface>(modController == null);//设置对应的全局Config是否可用
+            ManagerHolderManager.Instance.FireGlobalControllerConfigStateEvent<TSOControllerConfigInterface>(modController == null);//设置对应的全局Config是否可用
         }
         public virtual void OnModDeinit(Scene scene, ModEntry modEntry)
         {

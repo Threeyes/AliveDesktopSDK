@@ -15,14 +15,14 @@ MonoBehaviour:
   toolsIconSmall: {fileID: 2800000, guid: a76d00800fbaff546a8ab5fb467d4e22, type: 3}
   toolsIconLarge: {fileID: 2800000, guid: a76d00800fbaff546a8ab5fb467d4e22, type: 3}
   toolsName: AliveDesktopSDK
-  toolsVersion: 0.2.0
+  toolsVersion: 0.4.1
   firstRunWindow:
     assemblyQualifiedName: 
   developerName: Threeyes
   syncDeveloperName: 0
   gameName: AliveDesktop
   syncGameName: 0
-  gameVersion: 0.2.0
+  gameVersion: 0.4.1
   syncGameVersion: 1
   modFileExtension: .umod
   commandLineLaunchFormat: +mod=$PATH
@@ -155,7 +155,7 @@ MonoBehaviour:
       type: 2}
     readOnly: 0
   gameLocking:
-    allowGameLocking: 0
+    allowGameLocking: 1
     allowGameVersionLocking: 0
     gameLockingGUID: f7b2af7b-29ca-4806-b1f0-a60f75a83ae9
     readOnly: 0

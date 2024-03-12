@@ -4,8 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Threeyes.UI
 {
-    /// 参考结构： https://learn.microsoft.com/en-us/dotnet/desktop/winforms/controls/toolstrip-control-architecture?view=netframeworkdesktop-4.8
-
+    /// <summary>
+    /// 存储一系列下拉框
+    /// Provides basic functionality for controls that display a ToolStripDropDown when a ToolStripDropDownButton, ToolStripMenuItem, or ToolStripSplitButton control is clicked.
+    /// Ref：
+    /// - https://learn.microsoft.com/en-us/dotnet/desktop/winforms/controls/toolstrip-control-architecture?view=netframeworkdesktop-4.8
+    /// - https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.toolstripdropdownitem?view=windowsdesktop-7.0
+    /// </summary>
     public class ToolStripDropDownItemInfo : ToolStripItemInfo
     {
         public virtual bool HasDropDownItemInfo { get { return listDropDownItemInfo.Count > 0; } }
@@ -17,12 +22,12 @@ namespace Threeyes.UI
         public ToolStripDropDownItemInfo()
         {
         }
-        public ToolStripDropDownItemInfo(string text, EventHandler onClick = null, Texture texture = null, string toolTipText = null)
-            : base(text, onClick, texture, toolTipText)
+        public ToolStripDropDownItemInfo(string text, EventHandler onClick = null, int priority = 0, Texture texture = null, string toolTipText = null)
+            : base(text, onClick, priority, texture, toolTipText)
         {
         }
-        public ToolStripDropDownItemInfo(string text, Texture texture, params ToolStripItemInfo[] dropDownItems)
-         : this(text, null, texture)
+        public ToolStripDropDownItemInfo(string text, ToolStripItemInfo[] dropDownItems, int priority = 0, Texture texture = null)
+         : this(text, onClick: null, priority, texture)
         {
             if (dropDownItems != null)
                 ListDropDownItemInfo.AddRange(dropDownItems);
@@ -30,6 +35,7 @@ namespace Threeyes.UI
     }
 
     /// <summary>
+    /// 包含子菜单的元件
     /// 
     /// Represents a selectable option displayed on a MenuStrip or ContextMenuStrip.
     /// Ref: [ToolStripMenuItem] https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.toolstripmenuitem?view=netframework-4.8
@@ -43,11 +49,11 @@ namespace Threeyes.UI
         {
         }
 
-        public ToolStripMenuItemInfo(string text, EventHandler onClick = null, Texture texture = null, string toolTipText = null) : base(text, onClick, texture, toolTipText)
+        public ToolStripMenuItemInfo(string text, EventHandler onClick = null, int priority = 0, Texture texture = null, string toolTipText = null) : base(text, onClick, priority, texture, toolTipText)
         {
         }
-        public ToolStripMenuItemInfo(string text, Texture texture, params ToolStripItemInfo[] dropDownItems)
-       : base(text, texture, dropDownItems)
+        public ToolStripMenuItemInfo(string text, ToolStripItemInfo[] dropDownItems, int priority = 0, Texture texture = null)
+       : base(text, dropDownItems, priority, texture)
         {
         }
     }

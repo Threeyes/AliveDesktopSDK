@@ -1,13 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Threeyes.Core;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Threeyes.Steamworks
 {
     /// <summary>
-    /// 管理与各ManagerHolder特殊字段的初始化配置，可以直接放在Hub或Simulator中
+    /// 管理与各ManagerHolder特殊字段的初始化配置
+    /// 
+    /// PS：
+    /// -存在Hub及Simulator中
+    /// -为了避免访问顺序的问题，可用于存储静态属性、事件
     /// </summary>
     public abstract class ManagerHolderManager : HubManagerBase<ManagerHolderManager>
     {
@@ -18,7 +23,7 @@ namespace Threeyes.Steamworks
         /// </summary>
         /// <typeparam name="TSOInterface">接口</typeparam>
         /// <param name="isActive"></param>
-        public void SetGlobalControllerConfigState<TSOInterface>(bool isActive)
+        public void FireGlobalControllerConfigStateEvent<TSOInterface>(bool isActive)
         {
             GlobalControllerConfigStateChanged.Execute(typeof(TSOInterface), isActive);
         }

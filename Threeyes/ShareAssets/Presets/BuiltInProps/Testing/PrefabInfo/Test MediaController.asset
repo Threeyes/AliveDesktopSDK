@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e5fb1fb3feded6459e6e20499dcdb7a, type: 3}
+  m_Name: Test MediaController
+  m_EditorClassIdentifier: 
+  remark: 
+  title: Test MediaController
+  prefab: {fileID: 5417630304731701109, guid: 5d4ec6e4397d7a6498d4c72709a37882, type: 3}
+  preview: {fileID: 2800000, guid: b04172de98e41b64186974ee7d2e26f4, type: 3}
+  description: 
+  tooltip: 

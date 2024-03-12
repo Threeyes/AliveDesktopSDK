@@ -1,13 +1,14 @@
 using UnityEngine;
 using System.Text;
+using Threeyes.Core.Editor;
+using Threeyes.Core;
 #if UNITY_EDITOR
 using UnityEditor;
-using Threeyes.Editor;
 #endif
 
 namespace Threeyes.EventPlayer
 {
-    public interface ISequence_EventPlayer
+    public interface ISequence_EventPlayer : ISequence
     {
         /// <summary>
         /// 功能：Hierarchy中返回子EP的序号

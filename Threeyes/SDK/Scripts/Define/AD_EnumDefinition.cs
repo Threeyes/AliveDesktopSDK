@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-#region FileSystem
 
+#region Shell
 /// <summary>
 /// 对应目标在Shell中的类型
 /// 
@@ -29,6 +29,7 @@ public enum AD_ShellType
 /// 
 /// ToDo:
 /// -通过Attribute标记虚拟路径的文件夹
+/// -兼容其他平台（如Library、Picture等）
 /// </summary>
 [System.Flags]
 public enum AD_SpeicalFolder
@@ -155,12 +156,16 @@ public enum AD_PhysicsSpeicalFolder
 #region Workshop Item
 //——Custom Tags——
 
-///【ToAdd】:
-///-Mod类型：
-///     Item（如FileSystem或Decoration等）
+/// <summary>
+///Item种类：
 ///     Scene
-
-
+///     Model（如FileSystem或Decoration等Item，不拆分，那通过Group来统一加载，作为一个系列）
+/// </summary>
+public enum AD_WSItemType
+{
+    Scene,
+    Model
+}
 
 /// <summary>
 /// 年龄等级【必选】【在Manager中为单选，但可以进行组合】（Ref： https://rating-system.fandom.com/wiki/Australian_Classification_Board）
@@ -209,6 +214,7 @@ public enum AD_WSItemStyle
 public enum AD_WSItemGenre
 {
     None = 0,
+
     Comedy = 1 << 0,//喜剧
     Scifi = 1 << 1,//科幻（Science fiction often takes place in a dystopian society sometime in the future and contains elements of advanced technology.）【反乌托邦（如银翼杀手）】
     Horror = 1 << 2,//恐怖（如爬虫、猎头蟹 ）
@@ -277,13 +283,44 @@ public enum AD_WSItemAdvance
 }
 #endregion
 
+#region XR
+
+/// <summary>
+/// Which part of the XR Rig does the destination represented
+/// </summary>
+public enum AD_XRDestinationRigPart
+{
+    Foot,//Root (Default Value)
+    Head,
+}
+#endregion
+
+#region Input
+/// <summary>
+/// 根据输入类型，自动切换到对应交互
+/// </summary>
+public enum AD_InputDeviceType
+{
+    Keyboard_Mouse,
+    Gamepad,
+    XRController//ToUse
+}
+#endregion
+
 #region Command Line
 /// <summary>
 /// 运行平台模式
 /// </summary>
 public enum AD_PlatformMode
 {
-    PCVR,
-    PC//使用Simulator
+    PC,//【默认值】使用Simulator
+    PCVR
+}
+
+public enum AD_WindowMode
+{
+    Default,//【默认值】全屏，在壁纸上方，在其他窗口下方
+    Window,//窗口模式，方便录屏等
+    FullScreen//全屏模式
 }
 #endregion

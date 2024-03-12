@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Threeyes.Core;
 using Threeyes.Log;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -9,6 +10,7 @@ namespace Threeyes.Steamworks
     public static class EventCommunication
     {
         /// <summary>
+        /// ToObsolete: 转为Register，参考SystemAudioManagerBase和XRInteractionManager，可以避免每帧搜索导致性能消耗
         /// 
         /// PS：
         /// -建议不包含HubScene，因为HubScene物体数量庞大， 且各成员已知，可以改用Event来监听

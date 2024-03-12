@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e5fb1fb3feded6459e6e20499dcdb7a, type: 3}
+  m_Name: Long Lamp
+  m_EditorClassIdentifier: 
+  remark: 
+  title: Long Lamp
+  prefab: {fileID: 1639321033759487542, guid: 8c8247f489904a742af937fbcedf2f2e, type: 3}
+  preview: {fileID: 2800000, guid: cc926b49f099a5548b5506df224a8ebc, type: 3}
+  description: 
+  tooltip: 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Threeyes.Core;
 using UnityEngine;
 
 namespace Threeyes.ShowHide
@@ -20,6 +21,17 @@ namespace Threeyes.ShowHide
         public virtual void Show(bool isShow)
         {
             ForEachChildComponent<ShowAndHideBase>((c) => c.Show(isShow));
+        }
+
+        /// <summary>
+        /// 只显示特定物体
+        /// ToUpdate：增加传入GameObject的针对普通子物体的方法
+        /// </summary>
+        /// <param name="showAndHideBase"></param>
+        public virtual void ShowSolo(ShowAndHideBase showAndHideBase)
+        {
+            ForEachChildComponent<ShowAndHideBase>((c) => c.Show(c == showAndHideBase));
+
         }
 
     }

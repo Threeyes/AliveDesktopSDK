@@ -7,7 +7,8 @@ namespace Threeyes.UI
 {
     [Serializable]
     /// <summary>
-    /// 工具栏控件信息
+    /// 菜单栏最基础元件
+    /// 
     /// Represents the abstract base class that manages events and layout for all the elements that a ToolStrip or ToolStripDropDown can contain.
     /// 
     ///ToAdd:
@@ -23,11 +24,23 @@ namespace Threeyes.UI
         public Texture Texture { get { return texture; } set { texture = value; } }//代替Image
         public string Text { get { return text; } set { text = value; } }//显示内容
 
+        /// <summary>
+        /// The order by which the menu items are displayed.
+        /// Ref:https://docs.unity3d.com/ScriptReference/MenuItem-ctor.html
+        /// 
+        /// 功能：
+        /// - If the integer value is greater than the other values, then the MenuItem script function is placed at the bottom of the list. 
+        ///- The value of priority can also be used to manage the list of script functions into groups.（如果设置为相同值则归在一起）
+        ///- When a priority argument is separated by more than 10, a separator line is created between two entries.（两个值之间相隔大于10，则使用分隔符分开）
+        /// </summary>
+        public int Priority { get { return priority; } set { priority = value; } }
+
         public event EventHandler Click { add { click += value; } remove { click -= value; } }
         EventHandler click;
         [SerializeField] private string toolTipText;
         [SerializeField] private Texture texture;
         [SerializeField] private string text;
+        [SerializeField] private int priority;
 
         /// <summary>
         /// 
@@ -51,15 +64,14 @@ namespace Threeyes.UI
         /// <param name="onClick"></param>
         /// <param name="texture"></param>
         /// <param name="toolTipText"></param>
-        public ToolStripItemInfo(string text, EventHandler onClick = null, Texture texture = null, string toolTipText = null)
+        public ToolStripItemInfo(string text, EventHandler onClick = null, int priority = 0, Texture texture = null, string toolTipText = null)
         {
             Text = text;
             if (onClick != null)
             {
                 Click += onClick;
             }
-
-            //# Optional
+            Priority = priority;
             Texture = texture;
             ToolTipText = toolTipText;
         }

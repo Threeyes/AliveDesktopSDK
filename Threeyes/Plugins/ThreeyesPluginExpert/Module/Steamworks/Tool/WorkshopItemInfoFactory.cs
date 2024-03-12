@@ -4,11 +4,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Threeyes.Core;
 using UnityEngine;
 namespace Threeyes.Steamworks
 {
     public interface IWorkshopItemInfoFactory
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="itemDirPath"></param>
+        /// <param name="itemLocation"></param>
+        /// <returns>如果文件夹不存在或文件夹内的Mod文件格式错误，则返回null</returns>
         WorkshopItemInfo CreateBase(string itemDirPath, WSItemLocation itemLocation = WSItemLocation.Downloaded);
     }
 
@@ -35,14 +42,21 @@ namespace Threeyes.Steamworks
         /// <param name="sOWorkshopItemInfo"></param>
         public virtual TItemInfo Create(TSOItemInfo sOWorkshopItemInfo)
         {
+            TItemInfo inst = CreateFunc(sOWorkshopItemInfo);
+            return inst;
+        }
+
+        protected virtual TItemInfo CreateFunc(TSOItemInfo sOWorkshopItemInfo)
+        {
             return new TItemInfo()
             {
                 //Set basic
                 title = sOWorkshopItemInfo.Title,
                 description = sOWorkshopItemInfo.Description,
+                modFileRelatePath = sOWorkshopItemInfo.ItemModFileName,
+                previewFileRelatePath = sOWorkshopItemInfo.PreviewFilePath.NotNullOrEmpty() ? new FileInfo(sOWorkshopItemInfo.PreviewFilePath).Name : "",
                 itemVisibility = sOWorkshopItemInfo.ItemVisibility,
                 tags = sOWorkshopItemInfo.Tags,
-                previewFileRelatePath = sOWorkshopItemInfo.PreviewFilePath.NotNullOrEmpty() ? new FileInfo(sOWorkshopItemInfo.PreviewFilePath).Name : "",
 
                 //Set runtime
                 itemLocation = WSItemLocation.UnityProject,
@@ -50,6 +64,8 @@ namespace Threeyes.Steamworks
                 dirPath = sOWorkshopItemInfo.ItemDirPath,
             };
         }
+
+
 
         /// <summary>
         /// 【Runtime】通过读取打包后的Item所在目录的Json信息，生成WorkshopItemInfo。

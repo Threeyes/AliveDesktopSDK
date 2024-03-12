@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2200577364d0e2946a52a9abd8f95a8d, type: 3}
+  m_Name: ShellManagerSimulatorConfig
+  m_EditorClassIdentifier: 
+  listShellItemInfo:
+  - name: My Computer
+    itemShellType: 8
+    path: 
+    specialFolder: 8
+    targetShellType: 0
+    targetPath: 
+    texturePreview: {fileID: 2800000, guid: f8d0a8e512d688045b45e0e9ced0ea1f, type: 3}
+  - name: Recycle Bin
+    itemShellType: 8
+    path: 
+    specialFolder: 2
+    targetShellType: 0
+    targetPath: 
+    texturePreview: {fileID: 2800000, guid: 15b3cb7a08c283244b3ce20f946cd44b, type: 3}
+  - name: FolderA
+    itemShellType: 4
+    path: C:\Users\UserName\Desktop\Folder A
+    specialFolder: 0
+    targetShellType: 0
+    targetPath: 
+    texturePreview: {fileID: 2800000, guid: c5420004cfafeda4a97deaf6959cab08, type: 3}
+  - name: File.zip
+    itemShellType: 2
+    path: C:\Users\UserName\Desktop\File.zip
+    specialFolder: 0
+    targetShellType: 0
+    targetPath: 
+    texturePreview: {fileID: 2800000, guid: 9a2bf51d5f854394f8f2fe7312b58566, type: 3}
+  - name: ExecutableA.exe
+    itemShellType: 2
+    path: C:\Users\UserName\Desktop\ExecutableA.exe
+    specialFolder: 0
+    targetShellType: 0
+    targetPath: 
+    texturePreview: {fileID: 2800000, guid: 565dc5531466f55419b0cdc933156ff5, type: 3}
+  - name: LinkA.url
+    itemShellType: 2
+    path: C:\Users\UserName\Desktop\LinkA.url
+    specialFolder: 0
+    targetShellType: 0
+    targetPath: 
+    texturePreview: {fileID: 2800000, guid: cdfae94213b070d42b336a770e8bf32f, type: 3}

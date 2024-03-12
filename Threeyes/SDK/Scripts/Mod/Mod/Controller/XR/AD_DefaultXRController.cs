@@ -30,40 +30,62 @@ public class AD_DefaultXRController : AD_XRControllerBase<AD_SODefaultXRControll
     /// -附着点（可选。通过ParentConstraints或类似非父子关系实现。在普通模式可作为其父物体，实现车辆跟随等特殊功能（并且CameraMovementManager会失效）；在编辑模式会临时脱离，由CameraMovementManager控制）
 
     #region Callback
+    static bool IsVRMode { get { return AD_ManagerHolderManager.ActivePlatformMode == AD_PlatformMode.PCVR; } }
     public override void OnModControllerInit()
     {
         Pose exitRigPose = Config.exitRigPose;
         if (Config.isRestoreExitPose && exitRigPose != Pose.identity)//恢复到退出前的姿势
         {
-            AD_ManagerHolder.XRManager.TeleportTo(exitRigPose.position, exitRigPose.rotation, MatchOrientation.TargetUpAndForward);
+            MatchOrientation matchOrientation = IsVRMode ? MatchOrientation.TargetUpAndForward : MatchOrientation.None;//PS:None可以防止传送时更改相机朝向
+            AD_ManagerHolder.XRManager.TeleportTo(exitRigPose.position, exitRigPose.rotation, matchOrientation);
+            if (!IsVRMode)//非【VR模式】才更改相机
+                AD_ManagerHolder.XRManager.SetCameraPose(Config.exitCameraPose.position, Config.exitCameraPose.rotation);
         }
         else if (spawnPoint)//传送到初始位置
         {
-            spawnPoint.TeleportToThis();//PS:传送后不强制隐藏传送点，而是让Modder通过AD_TeleportationAnchor.isHideOnEnter自由设置，方便重用传送点
+            spawnPoint.Teleport();//PS:传送后不强制隐藏传送点，而是让Modder通过AD_TeleportationAnchor.isHideOnEnter自由设置，方便重用传送点
         }
+
+        //不管是否传入该传送点都要隐藏。如果Modder希望提供相同位置的传送点，可以在该位置放一个额外的传送点
+        if (spawnPoint)
+            spawnPoint.Hide();
+
+        UpdateSetting();
     }
+
     public override void OnModControllerDeinit()
     {
         ///保存退出前的姿势
         if (Config.isRestoreExitPose)
         {
-            Transform tfCameraRig = AD_ManagerHolder.XRManager.TfCameraRig;
-            Config.exitRigPose = new Pose(tfCameraRig.position, tfCameraRig.rotation);
+            Config.exitRigPose = AD_ManagerHolder.XRManager.PoseCameraRig;
+            if (!IsVRMode)//非【VR模式】才存储相机旋转，因为【VR模式】由头显控制旋转
+            {
+                Config.exitCameraPose = new Pose(AD_ManagerHolder.XRManager.PoseLocalCameraEye.position, AD_ManagerHolder.XRManager.PoseCameraEye.rotation);//PS：如果是退出前通过tfCamera.rotation获取值，会因为AD_XRDeviceSimulator.OnDisable-RemoveDevices而导致相机提前恢复到默认旋转值，从而返回默认值。因此要明确获取其缓存的旋转值。另外要注意，【编辑器模式】下，需要聚焦Game窗口才会恢复位置，如果不方便，后期可以忽略此设置，改为运行时才恢复
+            }
         }
     }
 
-    protected override void UpdateSetting()
-    {
-        AD_ManagerHolder.XRManager.DynamicMoveProvider.enableFly = Config.isEnableFly;
-        AD_ManagerHolder.XRManager.DynamicMoveProvider.useGravity = Config.isUseGravity;
-    }
-    public override void ResetPose()
+    public override void ResetRigPose()
     {
         //PS:放在这里而不是Manager中，是方便其他自定义的重置选项
         //传送到初始位置
         if (spawnPoint)
-            spawnPoint.TeleportToThis();
+            spawnPoint.Teleport();
+
+        if (!IsVRMode)//非【VR模式】才更改相机
+            AD_ManagerHolder.XRManager.SetCameraPose(rotation: Quaternion.identity);//需要调用此方法才可重置相机
+
     }
+    protected override void UpdateSetting()
+    {
+        UpdateLocomotionSetting();
+    }
+    public override void UpdateLocomotionSetting()
+    {
+        AD_ManagerHolder.XRManager.SetMovementType(Config.isEnableFly, Config.isPenetrateOnFly, Config.isUseGravity);
+    }
+
     #endregion
 
     #region Define
@@ -78,28 +100,34 @@ public class AD_DefaultXRController : AD_XRControllerBase<AD_SODefaultXRControll
 
         ///管理相机的以下设置：
         ///     -使用重力（普通模式）
-        ///     -Pos/Rot（用于缓存上次的位置，退出时保存，可用额外bool选择是否保存。）（每个Mod应该强制由一个XRController，否则报错）（PS：因为是存在Item而不是Item_Local文件夹，所以不适合使用PB保存）（需要标记为RuntimeEdit不可编辑，只是用于保存数据）
+        ///     -Pose（Pos/Rot）（用于缓存上次的位置，退出时保存，可用额外bool选择是否保存。）（每个Mod应该强制由一个XRController，否则报错）（PS：因为是存在Item而不是Item_Local文件夹，所以不适合使用PB保存）（需要标记为RuntimeEdit不可编辑，只是用于保存数据）
         ///     
-        ///     -Projection（正交、透视）（ToDelete）
+        ///以下属性仅在运行时临时有效，不保存到PD中
+        ///     -Projection（正交、透视）
         ///     -高度（非必要，因为VR模式按照人高度来动态调整Camera，而不是直接更改rig）
-        ///     -FOV（非必要，且VR模式无效）
+        ///     -FOV（仅PC模式，VR模式无效）
         ///     
         ///其他：
-        ///     -- 进入编辑前可以 自动或点击按钮 记录相机的最佳观看位置，编辑完成后调用其特定方法恢复原位
+        ///     - 进入编辑前可以 自动或点击按钮 记录相机的最佳观看位置，编辑完成后调用其特定方法恢复原位
 
         [Tooltip("Controls whether to enable flying (unconstrained movement). This overrides the use of gravity.")]
         [AllowNesting] public bool isEnableFly = true;//【普通模式】飞行模式
+        [Tooltip("Controls whether to penetrate during flying")]
+        [AllowNesting][ShowIf(nameof(isEnableFly))] public bool isPenetrateOnFly = true;
         [Tooltip("Controls whether gravity affects this provider when a Character Controller is used and flying is disabled.")]
-        [AllowNesting] [DisableIf(nameof(isEnableFly))] public bool isUseGravity = false;//【普通模式】使用重力
+        [AllowNesting][DisableIf(nameof(isEnableFly))] public bool isUseGravity = false;//【普通模式】使用重力
 
-        ////——【V2】缓存上次的信息——
+        ////——缓存上次的信息——
         [Tooltip("Restore exit pose when re-entering Mod scene.")]
         public bool isRestoreExitPose = false;//缓存退出前的信息
-        [RuntimeEditorIgnore] public Pose exitRigPose = Pose.identity;//退出前的Rig信息（PS：因为VR模式的Camera由用户控制，且体验人的高度不一定一致，所以不保存Camera的Pose并反推出Rig的位置）
+        [RuntimeEditorIgnore] public Pose exitRigPose = Pose.identity;//退出前的Rig信息，其中旋转可能是因为传入了DP（PS：因为VR模式的Camera由用户控制，且体验人的高度不一定一致，所以不保存Camera的Pose并反推出Rig的位置）
+        [RuntimeEditorIgnore] public Pose exitCameraPose = Pose.identity;//【PC模式】退出前的相机的信息（局部位置，全局旋转）
 
-
+        [JsonConstructor]
+        public ConfigInfo()
+        {
+        }
     }
-
     #endregion
 
     #region Editor Method
@@ -109,7 +137,7 @@ public class AD_DefaultXRController : AD_XRControllerBase<AD_SODefaultXRControll
     [UnityEditor.MenuItem(AD_EditorDefinition.HierarchyMenuPrefix_Root_Mod_Controller_XR + "Default", false)]
     public static void CreateInst()
     {
-        Threeyes.Editor.EditorTool.CreateGameObjectAsChild<AD_DefaultXRController>(instName);
+        Threeyes.Core.Editor.EditorTool.CreateGameObjectAsChild<AD_DefaultXRController>(instName);
     }
 #endif
     #endregion

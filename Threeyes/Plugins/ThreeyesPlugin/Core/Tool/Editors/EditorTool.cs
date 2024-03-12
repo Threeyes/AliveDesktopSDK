@@ -10,14 +10,65 @@ using UnityEngine.SceneManagement;
 using System.Threading;
 using System.IO;
 
-namespace Threeyes.Editor
+namespace Threeyes.Core.Editor
 {
     /// <summary>
     /// 编辑器通用的方法
-    /// PS:不能放在Editor下，因为外部代码可能访问不了，或者是因为资源加载顺序错误导致无法访问
+    /// PS:不能放在Editor文件夹下，因为外部代码可能访问不了，或者是因为资源加载顺序错误导致无法访问
     /// </summary>
     public static class EditorTool
     {
+        #region GameObject
+        /// <summary>
+        /// Returns true if the given object is part of any kind of Prefab.
+        /// Use this to check if a given object is part of any Prefab, regardless of whether it's a Prefab Asset or a Prefab instance.
+        /// 
+        /// Warning:
+        /// -【在PrefabMode中，根Prefab会被全部实例化，此时它就不算时资源的一部分，这时候会返回false！因此需要额外处理！】 For Prefab contents loaded in Prefab Mode, this method will not check the Prefab Asset the loaded contents are loaded from, since these Prefab contents are loaded into a preview scene and are not part of an Asset while being edited in Prefab Mode. （https://docs.unity3d.com/ScriptReference/PrefabUtility.IsPartOfAnyPrefab.html）
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool IsPartOfAnyPrefab(Object obj)
+        {
+            return PrefabUtility.IsPartOfAnyPrefab(obj);
+        }
+
+        public static bool IsPrefabMode(GameObject go)
+        {
+            return PrefabStageUtility.GetCurrentPrefabStage() && PrefabStageUtility.GetPrefabStage(go);
+        }
+
+        /// <summary>
+        /// 是否为场景中的实例物体
+        /// 
+        /// -否：在PrefabMode下或Prefab资源
+        /// </summary>
+        /// <param name="go"></param>
+        /// <returns></returns>
+        public static bool IsInstanceGameObject(GameObject go)
+        {
+            ///#1检查当前物体是否在Prefab Mode，如果是就代表仍然是PrefabAsset（Ref:NetworkIdentity.SetupIDs）
+            if (IsPrefabMode(go))
+                return false;
+
+            //#2 检查是否存储在磁盘上（资源）
+            return !EditorUtility.IsPersistent(go);
+            ///Warning:
+            ///-当打开Prefab进行编辑时，以下属性会返回1（代表该预制物为Root）
+            //return go.scene.rootCount != 0;
+        }
+
+        /// <summary>
+        /// 是否为预制物（存储在磁盘中）
+        /// </summary>
+        /// <param name="go"></param>
+        /// <returns></returns>
+        public static bool IsPersistentGameObject(GameObject go)
+        {
+            return EditorUtility.IsPersistent(go);
+        }
+        #endregion
+
         #region Asset
         /// <summary>
         /// 重命名资源，保留引用
@@ -73,7 +124,7 @@ namespace Threeyes.Editor
             }
 
             var relatePreviewTexturePath = relateObjPath.Substring(0, relateObjPath.LastIndexOf("/")) + "/Preview Texture";//将预览图存在obj所在目录的Preview Texture文件夹下
-            string savePath = Path.Combine(Application.dataPath, relatePreviewTexturePath.Replace("Assets/", string.Empty));
+            string savePath = EditorPathTool.UnityRelateToAbsPath(relatePreviewTexturePath);
 
             CreateSaveFolder(savePath);
 
@@ -83,8 +134,8 @@ namespace Threeyes.Editor
             string imagePath = overrideSavedPath.NotNullOrEmpty() ? overrideSavedPath : relatePreviewTexturePath + "/" + name;
 
 
-            if (File.Exists(name))
-                File.Delete(name);
+            if (File.Exists(imagePath))
+                File.Delete(imagePath);
             File.WriteAllBytes(imagePath, bytes);
 
             Debug.Log("创建预览图：\r\n" + imagePath);
@@ -204,8 +255,8 @@ namespace Threeyes.Editor
 
             if (tfParent)
             {
-                go.transform.localPosition = default(Vector3);
-                go.transform.localRotation = default(Quaternion);
+                go.transform.localPosition = default;
+                go.transform.localRotation = default;
                 go.transform.localScale = Vector3.one;
             }
 
@@ -329,6 +380,7 @@ namespace Threeyes.Editor
         }
 
         #endregion
+
     }
 }
 #endif

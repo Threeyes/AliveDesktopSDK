@@ -4,6 +4,11 @@ using UnityEditor;
 using UMod.Shared;
 using Threeyes.Steamworks;
 using Threeyes.RuntimeSerialization;
+using UnityEngine;
+using UnityEngine.UIElements;
+using System;
+using Threeyes.Core;
+using Threeyes.RuntimeEditor;
 
 namespace Threeyes.AliveCursor.SDK.Editor
 {
@@ -18,13 +23,46 @@ namespace Threeyes.AliveCursor.SDK.Editor
     /// </summary>
     public sealed class AD_ItemManagerWindow : ItemManagerWindow<AD_ItemManagerWindow, AD_ItemManagerWindowInfo, AD_SOEditorSettingManager, AD_SOWorkshopItemInfo, AD_WorkshopItemInfo>
     {
+        #region Override
+        EnumField enumFieldItemType;
+
+        protected override void InitUXMLField()
+        {
+            base.InitUXMLField();
+
+            enumFieldItemType = rootVisualElement.Q<EnumField>("ItemTypeEnumField");
+            enumFieldItemType.RegisterCallback<ChangeEvent<System.Enum>>(OnItemTypeEnumFieldChanged);
+        }
+        void OnItemTypeEnumFieldChanged(ChangeEvent<Enum> evt)
+        {
+            RefreshItemInfoGroupUIState();//当Item切换模式时，需要刷新状态（主要是根据ItemType，决定有效的条件）
+        }
+
+        protected override void RefreshItemInfoGroupUIState()
+        {
+            base.RefreshItemInfoGroupUIState();
+
+            //当为非Scene时，“Create Scene"为灰色不可点击（或者改为创建测试场景）
+            if (curSOWorkshopItemInfo)
+            {
+                buttonEditScene.SetInteractable(curSOWorkshopItemInfo.itemType == AD_WSItemType.Scene);
+            }
+        }
+
+        protected override void AfterCreateItem(AD_SOWorkshopItemInfo infoInst)
+        {
+            base.AfterCreateItem(infoInst);
+            CreateOrUpdateAssetPack(infoInst);//Item创建完成后，需要生成默认的AssetPack
+        }
+        #endregion
+
         #region MenuItem
 
-        [UnityEditor.MenuItem("Alive Desktop/Export Settings", priority = 44)]//ToDelete
-        internal static void Menu_Export_Settings()
-        {
-            ModToolsUtil.ShowToolsWindow(typeof(UMod.Exporter.SettingsWindow));
-        }
+        //[UnityEditor.MenuItem("Alive Desktop/Export Settings", priority = 44)]//【ToDelete】
+        //internal static void Menu_Export_Settings()
+        //{
+        //    ModToolsUtil.ShowToolsWindow(typeof(UMod.Exporter.SettingsWindow));
+        //}
         [MenuItem("Alive Desktop/Item Manager", priority = 0)]
         public static void AD_OpenWindow()
         {
@@ -40,13 +78,13 @@ namespace Threeyes.AliveCursor.SDK.Editor
         {
             BuildAll();
         }
-        [MenuItem("Alive Desktop/Add Simulator Scene", priority = 3)]
+        [MenuItem("Alive Desktop/Add Simulator Scene", priority = 3)]//ToUpdate：只有当前item为场景Mod时才有效
         public static void AD_RunCurSceneWithSimulator()
         {
             RunCurSceneWithSimulator();
         }
 
-        [MenuItem("Alive Desktop/CreateOrUpdate Cur AssetPack", priority = 100)]
+        [MenuItem("Alive Desktop/CreateOrUpdate Cur Item's AssetPack", priority = 100)]
         public static void AD_CreateOrUpdateAssetPack()
         {
             AD_SOWorkshopItemInfo workshopItemInfo = SOManagerInst.CurWorkshopItemInfo;
@@ -54,6 +92,56 @@ namespace Threeyes.AliveCursor.SDK.Editor
                 return;
 
             CreateOrUpdateAssetPack(workshopItemInfo);
+        }
+
+        //——Quick Setup for Shell/Decoration item——
+
+        /// <summary>
+        /// 不可交互的装饰，如墙壁（不包括Rigidbody和AD_XRGrabInteractable）
+        /// 
+        /// PS:
+        /// -纯装饰的物体层级要简单，没有Model等中间层，避免多余性能消耗
+        /// </summary>
+        [MenuItem("Alive Desktop/Init Select/Base Decoration", priority = 111)]
+        public static void AD_InitSelectAsBaseDecoration()
+        {
+            foreach (var go in Selection.gameObjects)
+            {
+                //#1 Add Components
+                AD_DefaultDecorationItem aD_DefaultDecorationItem = go.AddComponentOnce<AD_DefaultDecorationItem>();
+                RuntimeSerializable_GameObject runtimeSerialization_GameObject = go.AddComponentOnce<RuntimeSerializable_GameObject>();
+                go.AddComponentOnce<RuntimeSerializable_Transform>();
+
+                //#2 可选择
+                go.AddComponentOnce<RuntimeEditorSelectable>();//确保编辑模式可选择
+
+
+                //Init Setting
+                aD_DefaultDecorationItem.runtimeSerialization_GameObject = runtimeSerialization_GameObject;
+            }
+        }
+
+        /// <summary>
+        /// 将选中物体设置为【可交互的】装饰品
+        /// </summary>
+        [MenuItem("Alive Desktop/Init Select/Interactable Decoration", priority = 112)]
+        public static void AD_InitSelectAsInteractableDecoration()
+        {
+            foreach (var go in Selection.gameObjects)
+            {
+                //#1 Add Components
+                AD_DefaultDecorationItem aD_DefaultDecorationItem = go.AddComponentOnce<AD_DefaultDecorationItem>();
+                RuntimeSerializable_GameObject runtimeSerialization_GameObject = go.AddComponentOnce<RuntimeSerializable_GameObject>();//确保编辑模式可选择
+                go.AddComponentOnce<RuntimeSerializable_Transform>();
+
+                //#Interactable
+                go.AddComponentOnce<Rigidbody>();
+                AD_XRGrabInteractable aD_XRGrabInteractable = go.AddComponentOnce<AD_XRGrabInteractable>();
+
+                //Init Setting
+                aD_DefaultDecorationItem.runtimeSerialization_GameObject = runtimeSerialization_GameObject;
+                aD_XRGrabInteractable.useDynamicAttach = true;//Allow smooth grab
+            }
         }
 
         [MenuItem("Alive Desktop/SDK Wiki", priority = 1000)]
@@ -65,10 +153,12 @@ namespace Threeyes.AliveCursor.SDK.Editor
 
         #region Utility
 
-
         /// <summary>
         /// 针对Item文件夹生成或更新SOAssetPack
-        /// ToUpdate：移动到其他位置
+        /// 
+        /// ToUpdate：
+        /// -移动到其他位置
+        /// -针对文件类型，创建其他必须文件
         /// </summary>
         /// <param name="workshopItemInfo"></param>
         public static void CreateOrUpdateAssetPack(AD_SOWorkshopItemInfo workshopItemInfo)
@@ -79,6 +169,7 @@ namespace Threeyes.AliveCursor.SDK.Editor
         }
         #endregion
     }
+
     public class AD_ItemManagerWindowInfo : ItemManagerWindowInfo<AD_SOEditorSettingManager, AD_SOWorkshopItemInfo>
     {
         public override AD_SOEditorSettingManager SOEditorSettingManagerInst { get { return AD_SOEditorSettingManager.Instance; } }
@@ -86,15 +177,18 @@ namespace Threeyes.AliveCursor.SDK.Editor
 
         public override void BeforeBuild(ref AD_SOWorkshopItemInfo soItemInfo)
         {
-            //针对Item文件夹生成或更新SOAssetPack
+            //打包前，针对Item文件夹生成或更新SOAssetPack
             AD_ItemManagerWindow.CreateOrUpdateAssetPack(soItemInfo);
         }
         public override void AfterBuild(ModBuildResult result, ref AD_SOWorkshopItemInfo sOWorkshopItemInfo)
         {
-            ModContent modContent = result.BuiltMod.GetModContentMask();
+            if (result.BuiltMod != null)//避免因为取消打包导致为空
             {
-                sOWorkshopItemInfo.itemSafety = modContent.Has(ModContent.Scripts) ? AD_WSItemAdvance.IncludeScripts : AD_WSItemAdvance.None;
-                EditorUtility.SetDirty(sOWorkshopItemInfo);
+                ModContent modContent = result.BuiltMod.GetModContentMask();
+                {
+                    sOWorkshopItemInfo.itemAdvance = modContent.Has(ModContent.Scripts) ? AD_WSItemAdvance.IncludeScripts : AD_WSItemAdvance.None;
+                    EditorUtility.SetDirty(sOWorkshopItemInfo);
+                }
             }
         }
     }

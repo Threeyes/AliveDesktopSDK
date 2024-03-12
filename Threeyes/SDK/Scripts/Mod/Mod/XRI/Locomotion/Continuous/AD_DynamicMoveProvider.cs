@@ -10,13 +10,16 @@ using UnityEngine.XR.Interaction.Toolkit;
 /// 
 /// Ref:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider
 /// 
-/// 功能：
+/// 修改：
 /// -【编辑模式】移动时忽略TimeScale对deltaTime的影响（主要方法：ComputeDesiredMove、MoveRig）
 /// </summary>
 public class AD_DynamicMoveProvider : ActionBasedContinuousMoveProvider
     , IAD_RuntimeEditor_ModeActiveHandler
-
 {
+    //为了避免该组件禁用而无法更新leftHandValue，改为直接读取Action的值
+    public Vector2 LeftHandMoveInput { get { return /*leftHandValue*/leftHandMoveAction.action?.ReadValue<Vector2>() ?? Vector2.zero; } }
+    public Vector2 RightHandMoveInput { get { return /*rightHandValue*/rightHandMoveAction.action?.ReadValue<Vector2>() ?? Vector2.zero; } }
+  
     /// <summary>
     /// Defines which transform the XR Origin's movement direction is relative to.
     /// </summary>
@@ -117,6 +120,8 @@ public class AD_DynamicMoveProvider : ActionBasedContinuousMoveProvider
         forwardSource = m_CombinedTransform;
     }
 
+    Vector2 leftHandValue;
+    Vector2 rightHandValue;
     /// <inheritdoc />
     protected override Vector3 ComputeDesiredMove(Vector2 input)
     {
@@ -178,8 +183,8 @@ public class AD_DynamicMoveProvider : ActionBasedContinuousMoveProvider
         }
 
         // Combine the two poses into the forward source based on the magnitude of input
-        var leftHandValue = leftHandMoveAction.action?.ReadValue<Vector2>() ?? Vector2.zero;
-        var rightHandValue = rightHandMoveAction.action?.ReadValue<Vector2>() ?? Vector2.zero;
+        leftHandValue = leftHandMoveAction.action?.ReadValue<Vector2>() ?? Vector2.zero;
+        rightHandValue = rightHandMoveAction.action?.ReadValue<Vector2>() ?? Vector2.zero;
 
         var totalSqrMagnitude = leftHandValue.sqrMagnitude + rightHandValue.sqrMagnitude;
         var leftHandBlend = 0.5f;

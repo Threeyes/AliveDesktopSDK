@@ -3,9 +3,10 @@ using Threeyes.Data;
 public sealed class AD_DefaultDecorationItem : AD_SerializableItemWithContextMenuBase<AD_DefaultDecorationItem, AD_DefaultDecorationItem.ItemInfo, AD_DefaultDecorationItem.ItemPropertyBag>
     , IAD_DecorationItem
 {
-    protected override void UpdateSetting()
+    public override void UpdateSetting()
     {
-        //ToAdd
+        ///ToAdd:
+        ///-
     }
     #region Define
     /// <summary>

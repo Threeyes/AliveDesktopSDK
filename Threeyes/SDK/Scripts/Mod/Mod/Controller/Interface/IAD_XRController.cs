@@ -2,5 +2,13 @@ using Threeyes.Steamworks;
 
 public interface IAD_XRController : IModControllerHandler
 {
-    void ResetPose();
+    /// <summary>
+    /// Reset XR Rig to default position
+    /// </summary>
+    void ResetRigPose();
+
+    /// <summary>
+    /// Update Locomotion setting using config info
+    /// </summary>
+    void UpdateLocomotionSetting();
 }
