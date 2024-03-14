@@ -9,6 +9,9 @@ using UnityEngine;
 /// Control Environment Setting
 /// PS:
 /// 1.Default Environment Lighting/Reflections Sources come from Skybox, inheric this class if your want to change them
+///
+/// Todo:
+/// -当太阳移动的角度（相比上次）超过一定范围（需要限制刷新频率，避免用户把真实时间调快导致频繁刷新），或者被用户拖拽后，尝试调用Controller的刷新ReflectProbe
 /// 
 /// Warning：
 /// -If you use PersistentData_SO to manage soConfig, it is necessary to set PersistentData_SO.saveAnyway to true. Otherwise, modifying the changes to soConfig by dragging sunEntity may not be saved!（如果使用PersistentData_SO来管理Config，则需要将PersistentData_SO.saveAnyway设置为true，否则通过拖拽sunEntity从而修改Config的变更可能不会被保存！）
@@ -17,7 +20,9 @@ using UnityEngine;
 ///提供一个可选的太阳实体：
 ///     -可以设置太阳的颜色、亮度等（通过Gradient设置不同时段的颜色，其中X轴代表归一化的时间，HDRColor的Emission代表亮度）（Warning：不能直接使用sunSourceLight的参数，因为会影响所有物体的表面光。可以额外增加选项：是否影响灯光颜色及亮度）
 ///     -【重要】简单的太阳轨迹循环动画（或者根据现实太阳的轨迹进行运行）
+/// 
 /// PS：
+/// -AD_SunEntity作为一个特殊的脚本，因为与全局光绑定。后续可以增加不影响全局光的通用天体（如月亮、星星）
 /// -低于水平面时，可以不更改其颜色，因为太阳的光是恒定的，Modder可以通过模型、遮罩等进行遮挡
 /// -仅提供通用属性设置，如果用户需要更改太阳物体的其他特殊属性（如材质或形状），可以另外通过其他Controller进行操作，避免该类过于复杂
 /// </summary>
@@ -42,7 +47,15 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
     Vector3 cacheLastSunEntitySize;
     float cacheLastSunEntityDistance;
 
-    public ConfigInfo TestCI;
+    protected override void Awake()
+    {
+#if UNITY_EDITOR
+        if (!Application.isPlaying)//避免非运行时进入
+            return;
+#endif
+
+        base.Awake();
+    }
     private void Start()
     {
 #if UNITY_EDITOR
@@ -53,7 +66,33 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
         cacheTfMainCamera = Manager_tfCameraEye;//缓存以避免重复调用
         cacheTfSunEntity = sunEntity?.transform;
         cacheTfSunLight = sunSourceLight?.transform;
+
+        if (sunEntity)
+        {
+            sunEntity.onSelectExited.AddListener(OnSunEntitySelectExited);
+        }
+        lastSunLightRotation = Config.sunLightRotation;
     }
+    protected override void OnDestroy()
+    {
+#if UNITY_EDITOR
+        if (!Application.isPlaying)//避免非运行时进入
+            return;
+#endif
+
+        base.OnDestroy();
+        if (sunEntity)
+        {
+            sunEntity.onSelectExited.RemoveListener(OnSunEntitySelectExited);
+        }
+    }
+
+    private void OnSunEntitySelectExited()
+    {
+        //选择完成后，不管移动了多少距离，都强制调用一次刷新
+        RefreshReflectionProbe();
+    }
+
     float curPassedHourPercent { get { return curPassedHour / 24; } }//当前已用进度（百分比）
     float curPassedHour;
     Vector3 curSunEntitySize;
@@ -110,7 +149,6 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
                 float angle = curPassedHourPercent_Shift * 360;//根据当天的进度计算出角度
                 Quaternion targetRoatation = Quaternion.AngleAxis(angle, Config.sunRotateAxis);//计算出对应的旋转值
                 cacheTfSunLight.rotation = targetRoatation;
-                //float distance = Vector3.Distance(cacheTfSunEntity.position, cacheTfMainCamera.position);
                 cacheTfSunEntity.position = cacheTfMainCamera.position - cacheTfSunLight.forward * distance;//PS:朝向与主灯光的方向相反
 
                 //#2 根据时间，计算太阳的颜色和亮度 (Todo：仅当curPassedHourPercent有变化时才进行修改，避免频繁调用)
@@ -127,20 +165,37 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
                 }
                 else//【普通模式】：基于主灯光的旋转值更新反推太阳的位置，随着主相机的移动而同步变换，保证在不同位置观察，其都与主灯光/天空盒的太阳位置相同（PS：因为用户通过UIField编辑Config时base.UpdateSetting会设置灯光的旋转值，所以只需要基于灯光的旋转值进行同步即可，不需要使用Config的值）
                 {
-                    //float distance = Vector3.Distance(cacheTfSunEntity.position, cacheTfMainCamera.position);
                     cacheTfSunEntity.position = cacheTfMainCamera.position - cacheTfSunLight.forward * distance;//PS:朝向与主灯光的方向相反
                     //cacheTfSunEntity.LookAt(cacheTfMainCamera.position);//朝向相机，方便RuntimeEditor的局部轴变换（Warning：非必要，因为朝向后Z轴不好选中）
                 }
 
                 //根据灯光的角度计算大概时间，从而计算太阳的颜色和亮度
-                //Quaternion initRotation = Quaternion.AngleAxis(0, Config.sunRotateAxis);
-                //Vector3 startVector= initRotation.eulerAngles;//基于sunRotateAxis计算出初始角度（ToFix：错误返回长度为0的矢量）
                 Vector3 startVector = Vector3.up;//以正上方为起始角度
                 float curAngle = VectorTool.Angle360(startVector, cacheTfSunLight.forward, Config.sunRotateAxis);//计算当前已经走过的角度
                 float curPassedAnglePercent = curAngle / 360;
                 SetSunColorPercent(curPassedAnglePercent);
             }
         }
+
+        AutoUpdateReflection();
+    }
+
+    Vector3 lastSunLightRotation;
+    /// <summary>
+    /// 尝试自动更新反射探头
+    /// </summary>
+    void AutoUpdateReflection()
+    {
+        if (!Config.isAutoUpdateReflectionProbe)
+            return;
+
+        if (Time.time - lastUpdateReflectionProbeTime < Config.updateReflectionProbeIntervalTime)
+            return;
+
+        float deltaAngle = Vector3.Angle(Config.sunLightRotation, lastSunLightRotation);
+        if (deltaAngle < Config.updateReflectionProbeIntervalAngle)
+            return;
+        RefreshReflectionProbe();//PS：会自动更新lastUpdateReflectionProbeTime
     }
 
     void SetSunColorPercent(float percent)
@@ -167,24 +222,6 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
     }
 
     #region Override
-    protected override void Awake()
-    {
-#if UNITY_EDITOR
-        if (!Application.isPlaying)//避免非运行时进入
-            return;
-#endif
-
-        base.Awake();
-    }
-    protected override void OnDestroy()
-    {
-#if UNITY_EDITOR
-        if (!Application.isPlaying)//避免非运行时进入
-            return;
-#endif
-
-        base.OnDestroy();
-    }
 
     protected override void UpdateSetting()
     {
@@ -223,6 +260,12 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
 
         public bool isSunSyncWithRealTime = false;//与现实时间同步(24小时值)，默认6、18时经过地平面。设置为true会由程序控制太阳轨迹，设置为false则可以自由拖动太阳
         [EnableIf(nameof(isSunSyncWithRealTime))][Range(1, 10000)] public float realTimeScale = 1f;//针对真实时间的缩放
+
+        [Header("Others")]
+        [Tooltip("Update the reflection probe when there is a significant change in the environment")] public bool isAutoUpdateReflectionProbe = false;//当阳光角度等影响反射球的环境变量发生变化时，更新反射探头
+        [ShowIf(nameof(isAutoUpdateReflectionProbe))][Tooltip("The sun's interval rotation angle to update the reflection probe")][Range(5, 90)] public float updateReflectionProbeIntervalAngle = 30;//更新反射探头的间隔角度
+        [ShowIf(nameof(isAutoUpdateReflectionProbe))][Tooltip("The interval time to update the reflection probe")][Range(1, 90)] public float updateReflectionProbeIntervalTime = 10;//更新反射探头的间隔时间
+
         [Newtonsoft.Json.JsonConstructor]//Use the specified constructor when deserializing that object（使用该构造函数进行初始化，才能够使用字段的默认值，否则会因为加载旧版配置文件而导致sunDistance为默认值0而报错）
         public ConfigInfo()
         {

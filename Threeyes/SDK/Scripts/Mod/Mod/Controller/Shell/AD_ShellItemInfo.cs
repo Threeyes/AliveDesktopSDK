@@ -30,7 +30,7 @@ public class AD_ShellItemInfo : AD_SerializableItemInfo
     public string DisplayName { get { return Name; } }  //Todo:根据用户设置，决定返回的内容是否带后缀
     public string NameWithoutExtension { get { return Name.GetFileNameWithoutExtension(); } }
 
-    [SerializeField] string name;//文件名
+    [RuntimeEditorProperty] [RuntimeEditorReadOnly] [SerializeField] string name;//文件名
     [SerializeField] AD_ShellType itemShellType = AD_ShellType.File;//自身的类型
     [SerializeField] string path;//文件所在路径
     [SerializeField] AD_SpeicalFolder specialFolder = AD_SpeicalFolder.None;//特殊文件夹的类型（如果不是SpeicalFolder则设置为None）

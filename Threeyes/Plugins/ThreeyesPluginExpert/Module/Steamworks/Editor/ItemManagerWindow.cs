@@ -708,8 +708,9 @@ namespace Threeyes.Steamworks
                 }
                 previeTex = curSOWorkshopItemInfo.TexturePreview;//设置首帧图
             }
+     
             visualElementPreviewArea.style.backgroundImage = previeTex;
-            labelPreviewRemark.text = IsGifPath(curSOWorkshopItemInfo.PreviewFilePath) ? "Gif" : "";//提示是否为Gif
+            labelPreviewRemark.text = curSOWorkshopItemInfo && IsGifPath(curSOWorkshopItemInfo.PreviewFilePath) ? "Gif" : "";//提示是否为Gif
         }
 
         IVisualElementScheduledItem scheduledPlayGif;

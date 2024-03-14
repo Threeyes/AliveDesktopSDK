@@ -51,21 +51,20 @@ public sealed class AD_DefaultShellItem : AD_SerializableItemWithContextMenuBase
     public class ItemInfo : AD_ShellItemInfo
     {
         ///20231114注意：
-        ///-可以将name标记为RuntimeReadOnly，方便用户知道其默认名称
-        ///-删除override，有需要的统一通过Controller实现
+        ///
         ///-既可以通过Event更新信息，也可以通过Controller进行进一步调整
-        ///-以下的备注要移植到TextController等组件中
 
-
-        /// Todo:增加（读取或Refresh时这些字段不要覆盖，而是仅复制父类公有的部分，保存用户自定义字段）（编辑器选中后可在Inspector设置，最终会通过RTS保存。反序列化后可以在Init方法中读取对应配置并初始化）
-        ///     -nameOverride
-        ///     -previewPathOverride及对应的路径：支持用户自定义单个文件的预览图
-        /// -使用Attribute标记可编辑的用户自定义字段（参考Json，前缀为RuntimeEdit）
+        /// Todo:
+        /// +增加特殊字段（读取或Refresh时这些字段不要覆盖，而是仅复制父类公有的部分，保存用户自定义字段）（编辑器选中后可在Inspector设置，最终会通过RTS保存。反序列化后可以在Init方法中读取对应配置并初始化）
+        ///     +nameOverride
+        ///     +previewPathOverride及对应的路径：支持用户自定义单个文件的预览图
+        /// +将name标记为RuntimeReadOnly，方便用户知道其默认名称。
+        /// +使用Attribute标记可编辑的用户自定义字段（参考Json，前缀为RuntimeEdit）
         /// -多语言（只需要提供Key，然后通过Key查询到对应的多语言值）
-        [RuntimeEditorProperty] public string overrideName;//【ToDelete】
+        [RuntimeEditorProperty] public string overrideName;
 
-        [JsonIgnore] public Texture externalPreview;//【ToDelete】
-        [RuntimeEditorProperty] [PersistentAssetFilePath(nameof(externalPreview), true, defaultAssetFieldName: nameof(texturePreview))] public string overridePreviewFilePath;//【ToDelete】
+        [JsonIgnore] public Texture externalPreview;
+        [RuntimeEditorProperty] [PersistentAssetFilePath(nameof(externalPreview), true, defaultAssetFieldName: nameof(texturePreview))] public string overridePreviewFilePath;//支持用户自定义文件的预览图
 
         [HideInInspector] [JsonIgnore] [PersistentDirPath] public string PersistentDirPath;
 

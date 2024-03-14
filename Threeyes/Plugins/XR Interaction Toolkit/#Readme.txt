@@ -1,8 +1,8 @@
 Source: XRI Sample2.5.2
-Ê¹ÓÃµÄ×ÊÔ´£º
+ä½¿ç”¨çš„èµ„æºï¼š
 -Tunneling Vignette
 -Models
 -ActionBasedControllerManager
 
-PS£º
--ĞŞ¸ÄÁËDllµÄ²¿·ÖÔ´ÂëÒÔ±ãÖØÔØ
+PSï¼š
+-ä¿®æ”¹äº†Dllçš„éƒ¨åˆ†æºç ä»¥ä¾¿é‡è½½

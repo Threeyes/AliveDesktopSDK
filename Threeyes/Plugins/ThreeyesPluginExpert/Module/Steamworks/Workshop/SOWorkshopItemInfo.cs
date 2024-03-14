@@ -58,7 +58,7 @@ namespace Threeyes.Steamworks
         //https://partner.steamgames.com/doc/api/ISteamUGC#SetItemTag
         [Header("Item Info")]
         [SerializeField] string title;
-        [SerializeField] [Multiline] string description;
+        [SerializeField][Multiline] string description;
         [SerializeField] Texture2D texturePreview;
         [SerializeField] WSItemVisibility itemVisibility = WSItemVisibility.Public;
 
