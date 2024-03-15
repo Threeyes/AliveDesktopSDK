@@ -21,7 +21,7 @@ namespace Threeyes.Steamworks
     [RequireComponent(typeof(Rigidbody))]
     public class BuoyantObjectController : ConfigurableComponentBase<BuoyantObjectController, SOBuoyantObjectControllerConfig, BuoyantObjectController.ConfigInfo, BuoyantObjectController.PropertyBag>
     {
-        //——BuoyantContainer Settings——
+        //——BuoyantContainer(Stylized Water) Settings——
         [Header("Water")]//【Optional】：进入所在的水域时，获取其配置信息
         [SerializeField] public float waterHeight = 0.0f;//对应OceanSurface物体的世界高度
 
@@ -30,12 +30,6 @@ namespace Threeyes.Steamworks
         public float wavelength;
         public float speed;
         public Vector4 directions = new Vector4(0, 0.5f, 1, 0.2f);
-
-        //ToDelete
-        [Range(0.01f, 5)] public float strength = 1f;
-        [Range(0.01f, 5)] public float objectDepth = 1f;//Object's depth in water(Warning：物体尺寸不能小于该数值，否则会出现抖动)
-        public float velocityDrag = 0.99f;
-        public float angularDrag = 0.5f;
 
         [Header("Physics Settings")]
         public Rigidbody m_Rigidbody;

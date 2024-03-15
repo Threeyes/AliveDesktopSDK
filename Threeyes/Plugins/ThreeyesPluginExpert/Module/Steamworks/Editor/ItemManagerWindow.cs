@@ -419,32 +419,6 @@ namespace Threeyes.Steamworks
                 windowInstance.RefreshItemInfoGroupUIState();//刷新UI
         }
 
-
-        public static void RunCurSceneWithSimulator()
-        {
-            //ToUpdate:研究如何设置LightingSettings中对应SimulatorScene，而不是像现在一样需要重新加载(参考LightingWindowEnvironmentSection+LightingWindow）
-            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())//提示用户保存Scene
-                return;
-
-            //缓存当前非Item场景信息
-            string itemSceneFilePath = null;
-            for (int i = 0; i != SceneManager.sceneCount; i++)
-            {
-                Scene activeScene = SceneManager.GetSceneAt(i);
-                if (activeScene.path.Contains(SORuntimeManagerInst.SimulatorSceneName))
-                    continue;
-                else
-                    itemSceneFilePath = activeScene.path;
-            }
-            if (itemSceneFilePath.IsNullOrEmpty())
-                return;
-
-            //#1 先打开模拟场景，以便LightingSettings能被正常设置
-            bool isSimulaterHubSceneLoaded = OpenSimulatorScene_Solo();
-
-            //#2 重新打开Item场景
-            EditorSceneManager.OpenScene(itemSceneFilePath, isSimulaterHubSceneLoaded ? OpenSceneMode.Additive : OpenSceneMode.Single);
-        }
         public static void OpenSDKWiki(string url)
         {
             Application.OpenURL(url);
@@ -708,7 +682,7 @@ namespace Threeyes.Steamworks
                 }
                 previeTex = curSOWorkshopItemInfo.TexturePreview;//设置首帧图
             }
-     
+
             visualElementPreviewArea.style.backgroundImage = previeTex;
             labelPreviewRemark.text = curSOWorkshopItemInfo && IsGifPath(curSOWorkshopItemInfo.PreviewFilePath) ? "Gif" : "";//提示是否为Gif
         }
@@ -865,22 +839,17 @@ namespace Threeyes.Steamworks
             if (EditorApplication.isPlaying)
             {
                 EditorApplication.isPlaying = false;
+                //ToAdd:需要等待退出完成或直接return，否则会报错
             }
 
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())//提示用户保存Scene
                 return;
 
-
-            //#1 尝试打开模拟场景
-            bool isSimulaterHubSceneLoaded = OpenSimulatorScene_Solo();
-
-            //#2 打开Item场景
             string absItemSceneFilePath = curSOWorkshopItemInfo.SceneFilePath;
-            //判断是否存在
             if (File.Exists(absItemSceneFilePath))//Item场景存在：打开
             {
-                string relateFilePath = EditorPathTool.AbsToUnityRelatePath(absItemSceneFilePath);
-                EditorSceneManager.OpenScene(relateFilePath, isSimulaterHubSceneLoaded ? OpenSceneMode.Additive : OpenSceneMode.Single);
+                string relateItemSceneFilePath = EditorPathTool.AbsToUnityRelatePath(absItemSceneFilePath);
+                OpenMultiScenes(relateItemSceneFilePath);
             }
             else//不存在：打开新建Scene菜单，提示通过 SceneTemplate 创建
             {
@@ -888,7 +857,45 @@ namespace Threeyes.Steamworks
             }
         }
 
-        static bool OpenSimulatorScene_Solo()//打开模拟场景
+        public static void RunCurSceneWithSimulator()
+        {
+            //ToUpdate:研究如何设置LightingSettings中对应SimulatorScene，而不是像现在一样需要重新加载(参考LightingWindowEnvironmentSection+LightingWindow）
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())//提示用户保存Scene
+                return;
+
+
+            string itemSceneFilePath = null;//缓存需要编辑的Item场景信息
+            for (int i = 0; i != SceneManager.sceneCount; i++)
+            {
+                Scene activeScene = SceneManager.GetSceneAt(i);
+                if (activeScene.path.Contains(SORuntimeManagerInst.SimulatorSceneName))//忽略Simulator场景
+                    continue;
+                else
+                    itemSceneFilePath = activeScene.path;
+            }
+            if (itemSceneFilePath.IsNullOrEmpty())//如果当前没有Item场景，则代表仅有Simulator场景：跳过
+                return;
+
+            OpenMultiScenes(itemSceneFilePath);
+
+            //bool isSimulaterHubSceneLoaded = OpenHubSimulatorScene();//#1 先打开模拟场景，以便LightingSettings能被正常设置
+            //EditorSceneManager.OpenScene(itemSceneFilePath, isSimulaterHubSceneLoaded ? OpenSceneMode.Additive : OpenSceneMode.Single);//#2 重新打开Item场景
+        }
+
+        static void OpenMultiScenes(string relateItemSceneFilePath)
+        {
+            if (SORuntimeManagerInst.isOpenSimulatorBeforeItemScene)
+            {
+                bool isSimulaterHubSceneLoaded = OpenHubSimulatorScene();//#1 尝试打开模拟场景
+                EditorSceneManager.OpenScene(relateItemSceneFilePath, isSimulaterHubSceneLoaded ? OpenSceneMode.Additive : OpenSceneMode.Single);//#2 打开Item场景
+            }
+            else
+            {
+                EditorSceneManager.OpenScene(relateItemSceneFilePath, OpenSceneMode.Single);
+                OpenHubSimulatorScene(OpenSceneMode.Additive);
+            }
+        }
+        static bool OpenHubSimulatorScene(OpenSceneMode openSceneMode = OpenSceneMode.Single)//打开模拟场景
         {
             bool isSimulaterHubSceneLoaded = false;
 
@@ -954,7 +961,7 @@ namespace Threeyes.Steamworks
                 if (simulatorSceneAssetRealPath.NotNullOrEmpty())
                 {
                     //	Debug.Log("Find Simulator scene in " + simulatorSceneAssetRealPath);
-                    EditorSceneManager.OpenScene(simulatorSceneAssetRealPath, OpenSceneMode.Single);
+                    EditorSceneManager.OpenScene(simulatorSceneAssetRealPath, openSceneMode);
                     isSimulaterHubSceneLoaded = true;
                 }
             }
@@ -1247,14 +1254,17 @@ namespace Threeyes.Steamworks
                 }
 
                 //ToAdd:ChangeLog
-                string itemUploadErrorLog = await WorkshopItemUploader.RemoteUploadItem(soWorkshopItemInfo, SetUploadProcessInfo, textFieldChangeLog.value);
-                if (itemUploadErrorLog.NotNullOrEmpty())
-                {
-                    Debug.LogError($"Upload Item {soWorkshopItemInfo?.Title} with error: {itemUploadErrorLog}");
-                }
+                string cacheChangeLog = textFieldChangeLog.value;
+                string itemUploadErrorLog = await WorkshopItemUploader.RemoteUploadItem(soWorkshopItemInfo, SetUploadProcessInfo, cacheChangeLog);
 
                 //刷新UI，进度条会默认隐藏
                 InitUIWithCurInfo();
+
+                if (itemUploadErrorLog.NotNullOrEmpty())
+                {
+                    Debug.LogError($"Upload Item {soWorkshopItemInfo?.Title} with error: {itemUploadErrorLog}");
+                    textFieldChangeLog.value = cacheChangeLog;//还原ChangeLog，避免要重新设置
+                }
             }
         }
 

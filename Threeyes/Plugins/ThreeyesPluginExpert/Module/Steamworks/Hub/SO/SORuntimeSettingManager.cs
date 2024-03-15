@@ -7,7 +7,8 @@ using Threeyes.Core;
 namespace Threeyes.Steamworks
 {
     /// <summary>
-    /// 存储Steamworks插件的运行时配置：
+    /// 存储Steamworks插件的通用配置：
+    /// -Simulator配置
     /// -项目相关信息
     /// -SDK名称
     /// -接口代码前缀等
@@ -44,6 +45,10 @@ namespace Threeyes.Steamworks
 
         public string sDKIdentifier = "";//SDK的Package ID。如：com.threeyes.alivecursor.sdk
 
+        /// <summary>
+        /// 是否在Item场景之前提前打开Simulator场景（主要是首个打开的场景会影响LightingSettings）(PS:放在这里是方便通过SDK导出该选项)
+        /// </summary>
+        public bool isOpenSimulatorBeforeItemScene = true;
     }
     public class SORuntimeSettingManagerInfo : SOInstacneInfo
     {
