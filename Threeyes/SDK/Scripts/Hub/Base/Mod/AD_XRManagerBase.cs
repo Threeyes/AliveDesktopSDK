@@ -34,7 +34,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     public bool UseGravity { get => dynamicMoveProvider.useGravity; protected set => dynamicMoveProvider.useGravity = value; }
 
     //public AD_DynamicMoveProvider DynamicMoveProvider { get { return dynamicMoveProvider; } }//PS：暂不提供，等后续用户有需要自定义再公开
-    public AD_XRDeviceSimulator xRDeviceSimulator;
+
     //#Runtime
     [SerializeField] Transform tfCameraRigParent;//[XR Interaction Setup]
     [SerializeField] Transform tfCameraRig;//[XR Origin(XR Rig)]
@@ -85,12 +85,9 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
         XRITool.TeleportTo(targetPos, rotation, matchOrientation);
     }
 
-    public void SetCameraPose(Vector3? localPosition = null, Quaternion? rotation = null)
+    public virtual void SetCameraPose(Vector3? localPosition = null, Quaternion? rotation = null)
     {
-        if (AD_ManagerHolderManager.ActivePlatformMode == AD_PlatformMode.PCVR)//VR模式由设备控制相机，所以可以直接忽略
-            return;
-
-        xRDeviceSimulator.SetCamera(localPosition, rotation);
+        //VR模式由设备控制相机，所以可以直接忽略
     }
     #endregion
 
@@ -129,7 +126,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     public Pose PoseCameraRig { get { return poseCameraRig; } }
     public Pose PoseLocalCameraEye { get { return poseLocalCameraEye; } }
     public Pose PoseCameraEye { get { return poseCameraEye; } }
-    Quaternion CameraRotation { get { return AD_ManagerHolderManager.ActivePlatformMode == AD_PlatformMode.PCVR ? tfCameraEye.rotation : xRDeviceSimulator.CameraRotation; } }
+    protected virtual Quaternion CameraRotation { get { return tfCameraEye.rotation; } }
 
     Pose poseCameraRig;
     Pose poseLocalCameraEye;
@@ -184,7 +181,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
         SetAttachState(false);
     }
 
-    protected virtual void ResetRigPose()
+    public virtual void ResetRigPose()
     {
         TryDetach();//先取消附着（Bug：因为TeleportRequest要在Update中进行更新，此时Controller.OnModControllerDeinit保存的位置会报错。解决办法：应该是保存Attach之前的位置（可以自行保存），而不是当前的位置信息）
 
@@ -215,26 +212,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     /// </summary>
     protected void Init()
     {
-        ////#1 初始化所有VR相关字段（PS：后续用户如果要自定义XRRig，可使用此代码）（ToUpdate：可以改为基于XROrigin获取其他物体）
-        //vrCamera = transform.FindFirstComponentInChild<Camera>(false, true, c => c.GetComponent<TrackedPoseDriver>() != null);
-        //if (vrCamera)
-        //{
-        //    tfCameraEye = vrCamera.transform;
-        //    tfCameraRigParent = tfCameraRig.parent;
-
-        //    leftController = tfCameraRig.FindFirstComponentInChild<ActionBasedController>(false, true, (c) => c.gameObject.name.StartsWith("Left"));
-        //    tfLeftController = leftController?.transform;
-        //    rightController = tfCameraRig.FindFirstComponentInChild<ActionBasedController>(false, true, (c) => c.gameObject.name.StartsWith("Right"));
-        //    tfRightController = rightController?.transform;
-        //}
-
         InitPlatform();
-    }
-
-
-    private void OnApplicationQuit()
-    {
-        DeinitPlatform();
     }
     /// <summary>
     /// 根据平台类型进行初始化
@@ -244,16 +222,12 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     /// 【V2】后期查找如何在运行时切换模式（如缓存InputSystem.devices中所有的XRHMD）
     /// </summary>
     /// <param name="platformMode"></param>
-    void InitPlatform()
-    {
-        AD_PlatformMode platformMode = AD_ManagerHolderManager.ActivePlatformMode;
-        xRDeviceSimulator.enabled = platformMode == AD_PlatformMode.PC;//XRDeviceSimulator会在OnEnable时，自动移除其他VR设备
+    protected abstract void InitPlatform();
 
-        //如果OpenXR没有设置为InitializeXRonStartup，则需要手动调用此方法来初始化OpenXR
-        if (platformMode == AD_PlatformMode.PCVR)
-        {
-            StartXR();
-        }
+
+    private void OnApplicationQuit()
+    {
+        DeinitPlatform();
     }
 
     void DeinitPlatform()
@@ -266,7 +240,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     #region Utility
     bool hasManualStartXR = false;
 
-    public void StartXR()
+    protected void StartXR()
     {
         StartCoroutine(IEStartXR());
     }
@@ -290,7 +264,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
         }
     }
 
-    void StopXR()
+    protected void StopXR()
     {
         if (!hasManualStartXR)
             return;

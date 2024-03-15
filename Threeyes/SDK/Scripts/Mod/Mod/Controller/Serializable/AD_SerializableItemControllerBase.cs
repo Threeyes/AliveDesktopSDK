@@ -314,7 +314,7 @@ public abstract class AD_SerializableItemControllerBase<TManager, TPrefabConfigI
         //#2 如果上述匹配操作返回null，则返回Fallback预制物信息，避免出错
         if (targetPrefabInfo == null)
         {
-            Debug.LogWarning($"Can't find prefabInfo for [{eleData}]! Try get fallback element instead!");//不算错误，仅弹出警告
+            Debug.LogWarning($"Can't find prefabInfo for {eleData}! Try get fallback element instead!");//不算错误，仅弹出警告
             targetPrefabInfo = GetFallbackPrefabInfo(eleData);
         }
 

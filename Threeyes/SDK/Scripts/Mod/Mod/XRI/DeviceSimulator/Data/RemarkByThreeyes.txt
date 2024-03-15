@@ -1,2 +1,0 @@
-- 保留原版XR Device Simulator配置，方便Modder使用更完善的带UI模拟器进行调试
-- 为AD_XR Device Controller Controls新增Gamepad的绑定

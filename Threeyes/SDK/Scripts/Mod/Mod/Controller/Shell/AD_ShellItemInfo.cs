@@ -92,7 +92,7 @@ public class AD_ShellItemInfo : AD_SerializableItemInfo
     #region Override 【ToUpdate：部分放到父类】
     public override string ToString()
     {
-        return Name;
+        return Name+$"(Type: {ItemShellType})";
     }
 
     /// <summary>

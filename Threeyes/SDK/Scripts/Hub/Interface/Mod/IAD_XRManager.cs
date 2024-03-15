@@ -61,4 +61,6 @@ public interface IAD_XRManager :
     /// <param name="localPosition"></param>
     /// <param name="rotation"></param>
     void SetCameraPose(Vector3? localPosition = null, Quaternion? rotation = null);
+
+    void ResetRigPose();
 }

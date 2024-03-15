@@ -68,23 +68,25 @@ namespace Threeyes.AliveCursor.SDK.Editor
         {
             OpenWindow();
         }
-        [MenuItem("Alive Desktop/Build And Run %m", priority = 1)]
-        public static void AD_BuildAndRunCurItem()
-        {
-            BuildAndRunCurItem();
-        }
-        [MenuItem("Alive Desktop/Build All", priority = 2)]
-        public static void AD_BuildAll()
-        {
-            BuildAll();
-        }
-        [MenuItem("Alive Desktop/Add Simulator Scene", priority = 3)]//ToUpdate：只有当前item为场景Mod时才有效
+        [MenuItem("Alive Desktop/Add Simulator Scene", priority = 1)]//ToUpdate：只有当前item为场景Mod时才有效
         public static void AD_RunCurSceneWithSimulator()
         {
             RunCurSceneWithSimulator();
         }
 
-        [MenuItem("Alive Desktop/CreateOrUpdate Cur Item's AssetPack", priority = 100)]
+        //——Change Assets——
+        [MenuItem("Alive Desktop/Set PlatformMode/PC", priority = 100)]
+        public static void AD_SetPlatformModeToPC()
+        {
+            AD_SOEditorSettingManager.Instance.PlatformMode = AD_PlatformMode.PC;
+        }
+
+        [MenuItem("Alive Desktop/Set PlatformMode/VR", priority = 101)]
+        public static void AD_SetPlatformModeToVR()
+        {
+            AD_SOEditorSettingManager.Instance.PlatformMode = AD_PlatformMode.PCVR;
+        }
+        [MenuItem("Alive Desktop/Update Cur Item's AssetPack", priority = 102)]
         public static void AD_CreateOrUpdateAssetPack()
         {
             AD_SOWorkshopItemInfo workshopItemInfo = SOManagerInst.CurWorkshopItemInfo;
@@ -94,15 +96,15 @@ namespace Threeyes.AliveCursor.SDK.Editor
             CreateOrUpdateAssetPack(workshopItemInfo);
         }
 
-        //——Quick Setup for Shell/Decoration item——
 
+        //——Quick Setup Scene——
         /// <summary>
         /// 不可交互的装饰，如墙壁（不包括Rigidbody和AD_XRGrabInteractable）
         /// 
         /// PS:
         /// -纯装饰的物体层级要简单，没有Model等中间层，避免多余性能消耗
         /// </summary>
-        [MenuItem("Alive Desktop/Init Select/Base Decoration", priority = 111)]
+        [MenuItem("Alive Desktop/Init Select/Base Decoration", priority = 201)]
         public static void AD_InitSelectAsBaseDecoration()
         {
             foreach (var go in Selection.gameObjects)
@@ -124,7 +126,7 @@ namespace Threeyes.AliveCursor.SDK.Editor
         /// <summary>
         /// 将选中物体设置为【可交互的】装饰品
         /// </summary>
-        [MenuItem("Alive Desktop/Init Select/Interactable Decoration", priority = 112)]
+        [MenuItem("Alive Desktop/Init Select/Interactable Decoration", priority = 202)]
         public static void AD_InitSelectAsInteractableDecoration()
         {
             foreach (var go in Selection.gameObjects)
@@ -144,10 +146,23 @@ namespace Threeyes.AliveCursor.SDK.Editor
             }
         }
 
-        [MenuItem("Alive Desktop/SDK Wiki", priority = 1000)]
+        //——Build & Run——
+
+        [MenuItem("Alive Desktop/Build And Run %m", priority = 1001)]
+        public static void AD_BuildAndRunCurItem()
+        {
+            BuildAndRunCurItem();
+        }
+        [MenuItem("Alive Desktop/Build All", priority = 1002)]
+        public static void AD_BuildAll()
+        {
+            BuildAll();
+        }
+
+        [MenuItem("Alive Desktop/SDK Wiki", priority = 2000)]
         public static void AD_OpenSDKWiki()
         {
-            OpenSDKWiki("https://github.com/Threeyes/AliveCursorSDK/wiki");
+            OpenSDKWiki("https://github.com/Threeyes/" + SORuntimeSettingManager.Instance.productName + "SDK/wiki");
         }
         #endregion
 

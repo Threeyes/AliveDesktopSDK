@@ -97,7 +97,7 @@ public class AD_InputManagerBase<T> : HubManagerBase<T>, IAD_InputManager
                 curInputDeviceType = AD_InputDeviceType.XRController;
             }
         }
-        Debug.Log("PlayerInput_OnControlsChanged: " + firstDevice);
+        //Debug.Log("PlayerInput_OnControlsChanged: " + firstDevice);
         AD_ManagerHolderManager.FirePlayerInputControlChangedEvent(playerInput, curInputDeviceType);
     }
     #endregion

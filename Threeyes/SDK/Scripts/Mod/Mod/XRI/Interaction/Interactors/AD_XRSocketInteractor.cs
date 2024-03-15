@@ -8,6 +8,9 @@ using Threeyes.KeyLock;
 /// <summary>
 /// 功能：
 /// -包含可选Key的Socket
+/// 
+/// Warning:
+/// -Layer需要设置为IgnoreRaycast，否则会捕获鼠标事件
 /// </summary>
 public class AD_XRSocketInteractor : XRSocketInteractor
 {

@@ -179,8 +179,8 @@ namespace Threeyes.Steamworks
         /// Warning：
         /// -Option等仍需要手动设置
         /// </summary>
-        [ContextMenu("EditorUpdateSetttingUsingMaterialData")]
-        void EditorUpdateSetttingUsingMaterialData()
+        [ContextMenu("UpdateConfigUsingComponentData")]
+        void EditorUpdateConfigUsingComponentData()
         {
             if (Application.isPlaying)//运行时跳过
                 return;

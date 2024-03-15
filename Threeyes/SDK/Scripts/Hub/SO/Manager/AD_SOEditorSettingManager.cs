@@ -8,6 +8,19 @@ using Threeyes.Steamworks;
 public class AD_SOEditorSettingManager : SOEditorSettingManager<AD_SOEditorSettingManager, AD_SOWorkshopItemInfo>
 {
     #region Property & Field
+    public AD_PlatformMode PlatformMode
+    {
+        get
+        {
+            return platformMode;
+        }
+
+        set
+        {
+            platformMode = value;
+            EditorUtility.SetDirty(Instance);
+        }
+    }
     public bool HubSimulator_ShowAssistantGizmo
     {
         get
@@ -32,29 +45,53 @@ public class AD_SOEditorSettingManager : SOEditorSettingManager<AD_SOEditorSetti
             EditorUtility.SetDirty(Instance);
         }
     }
-
-    public AD_PlatformMode PlatformMode
+    public bool HubSimulator_EnableFly
     {
         get
         {
-            return platformMode;
+            return hubSimulator_EnableFly;
         }
-
         set
         {
-            platformMode = value;
+            hubSimulator_EnableFly = value;
             EditorUtility.SetDirty(Instance);
         }
     }
+    public bool HubSimulator_IsPenetrateOnFly
+    {
+        get
+        {
+            return hubSimulator_IsPenetrateOnFly;
+        }
+        set
+        {
+            hubSimulator_IsPenetrateOnFly = value;
+            EditorUtility.SetDirty(Instance);
+        }
+    }
+    public bool HubSimulator_UseGravity
+    {
+        get
+        {
+            return hubSimulator_UseGravity;
+        }
+        set
+        {
+            hubSimulator_UseGravity = value;
+            EditorUtility.SetDirty(Instance);
+        }
+    }
+    [Header("CommandLine Simulator")]//Simulate runtime command line
+    [SerializeField] protected AD_PlatformMode platformMode = AD_PlatformMode.PC;
 
 
     [Header("Hub Simulator")]
     [SerializeField] protected bool hubSimulator_ShowAssistantGizmo = true;
     [SerializeField] protected bool hubSimulator_ShowAssistantInfo = true;
+    [SerializeField] protected bool hubSimulator_EnableFly = true;
+    [SerializeField] protected bool hubSimulator_IsPenetrateOnFly = true;
+    [SerializeField] protected bool hubSimulator_UseGravity = false;
 
-
-    [Header("CommandLine Simulator")]//Simulate runtime command line
-    [SerializeField] protected AD_PlatformMode platformMode = AD_PlatformMode.PC;
 
     #endregion
 }
