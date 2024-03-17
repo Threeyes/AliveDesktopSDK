@@ -341,7 +341,7 @@ GameObject:
   - component: {fileID: 218657882635381140}
   - component: {fileID: 627877243102824859}
   - component: {fileID: 6944014815297541048}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Socket
   m_TagString: Untagged
   m_Icon: {fileID: 0}

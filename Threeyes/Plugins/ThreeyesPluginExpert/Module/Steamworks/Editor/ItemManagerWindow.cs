@@ -614,10 +614,6 @@ namespace Threeyes.Steamworks
                 //camera.clearFlags = CameraClearFlags.Nothing;//避免背景为默认颜色
 
                 //ToUpdate:使用当前场景的相机（默认是SimulaterManager的相机，也可以是用户自定义相机）
-                //临时禁用Simulator的UI，避免截图会截到UI
-                assistantManagerSimulator = FindObjectOfType<AssistantManagerSimulator>();//尝试查找该组件
-                if (assistantManagerSimulator)
-                    assistantManagerSimulator.TempShowInfoGroup(false);
 
                 tempGOCaptureCamera = Camera.main;
                 if (!tempGOCaptureCamera)
@@ -625,18 +621,30 @@ namespace Threeyes.Steamworks
                     Debug.LogError("Can't find main Camera in Scene!");
                     return;
                 }
-                cacheCameraLocalPos = tempGOCaptureCamera.transform.localPosition;
-                tempGOCaptureCamera.transform.position = new Vector3(0, -0.5f, -1.5f);
+                OnBeforeCreateScreenshot();
 
                 absPreviewFilePath = curSOWorkshopItemInfo.GetDefaultPreviewFilePath(".png");
                 delayFrameCaptureScreenshot = 3;
             }
         }
-        Camera tempGOCaptureCamera;
-        Vector3 cacheCameraLocalPos;
-        int delayFrameCaptureScreenshot = 0;//延后Capture及销毁相机
-        string absPreviewFilePath;//ToAdd:存储为默认预览图
+
+        protected virtual void OnBeforeCreateScreenshot()
+        {
+            //临时禁用Simulator的UI，避免截图会截到UI
+            assistantManagerSimulator = FindObjectOfType<AssistantManagerSimulator>();//尝试查找该组件
+            if (assistantManagerSimulator)
+                assistantManagerSimulator.TempShowInfoGroup(false);
+        }
+        protected virtual void OnAfterCreateScreenshot()
+        {
+            if (assistantManagerSimulator)
+                assistantManagerSimulator.TempShowInfoGroup(true);
+        }
+
         AssistantManagerSimulator assistantManagerSimulator;
+        protected Camera tempGOCaptureCamera;
+        int delayFrameCaptureScreenshot = 0;//N帧后延后Capture及销毁相机
+        string absPreviewFilePath;//ToAdd:存储为默认预览图
 
         void Update_CreateScreenshot()
         {
@@ -662,9 +670,7 @@ namespace Threeyes.Steamworks
                 }
                 else if (delayFrameCaptureScreenshot == 0)//Reset
                 {
-                    tempGOCaptureCamera.transform.localPosition = cacheCameraLocalPos;
-                    if (assistantManagerSimulator)
-                        assistantManagerSimulator.TempShowInfoGroup(true);
+                    OnAfterCreateScreenshot();
                 }
             }
         }
@@ -846,14 +852,21 @@ namespace Threeyes.Steamworks
                 return;
 
             string absItemSceneFilePath = curSOWorkshopItemInfo.SceneFilePath;
+            string relateItemSceneFilePath = EditorPathTool.AbsToUnityRelatePath(absItemSceneFilePath);
+
             if (File.Exists(absItemSceneFilePath))//Item场景存在：打开
             {
-                string relateItemSceneFilePath = EditorPathTool.AbsToUnityRelatePath(absItemSceneFilePath);
                 OpenMultiScenes(relateItemSceneFilePath);
             }
             else//不存在：打开新建Scene菜单，提示通过 SceneTemplate 创建
             {
-                SceneTemplateManagerWindow.ShowWindow(curSOWorkshopItemInfo.SceneFilePath);
+                SceneTemplateManagerWindow.ShowWindow(curSOWorkshopItemInfo.SceneFilePath,
+                    (isSuccess) =>
+                    {
+                        if (isSuccess)
+                            OpenMultiScenes(relateItemSceneFilePath);
+                    }
+                    );
             }
         }
 

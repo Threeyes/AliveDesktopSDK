@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f6452b2a9e469545b49d2f40480d00e, type: 3}
+  m_Name: ShellItem_Displaybox
+  m_EditorClassIdentifier: 
+  remark: 
+  title: Displaybox
+  prefab: {fileID: 5728484840347150481, guid: ba0d449bd967bdb4990e7eaf938b9016, type: 3}
+  preview: {fileID: 2800000, guid: 822c4ebba5c70a14597bc484d6534363, type: 3}
+  description: 
+  tooltip: 
+  shellType: 2
+  speicalFolder: 0

@@ -1,7 +1,18 @@
+using System.Collections.Generic;
 using System.Linq;
 using Threeyes.Core;
 using Threeyes.Steamworks;
 using UnityEngine.SceneManagement;
+public interface IAD_SerializableItemManager<TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo>
+    where TPrefabConfigInfo : AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>, new()
+    where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
+    where TSOPrefabInfo : AD_SOPrefabInfo
+{
+    TPrefabConfigInfo SdkPrefabConfigInfo { get; }
+
+    List<TPrefabConfigInfo> GetAllPrefabConfigInfo();
+}
+
 /// <summary>
 /// 带序列化物体组件的Manager
 /// 
@@ -15,6 +26,7 @@ using UnityEngine.SceneManagement;
 /// <typeparam name="TDefaultController"></typeparam>
 /// <typeparam name="TBaseEleData"></typeparam>
 public abstract class AD_SerializableItemManagerBase<T, TControllerInterface, TDefaultController, TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData> : HubManagerWithControllerBase<T, TControllerInterface, TDefaultController>
+    , IAD_SerializableItemManager<TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo>
     , IHubManagerModPreInitHandler
     , IHubManagerModInitHandler
     where T : HubManagerWithControllerBase<T, TControllerInterface, TDefaultController>
@@ -26,7 +38,11 @@ public abstract class AD_SerializableItemManagerBase<T, TControllerInterface, TD
     where TSOPrefabInfo : AD_SOPrefabInfo
     where TBaseEleData : class, IAD_SerializableItemInfo
 {
-    public TPrefabConfigInfo sdkPrefabConfigInfo = new TPrefabConfigInfo();
+    public TPrefabConfigInfo SdkPrefabConfigInfo { get { return sdkPrefabConfigInfo; } }
+
+    [UnityEngine.SerializeField] protected TPrefabConfigInfo sdkPrefabConfigInfo = new TPrefabConfigInfo();
+
+    public abstract List<TPrefabConfigInfo> GetAllPrefabConfigInfo();
 
     #region IHubManagerModPreInitHandler
     public virtual void OnModPreInit(Scene scene, ModEntry modEntry)

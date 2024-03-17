@@ -307,22 +307,31 @@ namespace Threeyes.RuntimeSerialization
         #region ——Editor——
 #if UNITY_EDITOR
 
-        readonly Dictionary<UnityObject, string> m_GuidMap = new();
+        [ContextMenu("EditorScanData")]
+        void EditorScanData()
+        {
+            //基于当前文件夹进行更新（常用于测试）
+            string relatedPath = AssetDatabase.GetAssetPath(this);
+            string sourceAbsDirPath = EditorPathTool.UnityRelateToAbsPath(relatedPath);
+            string destAbsDirPath = System.IO.Directory.GetParent(sourceAbsDirPath).FullName;
+            CreateFromFolder(destAbsDirPath, destAbsDirPath, relatedPath.GetFileNameWithoutExtension());
+        }
 
+        readonly Dictionary<UnityObject, string> m_GuidMap = new();
 
         /// <summary>
         /// 针对特定文件夹创建或更新SOAssetPack
         /// </summary>
         /// <param name="sourceAbsDirPath">目标文件夹路径</param>
         /// <param name="destAbsDirPath">存储SOAssetPack的文件夹路径</param>
-        public static void CreateFromFolder(string sourceAbsDirPath, string destAbsDirPath)
+        public static void CreateFromFolder(string sourceAbsDirPath, string destAbsDirPath, string fileNameWithoutExtension = "AssetPack")
         {
             //#1 获取文件夹位置
             string relateDirPath = EditorPathTool.AbsToUnityRelatePath(sourceAbsDirPath);
 
             //#2 创建或清空已有SOAssetPack（位置为选中文件夹里）
             PathTool.GetOrCreateDir(destAbsDirPath);
-            string assetPackPath = EditorPathTool.AbsToUnityRelatePath(destAbsDirPath + "/AssetPack.asset");
+            string assetPackPath = EditorPathTool.AbsToUnityRelatePath(destAbsDirPath + "/" + fileNameWithoutExtension + ".asset");
             SOAssetPack assetPack = AssetDatabase.LoadAssetAtPath<SOAssetPack>(assetPackPath);
             bool created = false;
             if (assetPack == null)

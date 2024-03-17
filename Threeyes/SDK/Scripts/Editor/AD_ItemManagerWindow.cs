@@ -56,6 +56,27 @@ namespace Threeyes.AliveCursor.SDK.Editor
         }
         #endregion
 
+        #region Screenshot
+        GameObject tempGOXRController;
+        AD_XRManagerSimulator tempXRManagerSimulator;
+        protected override void OnBeforeCreateScreenshot()
+        {
+            base.OnBeforeCreateScreenshot();
+
+            //临时隐藏XRManager
+            tempXRManagerSimulator = GameObject.FindObjectOfType<AD_XRManagerSimulator>();
+            if (tempXRManagerSimulator)
+                tempXRManagerSimulator.TempShowControllers(false);
+        }
+        protected override void OnAfterCreateScreenshot()
+        {
+            base.OnAfterCreateScreenshot();
+
+            if (tempXRManagerSimulator)
+                tempXRManagerSimulator.TempShowControllers(true);
+        }
+        #endregion
+
         #region MenuItem
 
         //[UnityEditor.MenuItem("Alive Desktop/Export Settings", priority = 44)]//【ToDelete】

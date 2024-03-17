@@ -165,7 +165,7 @@ public abstract class AD_SerializableItemControllerBase<TManager, TPrefabConfigI
     {
         foreach (var element in listElement)
         {
-            InitData(element, element.data);//主要是重新初始化其Manager的信息（后期Data有外部数据时，再更新此实现）
+            InitData(element, element.data);//主要是重新初始化对应Manager的信息（后期Data有外部数据时，再更新此实现）
         }
     }
 
@@ -180,16 +180,18 @@ public abstract class AD_SerializableItemControllerBase<TManager, TPrefabConfigI
     /// 将父类封装为子类
     /// 
     /// Warning：需要将IsBaseType设置为true
+    /// 
+    /// ToUpdate:
+    /// -Shell和Decoration要有不同实现（Shell要GetFirstValidPrefab；Decoration要overridePrefab）
     /// </summary>
     /// <param name="baseEleData"></param>
     /// <returns></returns>
     protected abstract TEleData ConvertFromBaseData(TBaseEleData baseEleData);
 
-    protected GameObject overridePrefab = null;//Set this to temp override prefab
     protected override TElement CreateElementFunc(TEleData eleData)
     {
         //#1 生成物体
-        GameObject prefab = overridePrefab ?? GetFirstValidPrefab(eleData); //从Config中获取首个有效的Prefab
+        GameObject prefab = GetPrefab(eleData); //从Config中获取首个有效的Prefab
         GameObject goInst = prefab.InstantiatePrefab(tfElementParent);
         TElement element = goInst.GetComponent<TElement>();
 
@@ -198,8 +200,18 @@ public abstract class AD_SerializableItemControllerBase<TManager, TPrefabConfigI
         {
             TrySetPrefabMetadata(goInst, prefab);
         }
-
         return element;
+    }
+
+    protected GameObject overridePrefab = null;//Set this to temp override prefab
+    /// <summary>
+    /// 获取创建数据所需的Prefab
+    /// </summary>
+    /// <param name="eleData"></param>
+    /// <returns></returns>
+    protected virtual GameObject GetPrefab(TEleData eleData)
+    {
+        return overridePrefab;
     }
 
     protected Coroutine cacheEnumInitElementList;
@@ -268,65 +280,6 @@ public abstract class AD_SerializableItemControllerBase<TManager, TPrefabConfigI
         TryStopCoroutine_InitElementList();
         tfElementParent.DestroyAllChild();
     }
-    #endregion
-
-    #region Interfaces
-
-    public List<TSOPrefabInfo> GetAllValidPrefabInfos(IAD_SerializableItemInfo eleData, bool matchingCondition)
-    {
-        return GetAllValidPrefabInfosFunc(eleData as TEleData, matchingCondition);
-    }
-
-    /// <summary>
-    /// 获取匹配该data条件的所有预制物（可用于后期Shell根据条件进行匹配）
-    /// </summary>
-    /// <param name="eleData"></param>
-    /// <param name="matchingCondition">是否根据条件进行匹配，如果为否则返回所有预制物。（可通过UI上的一个Toggle开关，方便用户使用其他物体代替）</param>
-    /// <returns></returns>
-    protected virtual List<TSOPrefabInfo> GetAllValidPrefabInfosFunc(TEleData eleData, bool matchingCondition)
-    {
-        List<TSOPrefabInfo> listTargetPrefabInfo = new List<TSOPrefabInfo>();
-
-        var listSourcePrefabInfo = prefabConfigInfo.FindAllPrefabInfo();
-        if (matchingCondition)
-        {
-            GetAllValidPrefabInfos_Matching(eleData, ref listSourcePrefabInfo, ref listTargetPrefabInfo);
-        }
-        else//不需要匹配：返回所有
-        {
-            listTargetPrefabInfo.AddRange(listSourcePrefabInfo);
-        }
-        return listTargetPrefabInfo;
-    }
-    protected abstract void GetAllValidPrefabInfos_Matching(TEleData eleData, ref List<TSOPrefabInfo> listSourcePrefabInfo, ref List<TSOPrefabInfo> listTargetPrefabInfo);
-
-
-    /// <summary>
-    /// 通过Fallback的方式查找首个有效的Prefab，常用于首次初始化
-    /// </summary>
-    /// <param name="eleData"></param>
-    /// <returns></returns>
-    GameObject GetFirstValidPrefab(TEleData eleData)
-    {
-        //#1 尝试查找匹配
-        TSOPrefabInfo targetPrefabInfo = GetAllValidPrefabInfosFunc(eleData, true).FirstOrDefault();
-
-        //#2 如果上述匹配操作返回null，则返回Fallback预制物信息，避免出错
-        if (targetPrefabInfo == null)
-        {
-            Debug.LogWarning($"Can't find prefabInfo for {eleData}! Try get fallback element instead!");//不算错误，仅弹出警告
-            targetPrefabInfo = GetFallbackPrefabInfo(eleData);
-        }
-
-        //#3 仍然找不到：报错
-        if (!targetPrefabInfo)
-        {
-            Debug.LogError($"Can't find prefadInfo for [{eleData}]! Check if list empty！");
-        }
-        return targetPrefabInfo?.Prefab;
-    }
-
-    protected abstract TSOPrefabInfo GetFallbackPrefabInfo(TEleData eleData);
     #endregion
 
     #region IModControllerHandler

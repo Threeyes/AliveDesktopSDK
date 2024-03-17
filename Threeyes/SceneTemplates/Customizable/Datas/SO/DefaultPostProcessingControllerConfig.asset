@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7f172e314e61249abc19bf038f95ea, type: 3}
+  m_Name: DefaultPostProcessingControllerConfig
+  m_EditorClassIdentifier: 
+  config:
+    isUsePostProcessing: 1
+    bloom_IsActive: 1
+    bloom_Threshold: 1
+    bloom_Intensity: 1.81
+    bloom_Scatter: 0.1
+    bloom_Tint: {r: 1, g: 1, b: 1, a: 1}
+    bloom_Clamp: 65472
+    bloom_DirtIntensity: 0
+    channelMixer_IsActive: 0
+    channelMixer_RedOutRedIn: 100
+    channelMixer_RedOutGreenIn: 0
+    channelMixer_RedOutBlueIn: 0
+    channelMixer_GreenOutRedIn: 0
+    channelMixer_GreenOutGreenIn: 100
+    channelMixer_GreenOutBlueIn: 0
+    channelMixer_BlueOutRedIn: 0
+    channelMixer_BlueOutGreenIn: 0
+    channelMixer_BlueOutBlueIn: 100
+    chromaticAberration_IsActive: 0
+    chromaticAberration_Intensity: 0
+    colorAdjustments_IsActive: 0
+    colorAdjustments_PostExposure: 0
+    colorAdjustments_Contrast: 0
+    colorAdjustments_ColorFilter: {r: 1, g: 1, b: 1, a: 1}
+    colorAdjustments_HueShift: 0
+    colorAdjustments_Saturation: 0
+    colorLookup_IsActive: 0
+    colorAdjustments_Contribution: 0
+    depthOfField_IsActive: 1
+    depthOfField_Mode: 1
+    depthOfField_GaussianStart: 19
+    depthOfField_GaussianEnd: 37
+    depthOfField_GaussianMaxRadius: 1
+    depthOfField_HighQualitySampling: 0
+    depthOfField_FocusDistance: 10
+    depthOfField_Aperture: 5.6
+    depthOfField_FocalLength: 50
+    depthOfField_BladeCount: 5
+    depthOfField_BladeCurvature: 1
+    depthOfField_BladeRotation: 0
+    filmGrain_IsActive: 0
+    filmGrain_Type: 0
+    filmGrain_Intensity: 0
+    filmGrain_Response: 0.8
+    lensDistortion_IsActive: 0
+    lensDistortion_Intensity: 0
+    lensDistortion_XMultiplier: 1
+    lensDistortion_YMultiplier: 1
+    lensDistortion_Center: {x: 0.5, y: 0.5}
+    lensDistortion_Scale: 1
+    liftGammaGain_IsActive: 0
+    liftGammaGain_Lift: {x: 1, y: 1, z: 1, w: 0}
+    liftGammaGain_Gamma: {x: 1, y: 1, z: 1, w: 0}
+    liftGammaGain_Gain: {x: 1, y: 1, z: 1, w: 0}
+    motionBlur_IsActive: 0
+    motionBlur_Mode: 0
+    motionBlur_Quality: 0
+    motionBlur_Intensity: 0
+    motionBlur_Clamp: 0.05
+    paniniProjection_IsActive: 0
+    paniniProjection_Distance: 0
+    paniniProjection_CropToFit: 1
+    shadowsMidtonesHighlights_IsActive: 0
+    shadowsMidtonesHighlights_Shadows: {x: 1, y: 1, z: 1, w: 0}
+    shadowsMidtonesHighlights_Midtones: {x: 1, y: 1, z: 1, w: 0}
+    shadowsMidtonesHighlights_Highlights: {x: 1, y: 1, z: 1, w: 0}
+    shadowsMidtonesHighlights_ShadowsStart: 0
+    shadowsMidtonesHighlights_ShadowsEnd: 0.3
+    shadowsMidtonesHighlights_HighlightsStart: 0.55
+    shadowsMidtonesHighlights_HighlightsEnd: 1
+    splitToning_IsActive: 0
+    splitToning_Shadows: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    splitToning_Highlights: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    splitToning_Balance: 0
+    tonemapping_IsActive: 1
+    tonemapping_Mode: 1
+    vignette_IsActive: 1
+    vignette_Color: {r: 0, g: 0, b: 0, a: 1}
+    vignette_Center: {x: 0.5, y: 0.5}
+    vignette_Intensity: 0.25
+    vignette_Smoothness: 0.4
+    vignette_Rounded: 0
+    whiteBalance_IsActive: 0
+    whiteBalance_Temperature: 0
+    whiteBalance_Tint: 0

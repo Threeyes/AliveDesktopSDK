@@ -25,4 +25,14 @@ public class AD_XRManagerSimulator : AD_XRManagerBase<AD_XRManagerSimulator>
             StartXR();
         }
     }
+
+    /// <summary>
+    /// 显隐双控制器，主要用于截图
+    /// </summary>
+    /// <param name="isShow"></param>
+    public void TempShowControllers(bool isShow)
+    {
+        TfLeftController.gameObject.SetActive(isShow);
+        TfRightController.gameObject.SetActive(isShow);
+    }
 }

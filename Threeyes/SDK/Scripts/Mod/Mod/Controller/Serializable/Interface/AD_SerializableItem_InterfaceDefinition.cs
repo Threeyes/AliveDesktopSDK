@@ -78,37 +78,6 @@ public interface IAD_SerializableItemInfo : IDisposable
 /// <summary>
 /// 存储所有预制物信息的配置
 /// </summary>
-[System.Serializable]
-public class AD_PrefabConfigInfo
-{
-    public List<AD_SOShellPrefabInfoGroup> ListSOPrefabInfoGroup { get { return listSOPrefabInfoGroup; } set { listSOPrefabInfoGroup = value; } }
-    [SerializeField] List<AD_SOShellPrefabInfoGroup> listSOPrefabInfoGroup = new List<AD_SOShellPrefabInfoGroup>();
-
-    public AD_PrefabConfigInfo()
-    {
-    }
-
-    //ToAdd：将常用方法放到这里
-
-    /// <summary>
-    /// 返回所有符合条件的子元素
-    /// </summary>
-    /// <param name="predicate">可选的匹配方法，空则返回全部</param>
-    /// <returns></returns>
-    public List<AD_SOPrefabInfo> FindAllPrefabInfo(Predicate<AD_SOPrefabInfo> match = null)
-    {
-        List<AD_SOPrefabInfo> listResult = new List<AD_SOPrefabInfo>();
-        foreach (var soGroup in listSOPrefabInfoGroup)
-        {
-            if (match != null)
-                listResult.AddRange(soGroup.ListData.FindAll(match));
-            else
-                listResult.AddRange(soGroup.ListData);
-        }
-        return listResult;
-    }
-}
-
 [Serializable]
 public class AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>
     where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
@@ -128,11 +97,6 @@ public class AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>
     {
     }
 
-    //public AD_PrefabConfigInfo(List<TSOPrefabInfoGroup> listSOPrefabInfoGroup)
-    //{
-    //    this.listSOPrefabInfoGroup = listSOPrefabInfoGroup;
-    //}
-
     public List<TSOPrefabInfo> FindAllPrefabInfo(Predicate<TSOPrefabInfo> match = null)
     {
         List<TSOPrefabInfo> listResult = new List<TSOPrefabInfo>();
@@ -145,8 +109,6 @@ public class AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>
         }
         return listResult;
     }
-
-
 }
 
 public interface IAD_SerializableItemController :
@@ -168,7 +130,6 @@ public interface IAD_SerializableItemController :
     /// <returns></returns>
     IAD_SerializableItem ChangeElementStyle(IAD_SerializableItem oldInst, GameObject prefab, UnityAction<GameObject, GameObject> actRebind);
     void DeleteElement(IAD_SerializableItem item);
-
 }
 
 public interface IAD_SerializableItemController<TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData> : IAD_SerializableItemController
@@ -184,15 +145,6 @@ public interface IAD_SerializableItemController<TPrefabConfigInfo, TSOPrefabInfo
     /// <param name="listBaseEleData"></param>
     /// <param name="isClear">true:清空; false:叠加</param>
     void InitBase(List<TBaseEleData> listBaseEleData, bool isClear);
-
-
-    /// <summary>
-    /// 获取所有可用的PrefabInfo
-    /// </summary>
-    /// <param name="eleData"></param>
-    /// <param name="matchingCondition"></param>
-    /// <returns></returns>
-    List<TSOPrefabInfo> GetAllValidPrefabInfos(IAD_SerializableItemInfo eleData, bool matchingCondition);
 
     /// <summary>
     /// 是否包含与给定SOAssetPack相关的实例

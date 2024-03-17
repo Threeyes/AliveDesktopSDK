@@ -34,20 +34,8 @@ public sealed class AD_DefaultDecorationController : AD_SerializableItemControll
         overridePrefab = null; //Reset
 
         //初始化Transform（参考Editor，仅设置位置，不设置旋转等）
-        newInst.transform.SetProperty(initPosition, initRotation, isLocalSpace :false);//PS：SetProperty方法可避免刚体物体在初始化修改其位置/缩放时出错
+        newInst.transform.SetProperty(initPosition, initRotation, isLocalSpace: false);//PS：SetProperty方法可避免刚体物体在初始化修改其位置/缩放时出错
     }
-
-    #region Override
-    protected override void GetAllValidPrefabInfos_Matching(ItemInfo eleData, ref List<AD_SODecorationPrefabInfo> listSourcePrefabInfo, ref List<AD_SODecorationPrefabInfo> listTargetPrefabInfo)
-    {
-        listTargetPrefabInfo.AddRange(listSourcePrefabInfo);
-    }
-
-    protected override AD_SODecorationPrefabInfo GetFallbackPrefabInfo(ItemInfo eleData)
-    {
-        return prefabConfigInfo.FindAllPrefabInfo().FirstOrDefault();//返回首个普通（非SpecialFolder）元素
-    }
-    #endregion
 
     #region Define
     [Serializable]

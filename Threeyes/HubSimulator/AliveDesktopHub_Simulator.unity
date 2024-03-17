@@ -2176,7 +2176,8 @@ MonoBehaviour:
   isDontDestroyOnLoad: 0
   defaultController: {fileID: 0}
   sdkPrefabConfigInfo:
-    listSOPrefabInfoGroup: []
+    listSOPrefabInfoGroup:
+    - {fileID: 11400000, guid: 68d6addba22d8444f82db761f6ab22fa, type: 2}
   soDefaultConfig: {fileID: 11400000, guid: dbfd12704a081bc4eba6186a6b56dbd2, type: 2}
 --- !u!1 &740263132
 GameObject:

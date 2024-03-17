@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51616a0535a5ba8408263b6d243e5a65, type: 3}
+  m_Name: DefaultEnvironmentControllerConfig
+  m_EditorClassIdentifier: 
+  config:
+    isUseLights: 1
+    sunLightRotation: {x: 30, y: 180, z: 0}
+    sunLightIntensity: 5
+    sunLightColor: {r: 1, g: 1, b: 1, a: 1}
+    lightShadowType: 2
+    isUseReflection: 1
+    isUseSkybox: 1
+    skyboxType: 0
+    defaultSkyboxMaterial: {fileID: 2100000, guid: ef959ef6a12b01e4091e410ea34710d5,
+      type: 2}
+    panoramaSkyboxMaterial: {fileID: 2100000, guid: b18e4ba1185fcaf45b606b65f6a42651,
+      type: 2}
+    defaultPanoramaTexture: {fileID: 0}
+    externalPanoramaTexture: {fileID: 0}
+    externalPanoramaTextureFilePath: 
+    panoramaSkyboxRotation: 0
+    PersistentDirPath: I:\Unity Group\My Group\App Group\AliveDesktop/Data/Save/Item/Ocean/Persistent
+    sunColorOverTime:
+      serializedVersion: 2
+      key0: {r: 0, g: 0, b: 0, a: 1}
+      key1: {r: 0, g: 1.254902, b: 1.4980392, a: 1}
+      key2: {r: 2.9960785, g: 0.62498146, b: 0, a: 0}
+      key3: {r: 8, g: 8, b: 8, a: 0}
+      key4: {r: 2.9960785, g: 0.62498146, b: 0, a: 0}
+      key5: {r: 0, g: 1.254902, b: 1.4980392, a: 0}
+      key6: {r: 0, g: 0, b: 0, a: 0}
+      key7: {r: 0, g: 0, b: 0, a: 0}
+      ctime0: 1298
+      ctime1: 6554
+      ctime2: 16384
+      ctime3: 32885
+      ctime4: 49151
+      ctime5: 58982
+      ctime6: 64224
+      ctime7: 0
+      atime0: 0
+      atime1: 65535
+      atime2: 0
+      atime3: 0
+      atime4: 0
+      atime5: 0
+      atime6: 0
+      atime7: 0
+      m_Mode: 0
+      m_ColorSpace: -1
+      m_NumColorKeys: 7
+      m_NumAlphaKeys: 2
+    sunRotateAxis: {x: 1, y: 0, z: 0}
+    sunSize: {x: 10, y: 10, z: 10}
+    sunDistance: 100
+    isSunAffectLightColor: 1
+    isSunAffectLightIntensity: 1
+    isSunSyncWithRealTime: 0
+    realTimeScale: 1
+    isAutoUpdateReflectionProbe: 0
+    updateReflectionProbeIntervalAngle: 30
+    updateReflectionProbeIntervalTime: 10

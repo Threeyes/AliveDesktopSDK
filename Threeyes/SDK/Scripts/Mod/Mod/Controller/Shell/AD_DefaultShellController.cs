@@ -20,10 +20,10 @@ using Threeyes.Core;
 /// +单独增加一个配置类SOPrefabInfo，提供Prefab信息
 /// -心跳检测检查回收站是否被清空，或者是隔一段时间调用以下刷新
 /// </summary>
-public sealed class AD_DefaultShellController : AD_SerializableItemControllerBase<AD_DefaultShellController, AD_ShellPrefabConfigInfo, AD_SOShellPrefabInfoGroup, AD_SOShellPrefabInfo, AD_DefaultShellItem, ItemInfo, AD_ShellItemInfo, AD_SODefaultShellControllerConfig, AD_DefaultShellController.ConfigInfo>
+public sealed class AD_DefaultShellController : AD_ShellControllerBase<AD_DefaultShellController, AD_DefaultShellItem, ItemInfo, AD_ShellItemInfo, AD_SODefaultShellControllerConfig, AD_DefaultShellController.ConfigInfo>
     , IAD_ShellController
 {
-    #region Override
+    #region Init
     protected override ItemInfo ConvertFromBaseData(AD_ShellItemInfo baseEleData)
     {
         var result = new ItemInfo(baseEleData);
@@ -69,17 +69,22 @@ public sealed class AD_DefaultShellController : AD_SerializableItemControllerBas
         List<AD_ShellItemInfo> listNotCreatedItemInfo = listNewItemInfo.FindAll(newData => !listElement.Exists(e => e.data.Equals(newData)));
         InitBase(listNotCreatedItemInfo, false);
     }
-
+    #endregion
 
     #region PrefabInfo
+    ///ToUpdate:
+    ///-以下两个方法应该先考虑自身，然后再考虑现存的SDK及所有Mod内置信息（可以调用Manager的GetListPrefabConfigInfo）(或者把方法直接挪到Manager，然后把该Mod的PrefabConfigInfo放到首位)
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="eleData"></param>
     /// <param name="listSourcePrefabInfo">源List</param>
     /// <param name="listTargetPrefabInfo">需要输出的list</param>
-    protected override void GetAllValidPrefabInfos_Matching(ItemInfo eleData, ref List<AD_SOShellPrefabInfo> listSourcePrefabInfo, ref List<AD_SOShellPrefabInfo> listTargetPrefabInfo)
+    protected override List<AD_SOShellPrefabInfo> GetAllValidPrefabInfos_Matching(ItemInfo eleData, List<AD_SOShellPrefabInfo> listSourcePrefabInfo)
     {
+        List<AD_SOShellPrefabInfo> listTargetPrefabInfo = new List<AD_SOShellPrefabInfo>();
+        //尝试匹配相同枚举的应用
         AD_ShellType dataShellType = eleData.ItemShellType;
         AD_SpeicalFolder dataSpeicalFolder = eleData.SpecialFolder;
 
@@ -91,13 +96,23 @@ public sealed class AD_DefaultShellController : AD_SerializableItemControllerBas
         {
             listTargetPrefabInfo = listTargetPrefabInfo.FindAll(pI => pI.speicalFolder.Has(dataSpeicalFolder));
         }
+        return listTargetPrefabInfo;
     }
     protected override AD_SOShellPrefabInfo GetFallbackPrefabInfo(ItemInfo eleData)
     {
-        return PrefabConfigInfo.FindAllPrefabInfo().FirstOrDefault(pl => pl.shellType != AD_ShellType.SpecialFolder);//返回首个普通（非SpecialFolder）元素
-    }
-    #endregion
+        AD_SOShellPrefabInfo result = null;
+        List<AD_ShellPrefabConfigInfo> allPCI = AD_ManagerHolder.ShellManager.GetAllPrefabConfigInfo();
+        foreach (var pCI in allPCI)
+        {
+            result = pCI.FindAllPrefabInfo().FirstOrDefault();//返回首个元素
+            //result = pCI.FindAllPrefabInfo().FirstOrDefault(pl => pl.shellType != AD_ShellType.SpecialFolder);//返回首个普通（非SpecialFolder）元素
 
+            if (result)
+                return result;
+        }
+
+        return null;
+    }
     #endregion
 
     #region Define

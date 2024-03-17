@@ -174,7 +174,7 @@ namespace Threeyes.Steamworks
             return Path.Combine(workshopItemInfo.dirPath, workshopItemInfo.modFileRelatePath);
         }
         /// <summary>
-        /// Item用户配置的存储路径
+        /// Item用户配置的存储路径（可云存储）
         /// </summary>
         /// <param name="workshopItemInfo"></param>
         /// <returns></returns>

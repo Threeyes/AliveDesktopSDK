@@ -15,6 +15,19 @@ public abstract class AD_SerializableItemManagerSimulatorBase<T, TControllerInte
     where TSOPrefabInfo : AD_SOPrefabInfo
     where TBaseEleData : class, IAD_SerializableItemInfo
 {
+    public override List<TPrefabConfigInfo> GetAllPrefabConfigInfo()
+    {
+        List<TPrefabConfigInfo> listPrefabConfigInfo = new List<TPrefabConfigInfo>();
+
+        //#1 优先添加场景的配置文件
+        if (ActiveController.PrefabConfigInfo.HasElement)//避免有些Controller提供空的素材，导致显示空的UITab
+            listPrefabConfigInfo.Add(ActiveController.PrefabConfigInfo);//添加Controller的自定义配置文件
+
+        //#2 添加SDK的配置文件
+        listPrefabConfigInfo.Add(sdkPrefabConfigInfo);
+   
+        return listPrefabConfigInfo;
+    }
     #region IHubManagerModInitHandler
     public override void OnModInit(Scene scene, ModEntry modEntry)
     {
