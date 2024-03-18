@@ -98,6 +98,7 @@ namespace Threeyes.RuntimeSerialization
                 ///ToAdd：
                 ///-针对Prefab，如果其子物体也有RS_GO，则应该也需要为其设置唯一InstanceIDID，否则会出现无法还原的Bug。下面的已有方法仅针对Prefab的根物体含有RS_GO的情况（测试物体：AD的TableWithCabinet.DrawerPivot）
 
+                //ToUpdate:可以通过PrefabUtility.GetOutermostPrefabInstanceRoot获取并判断返回物体是否与自身一致，从而确定是否为根物体（参考EditorUtility.FindPrefabRoot的Obsolete注释）
                 bool isTopGO = gameObject.transform.parent == null;//是否为顶层物体
 
                 if (isTopGO)//如果为顶层Prefab：【注释】备注：暂不清除，因为其不影响绑定，避免因为频繁修改Prefab导致字段频繁更新而出错。其值会在实例化时自动匹配并进行更新（包括作为其他Prefab的子Prefab）

@@ -22,13 +22,14 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class AD_XRGrabInteractable : XRGrabInteractable
 {
     #region Fix uMod Deserialize Problem
-    ///——ToUpdate：为了避免初始化时间不一致导致出错，需要统一改为由Item调用ManualInit。或者改为Awake时检测是否为Mod物体，如果是就延迟初始化——
 
     [ContextMenu("Awake")]
     protected override void Awake()
     {
         base.Awake();
-        if (UModTool.IsUModGameObject(this))//仅针对UMod打包物体才需要重新初始化
+
+        //为了避免初始化时间不一致导致出错，针对UMod打包物体延迟初始化
+        if (UModTool.IsUModGameObject(this))
             CoroutineManager.StartCoroutineEx(IEReInit());
     }
     IEnumerator IEReInit()
@@ -39,11 +40,7 @@ public class AD_XRGrabInteractable : XRGrabInteractable
         Init();
     }
     /// <summary>
-    /// Todo:
-    /// -在Mod时才主动调用，以便初始化（可以通过检测物体有无带有Mod相关组件来判断是否处在Mod下）
-    /// 
-    /// PS：
-    /// -主要是修复延迟初始化导致无法找到对应组件的问题
+    /// 主要是修复延迟初始化导致无法初始化对应组件（如碰撞体）的问题
     /// </summary>
     [ContextMenu("Init")]
     void Init()
@@ -54,45 +51,11 @@ public class AD_XRGrabInteractable : XRGrabInteractable
             return;
         }
 
-        //////——通过反射的方式，重新掉哟个Awake的关键初始化方法(ToDelete:直接调用base.Awake也行)——
-        ////——Ref：XRBaseInteractable.Awake——
-        //if (colliders.Count == 0)//检查是否已经正常初始化，避免多次调用
-        //{
-        //    GetComponentsInChildren(colliders);
-        //    // Skip any that are trigger colliders since these are usually associated with snap volumes.
-        //    // If a user wants to use a trigger collider, they must serialize the reference manually.
-        //    colliders.RemoveAll(col => col.isTrigger);
-        //}
-
-        ////查找Rigidbody组件并赋值给m_Rigidbody
-        //FieldInfo fieldInfo_m_Rigidbody = ReflectionTool.GetField(typeof(XRGrabInteractable), "m_Rigidbody");
-        //Rigidbody m_Rigidbody = fieldInfo_m_Rigidbody.GetValue(this) as Rigidbody;
-        //if (m_Rigidbody == null)
-        //{
-        //    if (!TryGetComponent(out m_Rigidbody))
-        //        Debug.LogError("XR Grab Interactable does not have a required Rigidbody.", this);
-
-        //    fieldInfo_m_Rigidbody.SetValue(this, m_Rigidbody);
-        //}
-
-        ////——Refer：XRGrabInteractable.Awake——
-        //FieldInfo fieldInfo_m_RigidbodyColliders = ReflectionTool.GetField(typeof(XRGrabInteractable), "m_RigidbodyColliders");
-        //List<Collider> m_RigidbodyColliders_Local = fieldInfo_m_RigidbodyColliders.GetValue(this) as List<Collider>;//因为该字段为私有字段，所以用反射设置该字段。因为是引用类型，所以不需要重新赋值
-        //if (m_RigidbodyColliders_Local.Count == 0)//重新查找碰撞体。
-        //{
-        //    m_Rigidbody.GetComponentsInChildren(true, m_RigidbodyColliders_Local);
-        //    for (var i = m_RigidbodyColliders_Local.Count - 1; i >= 0; i--)
-        //    {
-        //        if (m_RigidbodyColliders_Local[i].attachedRigidbody != m_Rigidbody)
-        //            m_RigidbodyColliders_Local.RemoveAt(i);
-        //    }
-        //}
-
         base.Awake();//重新初始化碰撞体列表等字段。m_TeleportationMonitor会因为新建而替换旧的实例，所以不会导致bug
         OnDisable();
         OnEnable();//重新注册事件
-        interactionLayers = UModTool.FixSerializationCallbackReceiverData(interactionLayers);//修复Lyaers反序列化出错导致无法交互的Bug
     }
+
     protected override void OnDestroy()
     {
         /////PS:以下方法可以避免物体被销毁时，XRInteractionManager 报错（https://github.com/Unity-Technologies/XR-Interaction-Toolkit-Examples/issues/26）

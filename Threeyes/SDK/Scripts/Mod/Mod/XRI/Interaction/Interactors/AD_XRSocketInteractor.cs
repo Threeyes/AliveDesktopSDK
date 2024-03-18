@@ -45,7 +45,6 @@ public class AD_XRSocketInteractor : XRSocketInteractor
         base.Awake();
         OnDisable();
         OnEnable();
-        interactionLayers = UModTool.FixSerializationCallbackReceiverData(interactionLayers);
 
         InitFunc();
     }

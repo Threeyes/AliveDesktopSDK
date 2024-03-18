@@ -9,6 +9,9 @@ using UnityEngine.UIElements;
 using System;
 using Threeyes.Core;
 using Threeyes.RuntimeEditor;
+using Threeyes.Core.Editor;
+using System.IO;
+using Threeyes.Common;
 
 namespace Threeyes.AliveCursor.SDK.Editor
 {
@@ -117,16 +120,16 @@ namespace Threeyes.AliveCursor.SDK.Editor
             CreateOrUpdateAssetPack(workshopItemInfo);
         }
 
-
         //——Quick Setup Scene——
+
         /// <summary>
         /// 不可交互的装饰，如墙壁（不包括Rigidbody和AD_XRGrabInteractable）
         /// 
         /// PS:
         /// -纯装饰的物体层级要简单，没有Model等中间层，避免多余性能消耗
         /// </summary>
-        [MenuItem("Alive Desktop/Init Select/Base Decoration", priority = 201)]
-        public static void AD_InitSelectAsBaseDecoration()
+        [MenuItem("Alive Desktop/Init Select/Static Decoration", priority = 201)]
+        public static void AD_InitSelectAsStaticDecoration()
         {
             foreach (var go in Selection.gameObjects)
             {
@@ -135,19 +138,14 @@ namespace Threeyes.AliveCursor.SDK.Editor
                 RuntimeSerializable_GameObject runtimeSerialization_GameObject = go.AddComponentOnce<RuntimeSerializable_GameObject>();
                 go.AddComponentOnce<RuntimeSerializable_Transform>();
 
-                //#2 可选择
-                go.AddComponentOnce<RuntimeEditorSelectable>();//确保编辑模式可选择
-
-
                 //Init Setting
                 aD_DefaultDecorationItem.runtimeSerialization_GameObject = runtimeSerialization_GameObject;
             }
         }
-
         /// <summary>
-        /// 将选中物体设置为【可交互的】装饰品
+        /// 将选中物体（Prefab或场景物体）设置为【可抓取的】装饰品
         /// </summary>
-        [MenuItem("Alive Desktop/Init Select/Interactable Decoration", priority = 202)]
+        [MenuItem("Alive Desktop/Init Select/Grabable Decoration", priority = 202)]
         public static void AD_InitSelectAsInteractableDecoration()
         {
             foreach (var go in Selection.gameObjects)
@@ -167,6 +165,76 @@ namespace Threeyes.AliveCursor.SDK.Editor
             }
         }
 
+
+        /// <summary>
+        /// 针对选中的Prefab，生成对应的SOPreabInfo
+        /// </summary>
+        [MenuItem("Alive Desktop/Create PrefabInfo/Shell", priority = 203)]
+        public static void AD_CreatePrefabInfo_Shell()
+        {
+            AD_CreatePrefabInfoFunc<AD_SOShellPrefabInfo>();
+        }
+        [MenuItem("Alive Desktop/Create PrefabInfo/Decoration", priority = 204)]
+        public static void AD_CreatePrefabInfo_Decoration()
+        {
+            AD_CreatePrefabInfoFunc<AD_SODecorationPrefabInfo>();
+        }
+
+        const string prefabInfoDirName = "PreabInfo";
+        static void AD_CreatePrefabInfoFunc<TSOPrefabInfo>()
+           where TSOPrefabInfo : SOPrefabInfo
+        {
+            foreach (var go in Selection.gameObjects)
+            {
+                if (!EditorUtility.IsPersistent(go))//排除非资源Prefab物体
+                    continue;
+
+                GameObject goRootPrefab = go.transform.root.gameObject;//查找根Prefab
+
+                string absPrefabFilePath = EditorPathTool.GetAssetAbsPath(goRootPrefab);
+                FileInfo fileInfo_Prefab = new FileInfo(absPrefabFilePath);
+
+                string outputDir = fileInfo_Prefab.Directory.FullName + "/" + prefabInfoDirName; //暂时存在Prefab同级的PreabInfo文件夹下，用户可自行挪动到其他位置
+                PathTool.GetOrCreateDir(outputDir);
+
+                Debug.Log($"Create {goRootPrefab.name}'s SOPreabInfo at path: {outputDir}");
+
+                string assetPackPath = EditorPathTool.AbsToUnityRelatePath(outputDir + "/" + goRootPrefab.name + ".asset");
+                TSOPrefabInfo soInst = AssetDatabase.LoadAssetAtPath<TSOPrefabInfo>(assetPackPath);
+                if (soInst == null)
+                {
+                    soInst = ScriptableObject.CreateInstance<TSOPrefabInfo>();
+                    AssetDatabase.CreateAsset(soInst, assetPackPath);
+                    AssetDatabase.SaveAssets();
+                }
+                soInst.Prefab = goRootPrefab;
+                soInst.InitAfterPrefab();
+            }
+            AssetDatabase.Refresh();
+        }
+
+
+        //——验证方法——
+        [MenuItem("Alive Desktop/Init Select/Static Decoration", true, priority = 201)]
+        public static bool AD_InitSelectAsStaticDecorationValidate()
+        {
+            return Selection.activeGameObject != null;
+        }
+        [MenuItem("Alive Desktop/Init Select/Grabable Decoration", true, priority = 202)]
+        public static bool AD_InitSelectAsInteractableDecorationValidate()
+        {
+            return Selection.activeGameObject != null;
+        }
+        [MenuItem("Alive Desktop/Create PrefabInfo/Shell", true, priority = 203)]
+        public static bool AD_CreatePrefabInfo_ShellValidate()
+        {
+            return Selection.activeGameObject != null;
+        }
+        [MenuItem("Alive Desktop/Create PrefabInfo/Decoration", true, priority = 204)]
+        public static bool AD_CreatePrefabInfo_DecorationValidate()
+        {
+            return Selection.activeGameObject != null;
+        }
         //——Build & Run——
 
         [MenuItem("Alive Desktop/Build And Run %m", priority = 1001)]

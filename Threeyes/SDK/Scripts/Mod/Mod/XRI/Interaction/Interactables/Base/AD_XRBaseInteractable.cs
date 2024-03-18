@@ -36,10 +36,10 @@ public class AD_XRBaseInteractable : XRBaseInteractable
         base.Awake();
         OnDisable();
         OnEnable();
-        interactionLayers = UModTool.FixSerializationCallbackReceiverData(interactionLayers);//修复Lyaers反序列化出错导致无法交互的Bug
 
         InitFunc();
     }
+
     protected virtual void InitFunc()
     {
         //方便子类添加一些需要在Awake执行的方法

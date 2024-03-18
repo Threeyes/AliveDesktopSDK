@@ -40,7 +40,6 @@ public class AD_TeleportationAnchor : TeleportationAnchor
         base.Awake();
         OnDisable();
         OnEnable();
-        interactionLayers = UModTool.FixSerializationCallbackReceiverData(interactionLayers);//修复Lyaers反序列化出错导致无法交互的Bug
 
         InitFunc();
     }
