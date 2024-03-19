@@ -12,6 +12,7 @@ using Threeyes.RuntimeEditor;
 using Threeyes.Core.Editor;
 using System.IO;
 using Threeyes.Common;
+using System.Collections.Generic;
 
 namespace Threeyes.AliveCursor.SDK.Editor
 {
@@ -81,12 +82,6 @@ namespace Threeyes.AliveCursor.SDK.Editor
         #endregion
 
         #region MenuItem
-
-        //[UnityEditor.MenuItem("Alive Desktop/Export Settings", priority = 44)]//【ToDelete】
-        //internal static void Menu_Export_Settings()
-        //{
-        //    ModToolsUtil.ShowToolsWindow(typeof(UMod.Exporter.SettingsWindow));
-        //}
         [MenuItem("Alive Desktop/Item Manager", priority = 0)]
         public static void AD_OpenWindow()
         {
@@ -180,10 +175,13 @@ namespace Threeyes.AliveCursor.SDK.Editor
             AD_CreatePrefabInfoFunc<AD_SODecorationPrefabInfo>();
         }
 
-        const string prefabInfoDirName = "PreabInfo";
+        const string prefabInfoDirName = "PrefabInfo";
         static void AD_CreatePrefabInfoFunc<TSOPrefabInfo>()
            where TSOPrefabInfo : SOPrefabInfo
         {
+            ///PS:
+            ///-只创建SO，不创建SOGroup，因为用户可能会使用一个Group来包含多个文件夹中的SO
+            List<TSOPrefabInfo> listResult = new List<TSOPrefabInfo>();
             foreach (var go in Selection.gameObjects)
             {
                 if (!EditorUtility.IsPersistent(go))//排除非资源Prefab物体
@@ -194,22 +192,29 @@ namespace Threeyes.AliveCursor.SDK.Editor
                 string absPrefabFilePath = EditorPathTool.GetAssetAbsPath(goRootPrefab);
                 FileInfo fileInfo_Prefab = new FileInfo(absPrefabFilePath);
 
-                string outputDir = fileInfo_Prefab.Directory.FullName + "/" + prefabInfoDirName; //暂时存在Prefab同级的PreabInfo文件夹下，用户可自行挪动到其他位置
+                string outputDir = fileInfo_Prefab.Directory.Parent.FullName + "/" + prefabInfoDirName; //暂时存在Prefab父文件夹同级的PreabInfo文件夹下，用户可自行挪动到其他位置
                 PathTool.GetOrCreateDir(outputDir);
 
-                Debug.Log($"Create {goRootPrefab.name}'s SOPreabInfo at path: {outputDir}");
 
                 string assetPackPath = EditorPathTool.AbsToUnityRelatePath(outputDir + "/" + goRootPrefab.name + ".asset");
                 TSOPrefabInfo soInst = AssetDatabase.LoadAssetAtPath<TSOPrefabInfo>(assetPackPath);
+                bool created = false;
                 if (soInst == null)
                 {
                     soInst = ScriptableObject.CreateInstance<TSOPrefabInfo>();
                     AssetDatabase.CreateAsset(soInst, assetPackPath);
                     AssetDatabase.SaveAssets();
+                    created = true;
+
                 }
                 soInst.Prefab = goRootPrefab;
                 soInst.InitAfterPrefab();
+
+                Debug.Log($"{(created ? "Create" : "Update")} {goRootPrefab.name}'s SOPreabInfo at path: {outputDir}");
+
+                listResult.Add(soInst);
             }
+            Selection.objects = listResult.ToArray();
             AssetDatabase.Refresh();
         }
 

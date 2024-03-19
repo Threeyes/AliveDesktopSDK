@@ -9,4 +9,9 @@ using UnityEngine;
 [CreateAssetMenu(menuName = AD_EditorDefinition.AssetMenuPrefix_Root + "PrefabInfo/ShellItemGroup", fileName = "ShellItemGroup", order = 1)]
 public class AD_SOShellPrefabInfoGroup : AD_SOPrefabInfoGroupBase<AD_SOShellPrefabInfo>
 {
+    [ContextMenu("InitUsingCurFolder")]
+    public void InitUsingCurFolder()
+    {
+        InitUsingCurFolderFunc();
+    }
 }

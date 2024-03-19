@@ -601,6 +601,11 @@ namespace Threeyes.Steamworks
             }
         }
 
+        /// <summary>
+        /// PS:
+        /// -支持任意含有主相机的场景
+        /// </summary>
+        /// <param name="evt"></param>
         void OnCreateScreenshotButtonClick(ClickEvent evt)
         {
             //Todo:截正方形的图，尺寸为4的倍数（PS：可以对图片进行二次处理）
@@ -612,8 +617,6 @@ namespace Threeyes.Steamworks
                 ////tempGOCaptureCamera.hideFlags = HideFlags.HideAndDontSave;//The GameObject is not shown in the Hierarchy, not saved to to Scenes, and not unloaded by Resources.UnloadUnusedAssets.
                 //Camera camera = tempGOCaptureCamera.AddComponent<Camera>();
                 //camera.clearFlags = CameraClearFlags.Nothing;//避免背景为默认颜色
-
-                //ToUpdate:使用当前场景的相机（默认是SimulaterManager的相机，也可以是用户自定义相机）
 
                 tempGOCaptureCamera = Camera.main;
                 if (!tempGOCaptureCamera)
