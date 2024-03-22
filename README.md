@@ -11,8 +11,8 @@
 
 ## Language
 <p float="left">
-  <a href="https://github.com/Threeyes/AliveDesktopSDK/wiki/Home-zh-CN">中文</a> | 
-  <a href="https://github.com/Threeyes/AliveDesktopSDK/wiki/Home">English</a>
+  <a href="https://github.com/Threeyes/AliveDesktopSDK/blob/main/locale/README-zh-CN.md">中文</a> | 
+  <a href="https://github.com/Threeyes/AliveDesktopSDK">English</a>
 </p>
 
 ## Description
