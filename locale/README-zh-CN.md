@@ -39,7 +39,7 @@
 请查阅[wiki](https://github.com/Threeyes/AliveDesktopSDK/wiki/Home-zh-CN)。
 
 ## SDK什么时候会更新
-![SDK更新规则](https://github.com/Threeyes/AliveDesktopSDK/assets/13210990/46dfa4c5-4a4e-4846-926d-2877808973cd)
+![SDK更新规则](https://github.com/Threeyes/AliveDesktopSDK/assets/13210990/d83ef22f-bf28-4f0e-879e-a4c4276675e8)
 
 ## 联系方式
 + [QQ](https://im.qq.com/index/)群: 673880395
