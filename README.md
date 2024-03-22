@@ -39,7 +39,7 @@
 Check out [wiki](https://github.com/Threeyes/AliveDesktopSDK/wiki).
 
 ## When will the SDK be updated
-![SDK更新规则](https://github.com/Threeyes/AliveDesktopSDK/assets/13210990/46dfa4c5-4a4e-4846-926d-2877808973cd)
+![SDK更新规则](https://github.com/Threeyes/AliveDesktopSDK/assets/13210990/d83ef22f-bf28-4f0e-879e-a4c4276675e8)
 
 ## Contact
 + [QQ](https://im.qq.com/index/) Group: 159714089
