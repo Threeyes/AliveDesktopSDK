@@ -34,8 +34,12 @@ public abstract class AD_SerializableItemBase<TElement, TEleData, TPropertyBag> 
                 runtimeSerialization_GameObject = GetComponent<RuntimeSerializable_GameObject>();
             return runtimeSerialization_GameObject;
         }
+        set
+        {
+            runtimeSerialization_GameObject = value;
+        }
     }
-    public RuntimeSerializable_GameObject runtimeSerialization_GameObject;//管理该物体的序列化信息，以及标记Prefab
+    [SerializeField] RuntimeSerializable_GameObject runtimeSerialization_GameObject;//管理该物体的序列化信息，以及标记Prefab
     #endregion
 
     #region Unity Method

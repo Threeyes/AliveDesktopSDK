@@ -10,7 +10,10 @@ public class AD_ShellManagerSimulator : AD_SerializableItemManagerSimulatorBase<
     {
         ActiveController.InitBase(GetSimulatorDatas(), true);
     }
-
+    protected override AD_ShellPrefabConfigInfo GetSceneModPrefabConfigInfo()
+    {
+        return AD_ManagerHolder.SceneManager.ShellPrefabConfigInfo;
+    }
     protected virtual List<AD_ShellItemInfo> GetSimulatorDatas()
     {
         AD_SOShellManagerSimulatorConfig soTargetConfig = soDefaultConfig;

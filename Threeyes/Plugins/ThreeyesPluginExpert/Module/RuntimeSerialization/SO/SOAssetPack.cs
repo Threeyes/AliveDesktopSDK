@@ -18,6 +18,9 @@ namespace Threeyes.RuntimeSerialization
     /// Stores asset metadata (guid and fileId) for assets associated with a JSON-serialized scene
     /// This type is used as a look up table for asset objects, and can be used to build an AssetBundle for loading
     /// scene assets in player builds
+    /// 
+    /// ToUpdate:
+    /// -添加所有Assets的meta信息，方便运行时替换资源
     /// </summary>
     [CreateAssetMenu(menuName = "SO/RuntimeSerialization/" + "AssetPack", fileName = "AssetPack")]
     public class SOAssetPack : ScriptableObject, ISerializationCallbackReceiver
@@ -321,6 +324,8 @@ namespace Threeyes.RuntimeSerialization
 
         /// <summary>
         /// 针对特定文件夹创建或更新SOAssetPack
+        /// 
+        /// Ref：Unity.RuntimeSceneSerialization.EditorInternal.MenuItems.SaveJsonScene
         /// </summary>
         /// <param name="sourceAbsDirPath">目标文件夹路径</param>
         /// <param name="destAbsDirPath">存储SOAssetPack的文件夹路径</param>
@@ -371,8 +376,6 @@ namespace Threeyes.RuntimeSerialization
 
             Debug.Log($"{(created ? "Create" : "Update")} assetPack with [{assetPack.Prefabs.Count}] Prefabs at: " + assetPackPath);
         }
-
-
 
         /// <summary>
         /// Get the guid of a given prefab, storing the result in the given SOAssetPack, if provided

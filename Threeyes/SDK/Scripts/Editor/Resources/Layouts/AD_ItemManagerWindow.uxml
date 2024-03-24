@@ -38,7 +38,6 @@
                         <uie:EnumFlagsField label="Feature (Multiple)" name="ItemFeatureEnumField" binding-path="itemFeature" />
                     </ui:Foldout>
                 </ui:VisualElement>
-                <ui:VisualElement name="Gap" class="HorizontalGap" />
                 <ui:VisualElement name="InteractionGroup">
                     <ui:VisualElement name="EditGroup" style="flex-direction: row; justify-content: space-around; align-items: stretch; border-left-width: 1px; border-right-width: 1px; border-top-width: 0; border-bottom-width: 0;">
                         <ui:Button text="Select Dir" display-tooltip-when-elided="true" name="SelectItemDirButton" focusable="true" style="overflow: visible; width: 49%;" />

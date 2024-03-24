@@ -155,10 +155,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 99f52783-9d75-48ac-9e35-0ac2253e714c
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!1 &3486593435952052136
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,7 +172,6 @@ GameObject:
   - component: {fileID: 8892420661098941832}
   - component: {fileID: 4394677030108477540}
   - component: {fileID: 2897609728659677681}
-  - component: {fileID: 8857434262973716137}
   m_Layer: 0
   m_Name: Double-Decker Table
   m_TagString: Untagged
@@ -232,10 +232,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &2897609728659677681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,33 +251,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id:
     m_Guid: 9bd266e2-e854-418a-bfcf-e9b610661414
---- !u!54 &8857434262973716137
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3486593435952052136}
-  serializedVersion: 4
-  m_Mass: 9
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &5417074837373103799
 GameObject:
   m_ObjectHideFlags: 0
@@ -766,10 +740,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: dcc96465-5ada-4296-b96e-37e9d0f0c5a1
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &3312290419068098098
 MonoBehaviour:
   m_ObjectHideFlags: 0

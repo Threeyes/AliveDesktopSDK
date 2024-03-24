@@ -30,9 +30,8 @@ public abstract class AD_SerializableItemManagerBase<T, TControllerInterface, TD
     , IHubManagerModPreInitHandler
     , IHubManagerModInitHandler
     where T : HubManagerWithControllerBase<T, TControllerInterface, TDefaultController>
-    where TControllerInterface : class, IAD_SerializableItemController<TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData>
+    where TControllerInterface : class, IAD_SerializableItemController<TBaseEleData>
     where TDefaultController : TControllerInterface
-
     where TPrefabConfigInfo : AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>, new()
     where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
     where TSOPrefabInfo : AD_SOPrefabInfo
