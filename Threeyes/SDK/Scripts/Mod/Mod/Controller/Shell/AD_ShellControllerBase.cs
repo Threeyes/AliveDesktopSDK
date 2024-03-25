@@ -5,8 +5,8 @@ using Threeyes.Config;
 using Threeyes.Core;
 using UnityEngine;
 
-public abstract class AD_ShellControllerBase<TManager, TElement, TEleData, TBaseEleData, TSOConfig, TConfig> : AD_SerializableItemControllerBase<TManager, AD_ShellPrefabConfigInfo, AD_SOShellPrefabInfoGroup, AD_SOShellPrefabInfo, TElement, TEleData, TBaseEleData, TSOConfig, TConfig>
-    where TManager : AD_SerializableItemControllerBase<TManager, AD_ShellPrefabConfigInfo, AD_SOShellPrefabInfoGroup, AD_SOShellPrefabInfo, TElement, TEleData, TBaseEleData, TSOConfig, TConfig>
+public abstract class AD_ShellControllerBase<TManager, TElement, TEleData, TBaseEleData, TSOConfig, TConfig> : AD_SerializableItemControllerBase<TManager, AD_SOShellPrefabInfoGroup, AD_SOShellPrefabInfo, TElement, TEleData, TBaseEleData, TSOConfig, TConfig>
+    where TManager : AD_SerializableItemControllerBase<TManager, AD_SOShellPrefabInfoGroup, AD_SOShellPrefabInfo, TElement, TEleData, TBaseEleData, TSOConfig, TConfig>
     where TElement : ElementBase<TEleData>, IAD_SerializableItem
     where TEleData : class, IAD_SerializableItemInfo, new()
     where TSOConfig : SOConfigBase<TConfig>

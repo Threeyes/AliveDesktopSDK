@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public abstract class AD_SerializableItemManagerSimulatorBase<T, TControllerInterface, TDefaultController, TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData> : AD_SerializableItemManagerBase<T, TControllerInterface, TDefaultController, TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData>
     where T : HubManagerWithControllerBase<T, TControllerInterface, TDefaultController>
-    where TControllerInterface : class, IAD_SerializableItemController<TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData>
+    where TControllerInterface : class, IAD_SerializableItemController<TBaseEleData>
     where TDefaultController : TControllerInterface
     where TPrefabConfigInfo : AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>, new()
     where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
@@ -20,14 +20,20 @@ public abstract class AD_SerializableItemManagerSimulatorBase<T, TControllerInte
         List<TPrefabConfigInfo> listPrefabConfigInfo = new List<TPrefabConfigInfo>();
 
         //#1 优先添加场景的配置文件
-        if (ActiveController.PrefabConfigInfo.HasElement)//避免有些Controller提供空的素材，导致显示空的UITab
-            listPrefabConfigInfo.Add(ActiveController.PrefabConfigInfo);//添加Controller的自定义配置文件
+        TPrefabConfigInfo prefabConfigInfo_SceneMod = GetSceneModPrefabConfigInfo();
+        if (prefabConfigInfo_SceneMod.HasElement)
+            listPrefabConfigInfo.Add(prefabConfigInfo_SceneMod);
+
 
         //#2 添加SDK的配置文件
         listPrefabConfigInfo.Add(sdkPrefabConfigInfo);
-   
+
+        //ToAdd:添加模型Mod的配置文件
+
         return listPrefabConfigInfo;
     }
+    protected abstract TPrefabConfigInfo GetSceneModPrefabConfigInfo();
+
     #region IHubManagerModInitHandler
     public override void OnModInit(Scene scene, ModEntry modEntry)
     {

@@ -273,7 +273,6 @@ GameObject:
   - component: {fileID: 9191109138187552817}
   - component: {fileID: 6903023213063154476}
   - component: {fileID: 2281503415405428626}
-  - component: {fileID: 8623835851096290620}
   - component: {fileID: 2147967829424058624}
   - component: {fileID: 8976450542571245851}
   - component: {fileID: 7839592548750050022}
@@ -337,10 +336,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &2281503415405428626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -355,33 +355,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id:
     m_Guid: bc8a1644-0ecc-41c9-be7a-1a6d4ab2b9f2
---- !u!54 &8623835851096290620
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8546584926831727883}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!65 &2147967829424058624
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -525,11 +498,19 @@ MonoBehaviour:
         minValue: 0
         maxValue: 100
   soOverrideConfig: {fileID: 0}
-  runtimeEditableDisplayName: 
   id:
     m_Guid: 4187eb9f-3b49-4b05-b151-7a2f95e65333
+  runtimeEditableDisplayName: 
+  cacheDefaultConfig:
+    materialIndex: 0
+    listTextureShaderProperty: []
+    listColorShaderProperty: []
+    listIntShaderProperty: []
+    listFloatShaderProperty: []
   targetRenderer: {fileID: 8080169352275953710}
   targetMaterial: {fileID: 0}
+  isShareMaterial: 0
+  listRendererMaterialInfo: []
   cloneMaterial: {fileID: 0}
 --- !u!1 &9134305315912847577
 GameObject:

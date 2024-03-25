@@ -19,11 +19,10 @@ using NaughtyAttributes;
 /// PS:
 /// -不继承SequenceElementManagerBase，是因为有很多代码不适用
 /// </summary>
-public abstract class AD_SerializableItemControllerBase<TManager, TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TElement, TEleData, TBaseEleData, TSOConfig, TConfig> : ElementGroupBase<TElement, TEleData>,
-    IAD_SerializableItemController<TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData>,
+public abstract class AD_SerializableItemControllerBase<TManager, TSOPrefabInfoGroup, TSOPrefabInfo, TElement, TEleData, TBaseEleData, TSOConfig, TConfig> : ElementGroupBase<TElement, TEleData>,
+    IAD_SerializableItemController<TBaseEleData>,
     IConfigurableComponent<TSOConfig, TConfig>
-    where TManager : AD_SerializableItemControllerBase<TManager, TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TElement, TEleData, TBaseEleData, TSOConfig, TConfig>
-    where TPrefabConfigInfo : AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>, new()
+    where TManager : AD_SerializableItemControllerBase<TManager, TSOPrefabInfoGroup, TSOPrefabInfo, TElement, TEleData, TBaseEleData, TSOConfig, TConfig>
     where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
     where TSOPrefabInfo : AD_SOPrefabInfo
     where TElement : ElementBase<TEleData>, IAD_SerializableItem
@@ -32,8 +31,6 @@ public abstract class AD_SerializableItemControllerBase<TManager, TPrefabConfigI
     where TConfig : AD_SerializableItemControllerConfigInfoBase<TSOPrefabInfo>
 {
     #region Property & Field
-    public TPrefabConfigInfo PrefabConfigInfo { get { return prefabConfigInfo; } }
-    [SerializeField] protected TPrefabConfigInfo prefabConfigInfo = new TPrefabConfigInfo();
     public Transform tfElementParent;//元素的父物体
     //管理子物体的序列化/反序列化
     public SpawnPointProvider spawnPointProvider;//[Optional]提供生成位置及时间间隔

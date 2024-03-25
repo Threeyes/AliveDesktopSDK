@@ -15,7 +15,7 @@ public interface IAD_SerializableItem :
     IRuntimeSerializableComponent
 {
     IAD_SerializableItemInfo BaseData { get; }
-    RuntimeSerializable_GameObject RuntimeSerialization_GameObject { get; }
+    RuntimeSerializable_GameObject RuntimeSerialization_GameObject { get; set; }
     /// <summary>
     /// 延迟激活特性，此类组件可以默认为disable的状态，如：
     /// -socket等Interactor，如果在初始化时激活会意外吸取其他组件
@@ -76,7 +76,7 @@ public interface IAD_SerializableItemInfo : IDisposable
 //——ItemController——
 
 /// <summary>
-/// 存储所有预制物信息的配置
+/// 存储统一区域内所有预制物信息
 /// </summary>
 [Serializable]
 public class AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>
@@ -132,13 +132,8 @@ public interface IAD_SerializableItemController :
     void DeleteElement(IAD_SerializableItem item);
 }
 
-public interface IAD_SerializableItemController<TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData> : IAD_SerializableItemController
-    where TPrefabConfigInfo : AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>, new()
-    where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
-    where TSOPrefabInfo : AD_SOPrefabInfo
+public interface IAD_SerializableItemController<TBaseEleData> : IAD_SerializableItemController
 {
-    public TPrefabConfigInfo PrefabConfigInfo { get; }
-
     /// <summary>
     /// 
     /// </summary>

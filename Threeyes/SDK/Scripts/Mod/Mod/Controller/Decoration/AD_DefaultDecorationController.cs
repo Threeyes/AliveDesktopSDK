@@ -13,7 +13,7 @@ using static AD_DefaultDecorationItem;
 ///     -Preset 适用于提前布置且能够编辑、删除的物体（如架子、桌椅等）
 ///     -如果是不可更改的静态物体，应该去掉所有可交互组件，并作为场景的的一部分
 /// </summary>
-public sealed class AD_DefaultDecorationController : AD_SerializableItemControllerBase<AD_DefaultDecorationController, AD_DecorationPrefabConfigInfo, AD_SODecorationPrefabInfoGroup, AD_SODecorationPrefabInfo, AD_DefaultDecorationItem, ItemInfo, AD_DecorationItemInfo, AD_SODefaultDecorationControllerConfig, AD_DefaultDecorationController.ConfigInfo>
+public sealed class AD_DefaultDecorationController : AD_SerializableItemControllerBase<AD_DefaultDecorationController, AD_SODecorationPrefabInfoGroup, AD_SODecorationPrefabInfo, AD_DefaultDecorationItem, ItemInfo, AD_DecorationItemInfo, AD_SODefaultDecorationControllerConfig, AD_DefaultDecorationController.ConfigInfo>
     , IAD_DecorationController
 {
     protected override ItemInfo ConvertFromBaseData(AD_DecorationItemInfo baseEleData)

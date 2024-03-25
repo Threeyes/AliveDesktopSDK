@@ -116,6 +116,19 @@ namespace Threeyes.AliveCursor.SDK.Editor
         }
 
         //——Quick Setup Scene——
+        [MenuItem("Alive Desktop/Init Select/Shell (Static)", priority = 201)]
+        public static void AD_InitSelectAsShell_Static()
+        {
+            foreach (var go in Selection.gameObjects)
+                InitSelectFunc<AD_DefaultShellItem>(go, false);
+        }
+
+        [MenuItem("Alive Desktop/Init Select/Shell (Grabable)", priority = 202)]
+        public static void AD_InitSelectAsShell_Grabable()
+        {
+            foreach (var go in Selection.gameObjects)
+                InitSelectFunc<AD_DefaultShellItem>(go, true);
+        }
 
         /// <summary>
         /// 不可交互的装饰，如墙壁（不包括Rigidbody和AD_XRGrabInteractable）
@@ -123,53 +136,49 @@ namespace Threeyes.AliveCursor.SDK.Editor
         /// PS:
         /// -纯装饰的物体层级要简单，没有Model等中间层，避免多余性能消耗
         /// </summary>
-        [MenuItem("Alive Desktop/Init Select/Static Decoration", priority = 201)]
-        public static void AD_InitSelectAsStaticDecoration()
+        [MenuItem("Alive Desktop/Init Select/Decoration (Static)", priority = 203)]
+        public static void AD_InitSelectAsDecoration_Static()
         {
             foreach (var go in Selection.gameObjects)
-            {
-                //#1 Add Components
-                AD_DefaultDecorationItem aD_DefaultDecorationItem = go.AddComponentOnce<AD_DefaultDecorationItem>();
-                RuntimeSerializable_GameObject runtimeSerialization_GameObject = go.AddComponentOnce<RuntimeSerializable_GameObject>();
-                go.AddComponentOnce<RuntimeSerializable_Transform>();
-
-                //Init Setting
-                aD_DefaultDecorationItem.runtimeSerialization_GameObject = runtimeSerialization_GameObject;
-            }
+                InitSelectFunc<AD_DefaultDecorationItem>(go, false);
         }
+
         /// <summary>
         /// 将选中物体（Prefab或场景物体）设置为【可抓取的】装饰品
         /// </summary>
-        [MenuItem("Alive Desktop/Init Select/Grabable Decoration", priority = 202)]
-        public static void AD_InitSelectAsInteractableDecoration()
+        [MenuItem("Alive Desktop/Init Select/Decoration (Grabable)", priority = 204)]
+        public static void AD_InitSelectAsDecoration_Grabable()
         {
             foreach (var go in Selection.gameObjects)
-            {
-                //#1 Add Components
-                AD_DefaultDecorationItem aD_DefaultDecorationItem = go.AddComponentOnce<AD_DefaultDecorationItem>();
-                RuntimeSerializable_GameObject runtimeSerialization_GameObject = go.AddComponentOnce<RuntimeSerializable_GameObject>();//确保编辑模式可选择
-                go.AddComponentOnce<RuntimeSerializable_Transform>();
+                InitSelectFunc<AD_DefaultDecorationItem>(go, true);
+        }
 
-                //#Interactable
+        static void InitSelectFunc<TSerializableItem>(GameObject go, bool isGrabable = false)
+            where TSerializableItem : Component, IAD_SerializableItem
+        {
+            //#1 Add Components
+            TSerializableItem aD_DefaultDecorationItem = go.AddComponentOnce<TSerializableItem>();
+            RuntimeSerializable_GameObject runtimeSerialization_GameObject = go.AddComponentOnce<RuntimeSerializable_GameObject>();//管理物体的整体序列化数据
+            go.AddComponentOnce<RuntimeSerializable_Transform>();//管理物体的Transform组件序列化数据
+            aD_DefaultDecorationItem.RuntimeSerialization_GameObject = runtimeSerialization_GameObject;//Init Serialization Setting
+
+            if (isGrabable)
+            {
                 go.AddComponentOnce<Rigidbody>();
                 AD_XRGrabInteractable aD_XRGrabInteractable = go.AddComponentOnce<AD_XRGrabInteractable>();
-
-                //Init Setting
-                aD_DefaultDecorationItem.runtimeSerialization_GameObject = runtimeSerialization_GameObject;
                 aD_XRGrabInteractable.useDynamicAttach = true;//Allow smooth grab
             }
         }
 
-
         /// <summary>
         /// 针对选中的Prefab，生成对应的SOPreabInfo
         /// </summary>
-        [MenuItem("Alive Desktop/Create PrefabInfo/Shell", priority = 203)]
+        [MenuItem("Alive Desktop/Create PrefabInfo/Shell", priority = 211)]
         public static void AD_CreatePrefabInfo_Shell()
         {
             AD_CreatePrefabInfoFunc<AD_SOShellPrefabInfo>();
         }
-        [MenuItem("Alive Desktop/Create PrefabInfo/Decoration", priority = 204)]
+        [MenuItem("Alive Desktop/Create PrefabInfo/Decoration", priority = 212)]
         public static void AD_CreatePrefabInfo_Decoration()
         {
             AD_CreatePrefabInfoFunc<AD_SODecorationPrefabInfo>();

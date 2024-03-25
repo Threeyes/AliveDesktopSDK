@@ -11,4 +11,9 @@ public class AD_DecorationManagerSimulator : AD_SerializableItemManagerSimulator
         ActiveController.RelinkElemets();
         ActiveController.InitExistElements();
     }
+
+    protected override AD_DecorationPrefabConfigInfo GetSceneModPrefabConfigInfo()
+    {
+        return AD_ManagerHolder.SceneManager.DecorationPrefabConfigInfo;
+    }
 }

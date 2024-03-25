@@ -232,9 +232,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8099300124002732893}
   - component: {fileID: 6862763671800645727}
-  - component: {fileID: 3795625537298424409}
   - component: {fileID: 1923842810495823255}
   - component: {fileID: 8259548267711892550}
+  - component: {fileID: 3795625537298424409}
   - component: {fileID: 3845159928955656517}
   - component: {fileID: 7793597800962390104}
   - component: {fileID: 2067894418797532799}
@@ -340,6 +340,37 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1923842810495823255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5728484840347150481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cacheInstanceID:
+    m_Guid: 
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
+--- !u!114 &8259548267711892550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5728484840347150481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46cd867d94071b74e894ce7a67019ac6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id:
+    m_Guid: 30c24858-ed95-46f3-82f8-0f9665b2bb69
 --- !u!54 &3795625537298424409
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -367,36 +398,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!114 &1923842810495823255
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5728484840347150481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
-  cacheInstanceID:
-    m_Guid: 
---- !u!114 &8259548267711892550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5728484840347150481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46cd867d94071b74e894ce7a67019ac6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id:
-    m_Guid: 30c24858-ed95-46f3-82f8-0f9665b2bb69
 --- !u!114 &3845159928955656517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -590,7 +591,7 @@ MonoBehaviour:
   logType: 3
   withName: 0
   format: 
-  tips: "PS\uFF1A\n-MovementType\u4E3Ainstantaneous\uFF0C\u907F\u514D\u9047\u5230\u78B0\u649E\u4F53\u65F6\u5F02\u5E38\u6296\u52A8"
+  tips: "PS\uFF1A\n-XR\u7684MovementType\u4E3Ainstantaneous\uFF0C\u907F\u514D\u9047\u5230\u78B0\u649E\u4F53\u65F6\u5F02\u5E38\u6296\u52A8"
   isLogOnConsole: 1
 --- !u!1 &6798098582026754931
 GameObject:

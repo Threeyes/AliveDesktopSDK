@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IAD_DecorationController : IAD_SerializableItemController<AD_DecorationPrefabConfigInfo, AD_SODecorationPrefabInfoGroup, AD_SODecorationPrefabInfo, AD_DecorationItemInfo>
+public interface IAD_DecorationController : IAD_SerializableItemController<AD_DecorationItemInfo>
 {
     /// <summary>
     /// 添加新装饰物
