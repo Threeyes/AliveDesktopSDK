@@ -25,7 +25,7 @@
 ## Installation via [OpenUPM](https://openupm.com/packages/com.threeyes.alivedesktop.sdk/)
 1. Install [Git](https://git-scm.com/).
 2. Create an empty Win project with [Unity2022.3.10f1](https://unity.com/releases/editor/qa/lts-releases?version=2022.3).
-3. Download the latest [manifest.json](https://raw.githubusercontent.com/Threeyes/AliveDesktopSDK/main/ProjectConfig~/manifest.json) file and replace the file with the same name in the `[ProjectRootPath]/Packages` directory. 
+3. Download the latest [manifest.json](https://raw.githubusercontent.com/Threeyes/AliveDesktopSDK/main/ProjectConfig~/manifest.json) file (Right click on the link and select: Save as...) and replace the file with the same name in the `[ProjectRootPath]/Packages` directory. 
 4. Download [ProjectSetting](https://raw.githubusercontent.com/Threeyes/AliveDesktopSDK/main/ProjectConfig~/ProjectSettings.zip) zip file, extract it and replace the folder with the same name in the `[ProjectRootPath]` directory. 
 5. Open the project, Make sure `Packages/manifest.json` contain one and only one External Script Editor that you are using in `Preferences/External Tools` (eg, VisualStudio):
 
