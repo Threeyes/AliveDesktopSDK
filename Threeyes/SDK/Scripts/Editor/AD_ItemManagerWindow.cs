@@ -283,7 +283,7 @@ namespace Threeyes.AliveCursor.SDK.Editor
                     AssetDatabase.CreateAsset(soInstTemp, assetPackPath);
                     AssetDatabase.SaveAssets();
                     AssetDatabase.Refresh();
-                    soInst = AssetDatabase.LoadAssetAtPath<TSOPrefabInfo>(assetPackPath);//便于被选中
+                    soInst = AssetDatabase.LoadAssetAtPath<TSOPrefabInfo>(assetPackPath);//重新加载Assets中的文件，便于后续被选中
                     //hasCreated = true;
                 }
                 soInst.Prefab = goRootPrefab;

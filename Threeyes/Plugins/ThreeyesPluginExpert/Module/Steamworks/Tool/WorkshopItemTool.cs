@@ -48,11 +48,11 @@ namespace Threeyes.Steamworks
             List<TAsset> listAsset = new List<TAsset>();
 
 #if UNITY_EDITOR
-            AssetDatabaseTool.LoadAssets<TAsset>($"t:{typeof(TAsset).Name}", new string[] { SOWorkshopItemInfo.GetRelatedItemDirPath(workshopItemInfo.title) });
+            listAsset = AssetDatabaseTool.LoadAssets<TAsset>($"t:{typeof(TAsset).Name}", new string[] { SOWorkshopItemInfo.GetRelatedItemDirPath(workshopItemInfo.title) });
 #else
             Debug.LogError($"Can't call {nameof(LoadAsset_UnityProject)} at runtime!");
 #endif
-            
+
             return listAsset;
         }
 

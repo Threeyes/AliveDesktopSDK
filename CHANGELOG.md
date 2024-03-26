@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.5.3]
+- Fix Item's PrefabInfoGroup not loading correctly at Simulator mode.
+
 ## [0.5.2]
 - Update Top Menu.
 

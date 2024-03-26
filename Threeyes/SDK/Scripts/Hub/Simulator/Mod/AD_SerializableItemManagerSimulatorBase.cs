@@ -24,7 +24,6 @@ public abstract class AD_SerializableItemManagerSimulatorBase<T, TControllerInte
         if (prefabConfigInfo_SceneMod.HasElement)
             listPrefabConfigInfo.Add(prefabConfigInfo_SceneMod);
 
-
         //#2 添加SDK的配置文件
         listPrefabConfigInfo.Add(sdkPrefabConfigInfo);
 
