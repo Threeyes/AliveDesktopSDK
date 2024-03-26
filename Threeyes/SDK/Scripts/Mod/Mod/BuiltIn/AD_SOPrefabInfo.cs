@@ -11,6 +11,4 @@ using UnityEngine;
 //[CreateAssetMenu(menuName = AD_EditorDefinition.AssetMenuPrefix_Root_Common + "PrefabInfo", fileName = "PrefabInfo")]
 public class AD_SOPrefabInfo : SOPrefabInfo
 {
-    ///ToAdd:
-    ///-string类型的Category，将相同类别的预制物信息归类到同一组中
 }

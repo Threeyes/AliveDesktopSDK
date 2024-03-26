@@ -16,7 +16,7 @@ using UnityEngine.EventSystems;
 /// -Data增加一个overrideDisplayName，方便用户更改其显示名称（也可以是直接为源文件改名并重链接）
 /// </summary>
 public sealed class AD_DefaultShellItem : AD_SerializableItemWithContextMenuBase<AD_DefaultShellItem, AD_DefaultShellItem.ItemInfo, AD_DefaultShellItem.ItemPropertyBag>
-    , IAD_FileSystemItem
+    , IAD_ShellItem
 {
     public StringEvent onInitName;
     public TextureEvent onInitPreview;

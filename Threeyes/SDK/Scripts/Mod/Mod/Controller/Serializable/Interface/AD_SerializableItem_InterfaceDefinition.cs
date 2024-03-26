@@ -30,7 +30,7 @@ public interface IAD_SerializableItem :
 public interface IAD_SerializableItemWithContextMenu : IAD_SerializableItem
     , IContextMenuProvider//由自身提供ContextMenu
 { }
-public interface IAD_FileSystemItem : IAD_SerializableItemWithContextMenu
+public interface IAD_ShellItem : IAD_SerializableItemWithContextMenu
     , IRuntimeEditorSelectable//运行时可选
 {
 }

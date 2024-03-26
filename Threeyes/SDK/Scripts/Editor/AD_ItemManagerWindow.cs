@@ -13,7 +13,7 @@ using Threeyes.Core.Editor;
 using System.IO;
 using Threeyes.Common;
 using System.Collections.Generic;
-
+using System.Linq;
 namespace Threeyes.AliveCursor.SDK.Editor
 {
     /// <summary>
@@ -115,19 +115,85 @@ namespace Threeyes.AliveCursor.SDK.Editor
             CreateOrUpdateAssetPack(workshopItemInfo);
         }
 
+
+        //——验证方法——
+        [MenuItem("Alive Desktop/Shell/Init/Static Object", true)]
+        public static bool AD_Shell_Init_StaticValidate()
+        {
+            return Selection.objects.Any(obj => obj is GameObject);
+        }
+        [MenuItem("Alive Desktop/Shell/Init/Grabable Object", true)]
+        public static bool AD_Shell_Init_GrabableValidate()
+        {
+            return Selection.objects.Any(obj => obj is GameObject);
+        }
+        [MenuItem("Alive Desktop/Shell/PrefabInfo/Create", true)]
+        public static bool AD_Shell_PrefabInfo_CreateValidate()
+        {
+            return Selection.objects.Any(obj =>
+            {
+                if (EditorUtility.IsPersistent(obj) && obj is GameObject go)
+                {
+                    return go.GetComponent<IAD_ShellItem>() != null;
+                }
+                return false;
+            });//至少有一个选中物体，挂载了指定组件
+        }
+        [MenuItem("Alive Desktop/Shell/PrefabInfo/Group Selected", true)]
+        public static bool AD_Shell_PrefabInfo_GroupSelectedValidate()
+        {
+            return Selection.objects.Any(obj => obj is AD_SOShellPrefabInfo);//是指定类型文件
+        }
+        [MenuItem("Alive Desktop/Decoration/Init/Static Object", true)]
+        public static bool AD_Decoration_Init_StaticValidate()
+        {
+            return Selection.objects.Any(obj => obj is GameObject);
+        }
+        [MenuItem("Alive Desktop/Decoration/Init/Grabable Object", true)]
+        public static bool AD_Decoration_Init_GrabableValidate()
+        {
+            return Selection.objects.Any(obj => obj is GameObject);
+        }
+        [MenuItem("Alive Desktop/Decoration/PrefabInfo/Create", true)]
+        public static bool AD_Decoration_PrefabInfo_CreateValidate()
+        {
+            return Selection.objects.Any(obj =>
+            {
+                if (EditorUtility.IsPersistent(obj) && obj is GameObject go)
+                {
+                    return go.GetComponent<IAD_DecorationItem>() != null;
+                }
+                return false;
+            });//至少有一个选中物体，挂载了指定组件
+        }
+        [MenuItem("Alive Desktop/Decoration/PrefabInfo/Group Selected", true)]
+        public static bool AD_Decoration_PrefabInfo_GroupSelectedValidate()
+        {
+            return Selection.objects.Any(obj => obj is AD_SODecorationPrefabInfo);//是指定类型文件
+        }
+
         //——Quick Setup Scene——
-        [MenuItem("Alive Desktop/Init Select/Shell (Static)", priority = 201)]
-        public static void AD_InitSelectAsShell_Static()
+        [MenuItem("Alive Desktop/Shell/Init/Static Object", priority = 201)]
+        public static void AD_Shell_Init_Static()
         {
             foreach (var go in Selection.gameObjects)
                 InitSelectFunc<AD_DefaultShellItem>(go, false);
         }
-
-        [MenuItem("Alive Desktop/Init Select/Shell (Grabable)", priority = 202)]
-        public static void AD_InitSelectAsShell_Grabable()
+        [MenuItem("Alive Desktop/Shell/Init/Grabable Object", priority = 202)]
+        public static void AD_Shell_Init_Grabable()
         {
             foreach (var go in Selection.gameObjects)
                 InitSelectFunc<AD_DefaultShellItem>(go, true);
+        }
+        [MenuItem("Alive Desktop/Shell/PrefabInfo/Create", priority = 205)]
+        public static void AD_Shell_PrefabInfo_Create()
+        {
+            CreateSOPrefabInfoFunc<IAD_ShellItem, AD_SOShellPrefabInfo>();
+        }
+        [MenuItem("Alive Desktop/Shell/PrefabInfo/Group Selected", priority = 206)]
+        public static void AD_Shell_PrefabInfo_GroupSelected()
+        {
+            AD_SOShellPrefabInfoGroup.CreateUsingSelectedObjects();
         }
 
         /// <summary>
@@ -136,22 +202,38 @@ namespace Threeyes.AliveCursor.SDK.Editor
         /// PS:
         /// -纯装饰的物体层级要简单，没有Model等中间层，避免多余性能消耗
         /// </summary>
-        [MenuItem("Alive Desktop/Init Select/Decoration (Static)", priority = 203)]
-        public static void AD_InitSelectAsDecoration_Static()
+        [MenuItem("Alive Desktop/Decoration/Init/Static Object", priority = 211)]
+        public static void AD_Decoration_Init_Static()
         {
             foreach (var go in Selection.gameObjects)
                 InitSelectFunc<AD_DefaultDecorationItem>(go, false);
         }
-
         /// <summary>
-        /// 将选中物体（Prefab或场景物体）设置为【可抓取的】装饰品
+        /// 将选中的场景物体或Prefab 设置为【可抓取的】装饰品
         /// </summary>
-        [MenuItem("Alive Desktop/Init Select/Decoration (Grabable)", priority = 204)]
-        public static void AD_InitSelectAsDecoration_Grabable()
+        [MenuItem("Alive Desktop/Decoration/Init/Grabable Object", priority = 212)]
+        public static void AD_Decoration_Init_Grabable()
         {
             foreach (var go in Selection.gameObjects)
                 InitSelectFunc<AD_DefaultDecorationItem>(go, true);
         }
+        /// <summary>
+        /// 基于选中的Preafb，生成对应的PrefabInfo
+        /// </summary>
+        [MenuItem("Alive Desktop/Decoration/PrefabInfo/Create", priority = 215)]
+        public static void AD_Decoration_PrefabInfo_Create()
+        {
+            CreateSOPrefabInfoFunc<IAD_DecorationItem, AD_SODecorationPrefabInfo>();
+        }
+        /// <summary>
+        /// 把选中的PrefabInfo成组
+        /// </summary>
+        [MenuItem("Alive Desktop/Decoration/PrefabInfo/Group Selected", priority = 216)]
+        public static void AD_Decoration_PrefabInfo_GroupSelected()
+        {
+            AD_SODecorationPrefabInfoGroup.CreateUsingSelectedObjects();
+        }
+
 
         static void InitSelectFunc<TSerializableItem>(GameObject go, bool isGrabable = false)
             where TSerializableItem : Component, IAD_SerializableItem
@@ -170,23 +252,9 @@ namespace Threeyes.AliveCursor.SDK.Editor
             }
         }
 
-        /// <summary>
-        /// 针对选中的Prefab，生成对应的SOPreabInfo
-        /// </summary>
-        [MenuItem("Alive Desktop/Create PrefabInfo/Shell", priority = 211)]
-        public static void AD_CreatePrefabInfo_Shell()
-        {
-            AD_CreatePrefabInfoFunc<AD_SOShellPrefabInfo>();
-        }
-        [MenuItem("Alive Desktop/Create PrefabInfo/Decoration", priority = 212)]
-        public static void AD_CreatePrefabInfo_Decoration()
-        {
-            AD_CreatePrefabInfoFunc<AD_SODecorationPrefabInfo>();
-        }
-
         const string prefabInfoDirName = "PrefabInfo";
-        static void AD_CreatePrefabInfoFunc<TSOPrefabInfo>()
-           where TSOPrefabInfo : SOPrefabInfo
+        static void CreateSOPrefabInfoFunc<TItem, TSOPrefabInfo>()
+           where TSOPrefabInfo : AD_SOPrefabInfo
         {
             ///PS:
             ///-只创建SO，不创建SOGroup，因为用户可能会使用一个Group来包含多个文件夹中的SO
@@ -197,58 +265,36 @@ namespace Threeyes.AliveCursor.SDK.Editor
                     continue;
 
                 GameObject goRootPrefab = go.transform.root.gameObject;//查找根Prefab
+                if (goRootPrefab.GetComponent<TItem>() == null)//忽略没有挂载指定组件的物体
+                    continue;
 
                 string absPrefabFilePath = EditorPathTool.GetAssetAbsPath(goRootPrefab);
                 FileInfo fileInfo_Prefab = new FileInfo(absPrefabFilePath);
 
-                string outputDir = fileInfo_Prefab.Directory.Parent.FullName + "/" + prefabInfoDirName; //暂时存在Prefab父文件夹同级的PreabInfo文件夹下，用户可自行挪动到其他位置
+                string outputDir = fileInfo_Prefab.Directory.FullName + "/" + prefabInfoDirName; //暂时存在Prefab文件夹的PreabInfo文件夹下，用户可自行挪动到其他位置
                 PathTool.GetOrCreateDir(outputDir);
-
 
                 string assetPackPath = EditorPathTool.AbsToUnityRelatePath(outputDir + "/" + goRootPrefab.name + ".asset");
                 TSOPrefabInfo soInst = AssetDatabase.LoadAssetAtPath<TSOPrefabInfo>(assetPackPath);
-                bool created = false;
+                //bool hasCreated = false;
                 if (soInst == null)
                 {
-                    soInst = ScriptableObject.CreateInstance<TSOPrefabInfo>();
-                    AssetDatabase.CreateAsset(soInst, assetPackPath);
+                    TSOPrefabInfo soInstTemp = CreateInstance<TSOPrefabInfo>();
+                    AssetDatabase.CreateAsset(soInstTemp, assetPackPath);
                     AssetDatabase.SaveAssets();
-                    created = true;
-
+                    AssetDatabase.Refresh();
+                    soInst = AssetDatabase.LoadAssetAtPath<TSOPrefabInfo>(assetPackPath);//便于被选中
+                    //hasCreated = true;
                 }
                 soInst.Prefab = goRootPrefab;
                 soInst.InitAfterPrefab();
-
-                Debug.Log($"{(created ? "Create" : "Update")} {goRootPrefab.name}'s SOPreabInfo at path: {outputDir}");
+                //Debug.Log($"{(hasCreated ? "Create" : "Update")} {goRootPrefab.name}'s SOPreabInfo at path: {outputDir}");
 
                 listResult.Add(soInst);
             }
-            Selection.objects = listResult.ToArray();
-            AssetDatabase.Refresh();
+            Selection.objects = listResult.ToArray();//PS:可能EditorUI、报错（ArgumentOutOfRangeException: Index was out of range.），但程序正常运行。遇到此问题可以重置UnityEditor的Layout
         }
 
-
-        //——验证方法——
-        [MenuItem("Alive Desktop/Init Select/Static Decoration", true, priority = 201)]
-        public static bool AD_InitSelectAsStaticDecorationValidate()
-        {
-            return Selection.activeGameObject != null;
-        }
-        [MenuItem("Alive Desktop/Init Select/Grabable Decoration", true, priority = 202)]
-        public static bool AD_InitSelectAsInteractableDecorationValidate()
-        {
-            return Selection.activeGameObject != null;
-        }
-        [MenuItem("Alive Desktop/Create PrefabInfo/Shell", true, priority = 203)]
-        public static bool AD_CreatePrefabInfo_ShellValidate()
-        {
-            return Selection.activeGameObject != null;
-        }
-        [MenuItem("Alive Desktop/Create PrefabInfo/Decoration", true, priority = 204)]
-        public static bool AD_CreatePrefabInfo_DecorationValidate()
-        {
-            return Selection.activeGameObject != null;
-        }
         //——Build & Run——
 
         [MenuItem("Alive Desktop/Build And Run %m", priority = 1001)]

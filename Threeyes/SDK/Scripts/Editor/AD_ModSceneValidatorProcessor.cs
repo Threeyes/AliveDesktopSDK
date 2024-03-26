@@ -31,7 +31,7 @@ public class AD_ModSceneValidatorProcessor : BuildEngineProcessor
 
         bool validScene = true;
         string errorInfo = null;
-        //# 场景ModdScene
+        //# 场景Mod的Scene文件
         if (asset.FullPath.GetFileNameWithoutExtension() == SOWorkshopItemInfo.SceneName)//只处理与ItemScene名称相关（如果Model里面包含场景，只要不是与Scene同名，则不会被处理）
         {
             // Load the scene into the editor

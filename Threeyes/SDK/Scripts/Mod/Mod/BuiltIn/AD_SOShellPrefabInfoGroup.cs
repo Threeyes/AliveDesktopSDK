@@ -14,4 +14,9 @@ public class AD_SOShellPrefabInfoGroup : AD_SOPrefabInfoGroupBase<AD_SOShellPref
     {
         InitUsingCurFolderFunc();
     }
+
+    public static void CreateUsingSelectedObjects()
+    {
+        CreateUsingSelectedObjectsFunc<AD_SOShellPrefabInfoGroup>("ShellItemGroup");
+    }
 }
