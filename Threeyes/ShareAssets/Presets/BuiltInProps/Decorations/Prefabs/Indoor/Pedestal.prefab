@@ -344,7 +344,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3825561062623822593}
@@ -673,10 +673,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 942bb6ae-20e0-40b2-90f7-1ab7281a374d
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &8027532685707796667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -897,14 +898,10 @@ MonoBehaviour:
   id:
     m_Guid: fee15658-78dd-4b4f-b386-bc010d4025d8
   runtimeEditableDisplayName: Top
-  cacheDefaultConfig:
-    materialIndex: 0
-    listTextureShaderProperty: []
-    listColorShaderProperty: []
-    listIntShaderProperty: []
-    listFloatShaderProperty: []
   targetRenderer: {fileID: 0}
   targetMaterial: {fileID: 2100000, guid: 0cbde1c4f2aa8fa478dabce1b45aaacc, type: 2}
+  isShareMaterial: 0
+  listRendererMaterialInfo: []
   cloneMaterial: {fileID: 0}
 --- !u!114 &7943839712298339469
 MonoBehaviour:

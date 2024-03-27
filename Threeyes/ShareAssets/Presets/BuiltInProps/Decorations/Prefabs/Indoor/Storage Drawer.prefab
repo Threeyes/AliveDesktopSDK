@@ -74,10 +74,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 3d197a64-4b21-4a3d-adad-79fbffa7827d
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &4249930684228109081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -671,8 +672,8 @@ Transform:
   m_GameObject: {fileID: 7214194272036145958}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.221, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.1326, z: 0}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3050433836916978310}
@@ -691,10 +692,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: a71acbc2-37e2-40e5-99cc-bde30dc2ca79
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!1 &7282577913602112015
 GameObject:
   m_ObjectHideFlags: 0

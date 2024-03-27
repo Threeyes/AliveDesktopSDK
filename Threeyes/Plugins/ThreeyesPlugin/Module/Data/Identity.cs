@@ -59,10 +59,6 @@ namespace Threeyes.Data
         }
 
         #region IEquatable (Ref: ReplayIdentity)
-        public override int GetHashCode()
-        {
-            return m_Guid.GetHashCode();
-        }
         public override bool Equals(object obj)
         {
             if (obj is Identity other)
@@ -70,6 +66,10 @@ namespace Threeyes.Data
                 return Equals(other);
             }
             return false;
+        }
+        public override int GetHashCode()
+        {
+            return m_Guid.GetHashCode();
         }
         public bool Equals(Identity other)
         {

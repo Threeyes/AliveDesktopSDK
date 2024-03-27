@@ -333,7 +333,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5512801658212282247}
@@ -523,10 +523,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 8a58d146-9e20-46ca-9f0b-8d64c2fda136
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &7086396444408013045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -741,9 +742,9 @@ MonoBehaviour:
     isVideoMute: 0
     PersistentDirPath: 
   soOverrideConfig: {fileID: 0}
-  runtimeEditableDisplayName: Monitor
   id:
     m_Guid: 6332bb39-7c1e-4c1d-a5e1-ff4f61f91d27
+  runtimeEditableDisplayName: Monitor
   rendererHelper: {fileID: 8681155624472537141}
   gifPlayer: {fileID: 361945687494157488}
   useRendererHelperToDisplayGif: 1
@@ -777,11 +778,13 @@ MonoBehaviour:
     listIntShaderProperty: []
     listFloatShaderProperty: []
   soOverrideConfig: {fileID: 0}
-  runtimeEditableDisplayName: Monitor
   id:
     m_Guid: bbd9013a-11e0-46e7-b399-cc5cd531be25
+  runtimeEditableDisplayName: Monitor
   targetRenderer: {fileID: 321965517507199584}
   targetMaterial: {fileID: 0}
+  isShareMaterial: 0
+  listRendererMaterialInfo: []
   cloneMaterial: {fileID: 0}
 --- !u!1 &5417666320595008278
 GameObject:
@@ -890,6 +893,8 @@ MonoBehaviour:
   materialColorType: 1
   customMaterialColorName: 
   isKeepAlpha: 1
+  materialFloatType: 5
+  customMaterialFloatName: 
 --- !u!1 &5474295359945916531
 GameObject:
   m_ObjectHideFlags: 0

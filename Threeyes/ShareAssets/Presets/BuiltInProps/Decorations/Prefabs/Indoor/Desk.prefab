@@ -360,10 +360,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 98bed1ec-8a0c-4d25-9552-72fa691f1c0e
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!1 &4396492726975296367
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,10 +410,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 834dcb63-6bf8-443e-872f-8f7c5f54dcf9
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!1 &5258723130661619980
 GameObject:
   m_ObjectHideFlags: 0
@@ -440,7 +442,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9206564472784857616}
@@ -459,10 +461,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 54e77801-8da7-4560-b471-1cbfafa7802a
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!1 &5723508038621786478
 GameObject:
   m_ObjectHideFlags: 0
@@ -650,10 +653,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: ebecc829-c535-46f0-a204-e96ab37b6851
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!1 &6056163017726989382
 GameObject:
   m_ObjectHideFlags: 0
@@ -832,10 +836,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &4590048314876196620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1049,10 +1054,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 0fae9d2d-81da-460f-91b4-3ca5ae6e4fb5
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!1001 &1826951579703218122
 PrefabInstance:
   m_ObjectHideFlags: 0

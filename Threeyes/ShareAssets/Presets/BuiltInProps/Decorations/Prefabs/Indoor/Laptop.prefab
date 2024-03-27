@@ -371,7 +371,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3702490692090817560}
@@ -390,10 +390,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 082855fa-0f51-48c4-b3af-e64e999a3299
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!1 &2407471123070600598
 GameObject:
   m_ObjectHideFlags: 0
@@ -1290,10 +1291,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 76521580-91e5-4acc-81d4-01de50082bac
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &2587385534332000431
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1529,9 +1531,9 @@ MonoBehaviour:
     isVideoMute: 0
     PersistentDirPath: 
   soOverrideConfig: {fileID: 0}
-  runtimeEditableDisplayName: Monitor
   id:
     m_Guid: 6332bb39-7c1e-4c1d-a5e1-ff4f61f91d27
+  runtimeEditableDisplayName: Monitor
   rendererHelper: {fileID: 4245925144460132899}
   gifPlayer: {fileID: 3422277734175656279}
   useRendererHelperToDisplayGif: 1
@@ -1565,11 +1567,13 @@ MonoBehaviour:
     listIntShaderProperty: []
     listFloatShaderProperty: []
   soOverrideConfig: {fileID: 0}
-  runtimeEditableDisplayName: Monitor
   id:
     m_Guid: bbd9013a-11e0-46e7-b399-cc5cd531be25
+  runtimeEditableDisplayName: Monitor
   targetRenderer: {fileID: 4142892381620055246}
   targetMaterial: {fileID: 0}
+  isShareMaterial: 0
+  listRendererMaterialInfo: []
   cloneMaterial: {fileID: 0}
 --- !u!114 &3693201753221831789
 MonoBehaviour:
@@ -1614,11 +1618,13 @@ MonoBehaviour:
         minValue: 0
         maxValue: 1
   soOverrideConfig: {fileID: 0}
-  runtimeEditableDisplayName: A
   id:
     m_Guid: b3e2a472-8722-431a-ac17-fc54483a88ee
+  runtimeEditableDisplayName: A
   targetRenderer: {fileID: 3810028914543361860}
   targetMaterial: {fileID: 0}
+  isShareMaterial: 0
+  listRendererMaterialInfo: []
   cloneMaterial: {fileID: 0}
 --- !u!114 &4730484360361279212
 MonoBehaviour:
@@ -1663,11 +1669,13 @@ MonoBehaviour:
         minValue: 0
         maxValue: 1
   soOverrideConfig: {fileID: 0}
-  runtimeEditableDisplayName: B
   id:
     m_Guid: 9e24e6b3-6a98-447f-b0c7-98a9c6cee483
+  runtimeEditableDisplayName: B
   targetRenderer: {fileID: 8578734663023725543}
   targetMaterial: {fileID: 0}
+  isShareMaterial: 0
+  listRendererMaterialInfo: []
   cloneMaterial: {fileID: 0}
 --- !u!114 &739792066896642677
 MonoBehaviour:
@@ -1712,11 +1720,13 @@ MonoBehaviour:
         minValue: 0
         maxValue: 1
   soOverrideConfig: {fileID: 0}
-  runtimeEditableDisplayName: C
   id:
     m_Guid: 36c30d6c-d639-4e2f-babb-55f3397d0ad8
+  runtimeEditableDisplayName: C
   targetRenderer: {fileID: 1374062190375788614}
   targetMaterial: {fileID: 0}
+  isShareMaterial: 0
+  listRendererMaterialInfo: []
   cloneMaterial: {fileID: 0}
 --- !u!114 &9149551410846881000
 MonoBehaviour:
@@ -1761,11 +1771,13 @@ MonoBehaviour:
         minValue: 0
         maxValue: 1
   soOverrideConfig: {fileID: 0}
-  runtimeEditableDisplayName: D
   id:
     m_Guid: a2e1d42c-08ee-4604-962c-cafd1df8d0e5
+  runtimeEditableDisplayName: D
   targetRenderer: {fileID: 7583458711731717577}
   targetMaterial: {fileID: 0}
+  isShareMaterial: 0
+  listRendererMaterialInfo: []
   cloneMaterial: {fileID: 0}
 --- !u!1 &4745358062287274663
 GameObject:
@@ -2077,6 +2089,8 @@ MonoBehaviour:
   materialColorType: 1
   customMaterialColorName: 
   isKeepAlpha: 1
+  materialFloatType: 5
+  customMaterialFloatName: 
 --- !u!114 &3320605503919055760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2378,10 +2392,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 3ed4b70b-92e3-4d02-8f31-1a5ec46fb418
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!1 &6995310876268516063
 GameObject:
   m_ObjectHideFlags: 0

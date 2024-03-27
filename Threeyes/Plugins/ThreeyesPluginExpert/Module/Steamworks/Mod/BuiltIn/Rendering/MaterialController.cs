@@ -42,7 +42,7 @@ namespace Threeyes.Steamworks
 
         //Set either one to provide material
         [SerializeField] protected Renderer targetRenderer;//Where the material attached
-        [SerializeField] protected Material targetMaterial;//[Optional] Target material asset （源资源）
+        [SerializeField] protected Material targetMaterial;//[Optional] Target material asset （资源文件）
         [SerializeField] protected bool isShareMaterial = false;//是否修改共享材质（仅当targetRenderer不为空时有效），适用于多个物体共用同一个材质
         [SerializeField]
         protected List<RendererMaterialInfo> listRendererMaterialInfo = new List<RendererMaterialInfo>();//其他模型的材质信息，方便针对多个使用了相同或类似材质的模型进行统一修改
@@ -77,8 +77,35 @@ namespace Threeyes.Steamworks
         #endregion
 
         #region Callback
+        //protected override void OnPersistentChanged(PersistentChangeState persistentChangeState)
+        //{
+        //    if(persistentChangeState== PersistentChangeState.Load)
+        //    {
+
+        //    }
+        //    base.OnPersistentChanged(persistentChangeState);
+        //}
+
+        protected ConfigInfo cacheValidConfig = null;//缓存上次有效的配置
         public override void UpdateSetting()
         {
+            if (cacheValidConfig == null)
+                cacheValidConfig = UnityObjectTool.DeepCopy(cacheDefaultConfig);
+            ///ToUpdate:
+            ///-应该只有在开始的时候才需要这样比较（或者是比较上次有效修改的材质）。
+            ///- 一旦生成材质克隆，就不要比较（可以检查指定材质是否有(instance)后缀）。
+            ///-只有当Config与cacheDefaultConfig不同时（可以先简单按顺序匹配，检查每个元素是否一致）（需要重载各种类的Equal方法，包括DataOption。参考BasicData<TValue>的实现），才进行更新，避免出现多个克隆材质
+            if (Equals(Config, cacheValidConfig))
+            {
+                //Debug.LogError("[Debug]Checking Config equal!");
+                return;
+            }
+            else
+            {
+                //PS:由Json等调用时，可能会进入
+                //Debug.LogError("[Debug]Checking Config not equal!");
+            }
+
             SetMaterial(Material);
 
             //针对额外的Renderer进行修改（因为使用的材质可能不一致，仅仅是某些字段相同，所以不能直接用Material对其他Renderer进行替换）
@@ -87,6 +114,8 @@ namespace Threeyes.Steamworks
                 Material renderMaterial = GetMaterial(rmInfo.renderer, rmInfo.materialIndex, false);//一般不使用Share材质，否则也不用指定
                 SetMaterial(renderMaterial);
             }
+
+            cacheValidConfig = UnityObjectTool.DeepCopy(Config);
         }
 
         private void SetMaterial(Material targetMaterial)
@@ -145,7 +174,7 @@ namespace Threeyes.Steamworks
         /// <param name="materialIndex"></param>
         /// <param name="isShareMaterial"></param>
         /// <returns>如果找不到，则返回null</returns>
-        static Material GetMaterial(Renderer targetRenderer, int materialIndex, bool isShareMaterial)
+        Material GetMaterial(Renderer targetRenderer, int materialIndex, bool isShareMaterial)
         {
             if (targetRenderer)
             {
@@ -159,15 +188,62 @@ namespace Threeyes.Steamworks
                     }
                     else
                     {
+                        ///PS:以下实现可用，但是会克隆列表的所有材质。
+                        ///【优先】更优的解决办法：不使用多材质，进行模型拆分
                         if (targetRenderer.materials.Length > materialIndex)
                         {
                             desireMaterial = targetRenderer.materials[materialIndex];
                         }
+
+                        /////PS：以下实现只获取单个材质，而不是调用materials导致返回多个克隆材质（可以通过sharedMaterials获取指定的材质，然后直接克隆，并且赋值给materials字段）
+                        /////     -待解决：以上实现仅调用一次，然后就通过字典等进行存储，避免重复调用
+                        /////     -如果由其他物体调用materials，可能还是会导致重新生成材质克隆导致无法正常链接
+                        //desireMaterial = GetCacheMaterial(targetRenderer, materialIndex);
+                        //if (desireMaterial == null)
+                        //{
+                        //    if (targetRenderer.sharedMaterials.Length > materialIndex)
+                        //    {
+                        //        Material shareDesireMaterial = targetRenderer.sharedMaterials[materialIndex];
+                        //        desireMaterial = Instantiate(shareDesireMaterial);
+                        //        Material[] materialsClone = targetRenderer.sharedMaterials.Clone() as Material[];
+                        //        materialsClone[materialIndex] = desireMaterial;//替换对应的材质
+                        //        targetRenderer.materials = materialsClone;
+
+                        //        listRuntimeRMInfo.Add(new RuntimeRenderMaterialInfo(targetRenderer, materialIndex, desireMaterial));
+                        //    }
+                        //}
                     }
                 }
                 return desireMaterial;
             }
             return null;
+        }
+        Material GetCacheMaterial(Renderer targetRenderer, int materialIndex)
+        {
+            foreach (var rmInfo in listRuntimeRMInfo)
+            {
+                if (rmInfo.renderer == targetRenderer && rmInfo.materialIndex == materialIndex && rmInfo.material != null)
+                    return rmInfo.material;
+            }
+            return null;
+        }
+        List<RuntimeRenderMaterialInfo> listRuntimeRMInfo = new List<RuntimeRenderMaterialInfo>();//缓存运行时使用的材质
+        /// <summary>
+        /// 记录运行时获取的信息
+        /// </summary>
+        class RuntimeRenderMaterialInfo
+        {
+            public Renderer renderer;
+            public int materialIndex;
+
+            public Material material;
+
+            public RuntimeRenderMaterialInfo(Renderer renderer, int materialIndex, Material material)
+            {
+                this.renderer = renderer;
+                this.materialIndex = materialIndex;
+                this.material = material;
+            }
         }
         #endregion
 
@@ -219,13 +295,14 @@ namespace Threeyes.Steamworks
         public class RendererMaterialInfo
         {
             public Renderer renderer;
-            public int materialIndex = 0;//对应的材质信息
+            public int materialIndex = 0;//对应的材质序号
         }
 
         //针对每个贴图（包含默认贴图）、float、vector等定义对应数据类，并且存储在各自的List中。具体结构参考（debug模式）shader
 
         [Serializable]
         public class ConfigInfo : SerializableComponentConfigInfoBase
+            , IEquatable<ConfigInfo>
         {
             public int materialIndex = 0;
 
@@ -233,12 +310,53 @@ namespace Threeyes.Steamworks
             public List<ColorShaderProperty> listColorShaderProperty = new List<ColorShaderProperty>();
             public List<IntShaderProperty> listIntShaderProperty = new List<IntShaderProperty>();
             public List<FloatShaderProperty> listFloatShaderProperty = new List<FloatShaderProperty>();
+
+            #region IEquatable
+            public override bool Equals(object obj) { return Equals(obj as ConfigInfo); }
+            public override int GetHashCode() { return base.GetHashCode(); }
+            public bool Equals(ConfigInfo other)
+            {
+                if (other == null)
+                    return false;
+
+                //bool isEqual =
+                //    materialIndex.Equals(other.materialIndex) &&
+                //    listTextureShaderProperty.IsSequenceEqual(other.listTextureShaderProperty) &&
+                //    listColorShaderProperty.IsSequenceEqual(other.listColorShaderProperty) &&
+                //    listIntShaderProperty.IsSequenceEqual(other.listIntShaderProperty) &&
+                //    listFloatShaderProperty.IsSequenceEqual(other.listFloatShaderProperty);
+                bool isEqual = materialIndex.Equals(other.materialIndex);
+                isEqual &= listTextureShaderProperty.IsSequenceEqual(other.listTextureShaderProperty);
+                isEqual &= listColorShaderProperty.IsSequenceEqual(other.listColorShaderProperty);
+                isEqual &= listIntShaderProperty.IsSequenceEqual(other.listIntShaderProperty);
+                isEqual &= listFloatShaderProperty.IsSequenceEqual(other.listFloatShaderProperty);
+
+                return isEqual;
+            }
+            #endregion
         }
         public class PropertyBag : ConfigurableComponentPropertyBagBase<MaterialController, ConfigInfo> { }
 
+        /// <summary>
+        /// 
+        /// PS:
+        /// -因为每个子类的value字段都有对应的attribute，所以不能在该基类中提前定义
+        /// </summary>
         public class ShaderPropertyBase : SerializableDataBase
+            , IEquatable<ShaderPropertyBase>
         {
             public string name;//shader field name, set by modder（如：_BaseMap）（Todo【非必要，可以供用户动态修改】：runtimeEdit时不可编辑，但在UnityEditor可编辑。如有必要可自行写一个Attribute，增加一个bool值：editorEditableonly）
+
+            #region IEquatable
+            public override bool Equals(object obj) { return Equals(obj as ShaderPropertyBase); }
+            public override int GetHashCode() { return base.GetHashCode(); }
+            public virtual bool Equals(ShaderPropertyBase other)
+            {
+                if (other == null)
+                    return false;
+                return Equals(name, other.name);
+            }
+            #endregion
         }
 
         /// <summary>
@@ -249,7 +367,8 @@ namespace Threeyes.Steamworks
         /// -_BaseMap
         /// </summary>
         [Serializable]
-        public class TextureShaderProperty : ShaderPropertyBase, System.IDisposable
+        public class TextureShaderProperty : ShaderPropertyBase, IDisposable
+            , IEquatable<TextureShaderProperty>
         {
             public Texture Texture { get { return externalTexture ? externalTexture : defaultTexture; } }
 
@@ -260,7 +379,7 @@ namespace Threeyes.Steamworks
             public Vector2 offset = new Vector2(0, 0);
 
             //ToAdd：导入图片的类型（如通过TextureTool进一步转为noramlMap）
-
+            //#Runtime
             [HideInInspector] [JsonIgnore] [PersistentDirPath] public string PersistentDirPath;//必须要有，存储默认路径
 
             public TextureShaderProperty()
@@ -270,11 +389,37 @@ namespace Threeyes.Steamworks
 
             public void Dispose()
             {
+                //ToTest:看有无必要，因为Unity会自行管理加载后的图像
                 //if (externalTexture)
                 //{
-                //DestroyImmediate(externalTexture, true);//ToTest:看有无必要，因为Unity会自行管理加载后的图像
+                //DestroyImmediate(externalTexture, true);
                 //}
             }
+
+            #region IEquatable
+            public override bool Equals(object obj) { return Equals(obj as TextureShaderProperty); }
+            public override int GetHashCode() { return base.GetHashCode(); }
+            public bool Equals(TextureShaderProperty other)
+            {
+                if (!base.Equals(other))//会同时判断是否为空，因此后续就不用判断
+                    return false;
+
+                ///PS:
+                ///-仅当externalTextureFilePath有效时，才需要比较PersistentDirPath（因为其影响相对路径）
+                if (externalTextureFilePath.NotNullOrEmpty() && Equals(externalTextureFilePath, other.externalTextureFilePath))
+                {
+                    if (!Equals(PersistentDirPath, other.PersistentDirPath))
+                        return false;
+                }
+
+                bool isEqual =
+                      Equals(defaultTexture, other.defaultTexture) &&
+                     Equals(externalTexture, other.externalTexture) &&
+                     Equals(scale, other.scale) &&
+                     Equals(offset, other.offset);
+                return isEqual;
+            }
+            #endregion
         }
 
         /// <summary>
@@ -284,11 +429,10 @@ namespace Threeyes.Steamworks
         /// </summary>
         [Serializable]
         public class ColorShaderProperty : ShaderPropertyBase
+            , IEquatable<ColorShaderProperty>
         {
             //使用[ColorUsage]，确保编辑模式能提供所有选项
             [ColorUsageEx(dataOptionMemberName: nameof(dataOption_Color))] [ColorUsage(showAlpha: true, hdr: true)] public Color value;
-
-
             public DataOption_Color dataOption_Color;
 
             public ColorShaderProperty()
@@ -296,13 +440,38 @@ namespace Threeyes.Steamworks
                 value = Color.white;
                 dataOption_Color = new DataOption_Color(true, true);
             }
+
+            #region IEquatable
+            public override bool Equals(object obj) { return Equals(obj as ColorShaderProperty); }
+            public override int GetHashCode() { return base.GetHashCode(); }
+            public bool Equals(ColorShaderProperty other)
+            {
+                if (!base.Equals(other))//会同时判断是否为空，因此后续就不用判断
+                    return false;
+
+                return Equals(value, other.value) && Equals(dataOption_Color, other.dataOption_Color);
+            }
+            #endregion
         }
 
         [Serializable]
         public class IntShaderProperty : ShaderPropertyBase
+        , IEquatable<IntShaderProperty>
         {
             [RangeEx(dataOptionMemberName: nameof(dataOption_Int))] public int value;
             public DataOption_Int dataOption_Int;
+
+            #region IEquatable
+            public override bool Equals(object obj) { return Equals(obj as IntShaderProperty); }
+            public override int GetHashCode() { return base.GetHashCode(); }
+            public bool Equals(IntShaderProperty other)
+            {
+                if (!base.Equals(other))//会同时判断是否为空，因此后续就不用判断
+                    return false;
+
+                return Equals(value, other.value) && Equals(dataOption_Int, other.dataOption_Int);
+            }
+            #endregion
         }
 
         /// <summary>
@@ -313,9 +482,22 @@ namespace Threeyes.Steamworks
         /// </summary>
         [Serializable]
         public class FloatShaderProperty : ShaderPropertyBase
+            , IEquatable<FloatShaderProperty>
         {
             [RangeEx(dataOptionMemberName: nameof(dataOption_Float))] public float value;
             public DataOption_Float dataOption_Float;
+
+            #region IEquatable
+            public override bool Equals(object obj) { return Equals(obj as FloatShaderProperty); }
+            public override int GetHashCode() { return base.GetHashCode(); }
+            public bool Equals(FloatShaderProperty other)
+            {
+                if (!base.Equals(other))//会同时判断是否为空，因此后续就不用判断
+                    return false;
+
+                return Equals(value, other.value) && Equals(dataOption_Float, other.dataOption_Float);
+            }
+            #endregion
         }
         #endregion
     }

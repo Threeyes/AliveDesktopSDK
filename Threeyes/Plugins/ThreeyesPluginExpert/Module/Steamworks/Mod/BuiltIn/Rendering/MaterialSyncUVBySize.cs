@@ -35,7 +35,7 @@ public class MaterialSyncUVBySize : MonoBehaviour
     }
     private void LateUpdate()
     {
-        if (transform.lossyScale != curSize)
+        if (transform.lossyScale != curSize)//仅当尺寸变化时（包括开始时的变化）才会更改材质，避免创建多余的克隆体
         {
             if (!Material)
                 return;

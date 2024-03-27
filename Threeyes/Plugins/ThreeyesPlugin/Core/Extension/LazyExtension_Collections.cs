@@ -118,6 +118,30 @@ namespace Threeyes.Core
         #region Compare
 
         /// <summary>
+        /// 检查两个列表元素是否相同，考虑排序
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list1"></param>
+        /// <param name="list2"></param>
+        /// <returns></returns>
+        public static bool IsSequenceEqual<T>(this IEnumerable<T> list1, IEnumerable<T> list2)
+        {
+            if (list1 == list2)//引用相同（包括都为null）
+                return true;
+            if (list1 == null || list2 == null)
+                return false;
+
+            if (list1.Count() != list2.Count())
+                return false;
+            for (int i = 0; i != list1.Count(); i++)
+            {
+                if (!Equals(list1.ElementAt(i), list2.ElementAt(i)))//调用每个元素的Equals(object)或IEquatable<T>方法进行比较。使用Equals(a,b)可避免引用为空导致报错
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Check if two lists have the same element(忽略排序) 
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -126,7 +150,7 @@ namespace Threeyes.Core
         /// <returns></returns>
         public static bool IsElementEqual<T>(this IEnumerable<T> list1, IEnumerable<T> list2)
         {
-            //参考https://stackoverflow.com/questions/12795882/quickest-way-to-compare-two-list
+            //参考:https://stackoverflow.com/questions/12795882/quickest-way-to-compare-two-list
             var firstNotSecond = list1.Except(list2).ToList();
             var secondNotFirst = list2.Except(list1).ToList();
             return !firstNotSecond.Any() && !secondNotFirst.Any();

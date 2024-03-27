@@ -186,6 +186,8 @@ MonoBehaviour:
   targeUpdatePhase: 0
   tempSetParentKinematicOnGrab: 1
   tempUseKinematicOnGrab: 1
+  m_UseDynamicAttach: 1
+  m_AttachTransform: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -201,10 +203,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 96b099f6-0f83-4171-b480-0e9772549796
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &1292839416232589896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -637,8 +640,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 1, z: 0.2815621}
+  m_Center: {x: 0, y: -8.859309e-16, z: -0.37767607}
 --- !u!1 &6221078318108393241
 GameObject:
   m_ObjectHideFlags: 0

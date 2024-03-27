@@ -139,7 +139,7 @@ namespace Threeyes.Data
         public override bool Equals(object other)
         {
             //Check for null and compare run-time types.
-            if ((other == null) || !GetType().Equals(other.GetType()))
+            if ((other == null) || !Equals(GetType(), other.GetType()))
             {
                 return false;
             }
@@ -156,7 +156,7 @@ namespace Threeyes.Data
         /// <returns></returns>
         protected virtual bool EqualsFunc(TValue otherValue)
         {
-            return value.Equals(otherValue);
+            return Equals(value, otherValue);//可以避免value为空导致报错的情况
         }
         #endregion
     }

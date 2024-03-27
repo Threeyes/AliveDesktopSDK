@@ -31,10 +31,14 @@ namespace Threeyes.Core
             this.packageName = packageName;
         }
 
+        #region IEquatable
+        public override bool Equals(object obj) { return Equals(obj as DefineSymbol); }
+        public override int GetHashCode() { return base.GetHashCode(); }
         public bool Equals(DefineSymbol other)
         {
             if (other == null) return false;
             return name.Equals(other.name);
         }
+        #endregion
     }
 }

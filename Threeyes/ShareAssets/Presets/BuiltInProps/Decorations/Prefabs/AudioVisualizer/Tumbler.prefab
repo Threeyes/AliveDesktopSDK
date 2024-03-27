@@ -371,10 +371,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: d181acb5-6d52-4401-9b7b-32272c22504d
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &5271323949387854130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -596,18 +597,6 @@ MonoBehaviour:
   id:
     m_Guid: 3b3970ab-75b2-40db-b97f-452d73744190
   runtimeEditableDisplayName: 
-  cacheDefaultConfig:
-    baseFillAmount: 0.5
-    rangeFoam: {x: 0, y: 0.1}
-    foamIncreaseSpeed: 0.005
-    foamDecreaseSpeed: 0.2
-    maxWobble: 1
-    wobbleIncreaseByMoveSpeed: 0.15
-    wobbleIncreaseByRotateSpeed: 0.2
-    wobbleFrequency: 2
-    wobbleFrequencyIncreaseSpeed: 1
-    wobbleRecovery: 0.8
-    PersistentDirPath: 
   comp: {fileID: 1519387099314717284}
   tfMotionSource: {fileID: 0}
   modelScaleFactor: 1
@@ -668,14 +657,10 @@ MonoBehaviour:
   id:
     m_Guid: 3842170b-7f9d-4063-a1ef-1b540acf3739
   runtimeEditableDisplayName: 
-  cacheDefaultConfig:
-    materialIndex: 0
-    listTextureShaderProperty: []
-    listColorShaderProperty: []
-    listIntShaderProperty: []
-    listFloatShaderProperty: []
   targetRenderer: {fileID: 1519387099314717284}
   targetMaterial: {fileID: 0}
+  isShareMaterial: 0
+  listRendererMaterialInfo: []
   cloneMaterial: {fileID: 0}
 --- !u!114 &6436987801136243192
 MonoBehaviour:
@@ -744,9 +729,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7366846950074079941}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.25, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.15, z: 0}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5347200140974704736}

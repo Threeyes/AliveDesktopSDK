@@ -63,7 +63,7 @@ namespace Threeyes.Steamworks
             UpdateSetting();
         }
         public virtual void OnModDeinit() { }
-        void OnPersistentChanged(PersistentChangeState persistentChangeState)
+        protected virtual void OnPersistentChanged(PersistentChangeState persistentChangeState)
         {
             ///PS:
             ///-因为用户每次更改配置都会调用该设置，如果是繁重且不需要重复调用的操作（如生成Mesh），则需要将此类操作单独处理（参考AudioVisualizer_IcoSphere）
@@ -143,7 +143,7 @@ namespace Threeyes.Steamworks
         [Header("RuntimeEditable")]
         [SerializeField] string runtimeEditableDisplayName;//方便用户自定义
 
-        [SerializeField] protected TConfig cacheDefaultConfig = null;//缓存组件序列化之前的DefaultConfig，方便还原
+      /* [SerializeField] */protected TConfig cacheDefaultConfig = null;//缓存组件序列化之前的DefaultConfig，方便还原 (Warning：不应该标记为[SerializeField]，否则UMod还原会导致其在Awake的值被刷掉)
 
         public virtual void InitRuntimeEditable(FilePathModifier filePathModifier)
         {

@@ -58,7 +58,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3001107500606994267}
@@ -627,10 +627,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: 
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &8562273485053097022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -843,9 +844,9 @@ MonoBehaviour:
     shadowType: 2
     shadowStrength: 1
   soOverrideConfig: {fileID: 0}
-  runtimeEditableDisplayName: 
   id:
     m_Guid: e5bbdca9-6669-4a50-9033-d5f6079f05b1
+  runtimeEditableDisplayName: 
   _light: {fileID: 2140251628253948082}
   onSetLightColor:
     m_PersistentCalls:
@@ -1357,10 +1358,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: c2b6b28d-919f-431f-99ff-166b96f026df
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &7993418844963739325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1685,10 +1687,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: fd276dfb-92a7-4108-afd9-119192efb14d
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!1 &7469485445514992452
 GameObject:
   m_ObjectHideFlags: 0
@@ -2058,3 +2061,5 @@ MonoBehaviour:
   materialColorType: 2
   customMaterialColorName: 
   isKeepAlpha: 1
+  materialFloatType: 5
+  customMaterialFloatName: 
