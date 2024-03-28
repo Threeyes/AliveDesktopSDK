@@ -66,6 +66,11 @@
       "path": "Threeyes/HubSimulator"
     },
     {
+      "displayName": "XRI",
+      "description": "Custom XRI Samples",
+      "path": "Threeyes/Samples/XRI"
+    },
+    {
       "displayName": "Liquid",
       "description": "Liquid",
       "path": "Threeyes/Samples/Feature/Liquid"
