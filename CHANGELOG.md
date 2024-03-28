@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.4]
+- Add alignment property for AD_XRGridSocketInteractor.
+- Optimize built-in models.
+
 ## [0.5.3]
 - Fix Item's PrefabInfoGroup not loading correctly at Simulator mode.
 - Change some builtin items' size to match real world size.

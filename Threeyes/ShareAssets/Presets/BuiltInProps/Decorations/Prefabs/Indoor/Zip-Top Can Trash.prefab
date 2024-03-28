@@ -113,7 +113,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3043573113613172274}
@@ -278,10 +278,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabID:
-    m_Guid: 
   cacheInstanceID:
     m_Guid: f144ac89-fde9-464f-b308-825d1c38e992
+  cachePrefabID:
+    m_Guid: 
+  cacheScope: 
 --- !u!114 &4101852370603320698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -511,11 +512,13 @@ MonoBehaviour:
         minValue: 0
         maxValue: 1
   soOverrideConfig: {fileID: 0}
-  runtimeEditableDisplayName: Body
   id:
     m_Guid: 262d206a-beae-4898-97be-800d92de51ba
+  runtimeEditableDisplayName: Body
   targetRenderer: {fileID: 1930432189319437980}
   targetMaterial: {fileID: 0}
+  isShareMaterial: 0
+  listRendererMaterialInfo: []
   cloneMaterial: {fileID: 0}
 --- !u!1 &9055935247107136732
 GameObject:

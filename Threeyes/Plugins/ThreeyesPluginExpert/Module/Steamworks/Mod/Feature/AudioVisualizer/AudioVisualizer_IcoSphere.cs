@@ -207,21 +207,23 @@ namespace Threeyes.Steamworks
         #region Init&Update
 
         #region Editor
-
+#if UNITY_EDITOR
         [ContextMenu("EditorGenerateWaveform")]
         void EditorGenerateWaveform()//非运行模式，基于当前配置生成Waveform
         {
             int rawSampleCount = 256;//提供模拟的RawSampleCount
             ReGenerateWaveform(rawSampleCount);
             UpdateWaveformSetting();
+            UnityEditor.EditorUtility.SetDirty(this);
         }
-        [ContextMenu("EditorGenerateSphere")]
-        void EditorGenerateSphere()
-        {
-            ///Todo:
-            ///-仅生成多边形，不缓存到非序列化字段中。不急，可以先用模型代替
-            //ReGenerateSphere();
-        }
+        //[ContextMenu("EditorGenerateSphere")]
+        //void EditorGenerateSphere()
+        //{
+        //    ///Todo:
+        //    ///-仅生成多边形，不缓存到非序列化字段中。不急，可以先用模型代替
+        //    //ReGenerateSphere();
+        //}
+#endif
         #endregion
 
         void ReGenerateSphere()
@@ -327,7 +329,7 @@ namespace Threeyes.Steamworks
             }
         }
 
-        [ContextMenu("UpdateWaveformSetting")]
+        //[ContextMenu("UpdateWaveformSetting")]
         void UpdateWaveformSetting()
         {
             waveform.colorGradient = Config.waveformGradient;

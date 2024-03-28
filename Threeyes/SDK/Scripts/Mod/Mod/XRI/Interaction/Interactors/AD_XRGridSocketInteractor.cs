@@ -7,10 +7,12 @@ using UnityEngine.XR.Interaction.Toolkit;
 /// 
 /// Todo:
 /// -【V2】被缩放后动态更新Grid子物体的相对位置以确保不变，以及针对Grid的配置新增Gid子物体
-/// -可以设置gridParentTransform代表的锚点，方便Grid基于中心进行生成等
-/// 
+/// -新增设置gridParentTransform代表的锚点，方便Grid基于中心进行生成等
+///
 /// PS:
-/// -Grid以 gridParentTransform 所在坐标系的左上角为起点，沿着XY平面布置
+/// Grid生成参考UI，以gridParentTransform坐标系的XY轴为左下角：
+///     -gridParentTransform作为Grid的父物体，其局部坐标系需要X为右，Y为上；
+///     -通过gridRotationReference来控制Grid的朝向
 /// 
 /// Ref: UnityEngine.XR.Content.Interaction XRLockGridSocketInteractor+XRGridSocketInteractor
 /// </summary>
@@ -50,18 +52,20 @@ public class AD_XRGridSocketInteractor : AD_XRSocketInteractor
     /// (Read Only) The grid size. The maximum number of Interactables that this Interactor can hold.
     /// </summary>
     public int gridSize => m_GridWidth * m_GridHeight;
+    bool hasEmptyAttachTransform => m_UnorderedUsedAttachedTransform.Count < gridSize;
 
     [Space]
     [Header("Grid Setting")]
-    [Tooltip("Parent of the grid.")] public Transform gridParentTransform;
-    [Tooltip("[Optional] Rotation reference of the grid.")] public Transform gridRotationReference;
+    [Tooltip("The positioning of the grid reliative to gridParentTransform.")] [SerializeField] GridAnchor alignment = GridAnchor.MiddleCenter;
+    [Tooltip("Parent of the grid.")] [SerializeField] Transform gridParentTransform;
+    [Tooltip("[Optional] Rotation reference of the grid.")] [SerializeField] Transform gridRotationReference;
 
     [SerializeField]
     [Tooltip("The grid width. The grid width is along the Attach Transform's local X axis.")]
-    int m_GridWidth = 2;
+    [Min(1)] int m_GridWidth = 2;
     [SerializeField]
     [Tooltip("The grid height. The grid height is along the Attach Transform's local Y axis.")]
-    int m_GridHeight = 2;
+    [Min(1)] int m_GridHeight = 2;
 
     [SerializeField]
     [Tooltip("The distance (in local space) between cells in the grid.")]
@@ -74,7 +78,6 @@ public class AD_XRGridSocketInteractor : AD_XRSocketInteractor
 
     Transform[,] m_Grid;
 
-    bool hasEmptyAttachTransform => m_UnorderedUsedAttachedTransform.Count < gridSize;
 
     protected override void InitFunc()
     {
@@ -83,31 +86,6 @@ public class AD_XRGridSocketInteractor : AD_XRSocketInteractor
 
         // The same material is used on both situations
         interactableCantHoverMeshMaterial = interactableHoverMeshMaterial;
-    }
-
-    /// <summary>
-    /// Creates the grid base on gridParentTransform
-    /// </summary>
-    void CreateGrid()
-    {
-        m_Grid = new Transform[m_GridHeight, m_GridWidth];
-
-        //基于局部坐标生成网格
-        for (var i = 0; i < m_GridHeight; i++)
-        {
-            for (var j = 0; j < m_GridWidth; j++)
-            {
-                var attachTransformInstance = new GameObject($"[{gameObject.name}] Attach ({i},{j})").transform;
-                attachTransformInstance.SetParent(gridParentTransform, false);
-
-                var localOffset = new Vector3(j * m_CellOffset.x, i * m_CellOffset.y, 0f);
-                attachTransformInstance.localPosition = localOffset;
-
-                attachTransformInstance.rotation = gridRotationReference ? gridRotationReference.rotation : gridParentTransform.rotation;//【新增】：设置附着点的旋转，用于控制附着物体的旋转
-
-                m_Grid[i, j] = attachTransformInstance;
-            }
-        }
     }
 
     /// <inheritdoc />
@@ -158,13 +136,79 @@ public class AD_XRGridSocketInteractor : AD_XRSocketInteractor
             return interactableAttachTransform;
 
         var interactableLocalPosition = gridParentTransform.InverseTransformPoint(interactable.GetAttachTransform(this).position);
-        var i = Mathf.RoundToInt(interactableLocalPosition.y / m_CellOffset.y);
-        var j = Mathf.RoundToInt(interactableLocalPosition.x / m_CellOffset.x);
-        i = Mathf.Clamp(i, 0, m_GridHeight - 1);
-        j = Mathf.Clamp(j, 0, m_GridWidth - 1);
+        interactableLocalPosition -= GetPivotOffset();
+        var i = Mathf.RoundToInt(interactableLocalPosition.x / m_CellOffset.x);
+        var j = Mathf.RoundToInt(interactableLocalPosition.y / m_CellOffset.y);
+        i = Mathf.Clamp(i, 0, m_GridWidth - 1);
+        j = Mathf.Clamp(j, 0, m_GridHeight - 1);
         return m_Grid[i, j];
     }
 
+
+    /// <summary>
+    /// Creates the grid base on gridParentTransform
+    /// </summary>
+    void CreateGrid()
+    {
+        m_Grid = new Transform[m_GridWidth, m_GridHeight];
+
+        //基于局部坐标生成网格
+        for (var i = 0; i < m_GridWidth; i++)
+        {
+            for (var j = 0; j < m_GridHeight; j++)
+            {
+                var attachTransformInstance = new GameObject($"[{gameObject.name}] Attach ({i},{j})").transform;
+                attachTransformInstance.SetParent(gridParentTransform, false);
+
+                //var localOffset = new Vector3(i * m_CellOffset.x, j * m_CellOffset.y, 0f);
+
+                attachTransformInstance.localPosition = GetGridLocaPos(i, j);// localOffset;
+
+                attachTransformInstance.rotation = gridRotationReference ? gridRotationReference.rotation : gridParentTransform.rotation;//【新增】：设置附着点的旋转，用于控制附着物体的旋转
+
+                m_Grid[i, j] = attachTransformInstance;
+            }
+        }
+    }
+
+    /// <summary>
+    /// (i,j)=>LocalPoint
+    /// </summary>
+    /// <param name="i"></param>
+    /// <param name="j"></param>
+    /// <returns></returns>
+    Vector3 GetGridLocaPos(int i, int j)
+    {
+        Vector3 localOffset = new Vector3(i * m_CellOffset.x, j * m_CellOffset.y, 0f);//与原点的位移
+        return localOffset + GetPivotOffset();
+    }
+
+    /// <summary>
+    /// 计算parent锚点基于alignment枚举的原点
+    /// </summary>
+    /// <returns></returns>
+    Vector3 GetPivotOffset()
+    {
+        ///Todo:
+        ///-通过Transform转换位置在parent的局部坐标，然后继续计算
+        Vector2 originOffsetToPivot = Vector2.zero;//与原点（LowerLeft）的位移
+        Vector2 areaSize = new Vector2((gridWidth - 1) * m_CellOffset.x, (gridHeight - 1) * m_CellOffset.y);
+        switch (alignment)
+        {
+            case GridAnchor.UpperLeft: originOffsetToPivot = new Vector2(0, -areaSize.y); break;
+            case GridAnchor.UpperCenter: originOffsetToPivot = new Vector2(-areaSize.x / 2, -areaSize.y); break;
+            case GridAnchor.UpperRight: originOffsetToPivot = new Vector2(-areaSize.x, -areaSize.y); break;
+
+            case GridAnchor.MiddleLeft: originOffsetToPivot = new Vector2(0, -areaSize.y / 2); break;
+            case GridAnchor.MiddleCenter: originOffsetToPivot = new Vector2(-areaSize.x / 2, -areaSize.y / 2); break;
+            case GridAnchor.MiddleRight: originOffsetToPivot = new Vector2(-areaSize.x, -areaSize.y / 2); break;
+
+            case GridAnchor.LowerLeft: break;//对应Pivot
+            case GridAnchor.LowerCenter: originOffsetToPivot = new Vector2(-areaSize.x / 2, 0); break;
+            case GridAnchor.LowerRight: originOffsetToPivot = new Vector2(-areaSize.x, 0); break;
+        }
+        return originOffsetToPivot;
+    }
     #region Editor
 
     /// <summary>
@@ -176,8 +220,6 @@ public class AD_XRGridSocketInteractor : AD_XRSocketInteractor
 
         if (!gridParentTransform)
             gridParentTransform = attachTransform;
-        m_GridWidth = Mathf.Max(1, m_GridWidth);
-        m_GridHeight = Mathf.Max(1, m_GridHeight);
     }
 
 
@@ -211,16 +253,18 @@ public class AD_XRGridSocketInteractor : AD_XRSocketInteractor
     private void DrawGizmosFunc()
     {
         Gizmos.matrix = gridParentTransform != null ? gridParentTransform.localToWorldMatrix : transform.localToWorldMatrix;
-        for (var i = 0; i < m_GridHeight; i++)
+        for (var i = 0; i < m_GridWidth; i++)
         {
-            for (var j = 0; j < m_GridWidth; j++)
+            for (var j = 0; j < m_GridHeight; j++)
             {
                 if (i == 0 && j == 0)//使用蓝色颜色绘制起始点
                     Gizmos.color = Color.blue;
                 else//使用绿色绘制其他点
                     Gizmos.color = Color.green;
 
-                var currentPosition = new Vector3(j * m_CellOffset.x, i * m_CellOffset.y, 0f);
+                //var currentPosition = new Vector3(i * m_CellOffset.x, j * m_CellOffset.y, 0f);
+                var currentPosition = GetGridLocaPos(i, j);//new Vector3(i * m_CellOffset.x, j * m_CellOffset.y, 0f);
+                //在点的两侧额外绘制线条，
                 Gizmos.DrawLine(currentPosition + (Vector3.left * m_CellOffset.x * 0.5f), currentPosition + (Vector3.right * m_CellOffset.y * 0.5f));
                 Gizmos.DrawLine(currentPosition + (Vector3.down * m_CellOffset.x * 0.5f), currentPosition + (Vector3.up * m_CellOffset.y * 0.5f));
             }
@@ -240,5 +284,51 @@ public class AD_XRGridSocketInteractor : AD_XRSocketInteractor
     }
 
     #endregion
+
+    #endregion
+
+    #region Define
+    /// <summary>
+    /// gridParentTransform 所对应的锚点
+    /// </summary>
+    public enum GridAnchor
+    {
+        //
+        // 摘要:
+        //     Text is anchored in upper left corner.
+        UpperLeft,
+        //
+        // 摘要:
+        //     Text is anchored in upper side, centered horizontally.
+        UpperCenter,
+        //
+        // 摘要:
+        //     Text is anchored in upper right corner.
+        UpperRight,
+        //
+        // 摘要:
+        //     Text is anchored in left side, centered vertically.
+        MiddleLeft,
+        //
+        // 摘要:
+        //     Text is centered both horizontally and vertically.
+        MiddleCenter,
+        //
+        // 摘要:
+        //     Text is anchored in right side, centered vertically.
+        MiddleRight,
+        //
+        // 摘要:
+        //     Text is anchored in lower left corner.
+        LowerLeft,
+        //
+        // 摘要:
+        //     Text is anchored in lower side, centered horizontally.
+        LowerCenter,
+        //
+        // 摘要:
+        //     Text is anchored in lower right corner.
+        LowerRight
+    }
     #endregion
 }
