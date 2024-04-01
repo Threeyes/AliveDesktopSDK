@@ -2799,6 +2799,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDontDestroyOnLoad: 0
+  curSOWorkshopItemInfo: {fileID: 0}
+  curWorkshopItemInfo:
+    title: 
+    description: 
+    modFileRelatePath: 
+    previewFileRelatePath: 
+    itemVisibility: 0
+    tags: []
+    itemLocation: 0
+    id: 0
+    dirPath: 
+    fileSize: 0
+  curListShellGroup: []
+  curListDecorationGroup: []
 --- !u!114 &926324524
 MonoBehaviour:
   m_ObjectHideFlags: 0

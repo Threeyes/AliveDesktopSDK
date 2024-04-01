@@ -238,6 +238,8 @@ namespace Threeyes.AliveCursor.SDK.Editor
         static void InitSelectFunc<TSerializableItem>(GameObject go, bool isGrabable = false)
             where TSerializableItem : Component, IAD_SerializableItem
         {
+            //Undo.RecordObject(go, "AD_InitSelect");//Bug:无效，待修复
+
             //#1 Add Components
             TSerializableItem aD_DefaultDecorationItem = go.AddComponentOnce<TSerializableItem>();
             RuntimeSerializable_GameObject runtimeSerialization_GameObject = go.AddComponentOnce<RuntimeSerializable_GameObject>();//管理物体的整体序列化数据
@@ -250,6 +252,8 @@ namespace Threeyes.AliveCursor.SDK.Editor
                 AD_XRGrabInteractable aD_XRGrabInteractable = go.AddComponentOnce<AD_XRGrabInteractable>();
                 aD_XRGrabInteractable.useDynamicAttach = true;//Allow smooth grab
             }
+
+            //EditorUtility.SetDirty(go);
         }
 
         const string prefabInfoDirName = "PrefabInfo";
@@ -259,6 +263,7 @@ namespace Threeyes.AliveCursor.SDK.Editor
             ///PS:
             ///-只创建SO，不创建SOGroup，因为用户可能会使用一个Group来包含多个文件夹中的SO
             List<TSOPrefabInfo> listResult = new List<TSOPrefabInfo>();
+
             foreach (var go in Selection.gameObjects)
             {
                 if (!EditorUtility.IsPersistent(go))//排除非资源Prefab物体

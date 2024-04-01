@@ -36,7 +36,7 @@ public class AD_XRInteractableEventListener : MonoBehaviour
 
     protected virtual void AddListeners()
     {
-        if(!Interactable)
+        if (!Interactable)
         {
             Debug.LogError($"{nameof(m_Interactable)} is null!");
             return;
@@ -70,7 +70,7 @@ public class AD_XRInteractableEventListener : MonoBehaviour
     protected virtual XRBaseInteractable GetCompFunc()
     {
         if (this)//避免物体被销毁
-            return GetComponent<XRBaseInteractable>();
+            return GetComponentInParent<XRBaseInteractable>();//从自身及父物体搜索
         return null;
     }
 }

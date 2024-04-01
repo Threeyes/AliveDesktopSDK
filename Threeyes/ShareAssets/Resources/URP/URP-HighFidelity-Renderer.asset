@@ -97,6 +97,25 @@ MonoBehaviour:
   m_CopyDepthMode: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
+--- !u!114 &2851357612251420778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d60edcaf080f1745a268da7adf3bd03, type: 3}
+  m_Name: ScreenSpaceReflectionURP
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  material: {fileID: 2100000, guid: 3023044652f9eb940b765b89a445c572, type: 2}
+  renderingDebugger: 0
+  resolution: 4
+  mipmapsMode: 1
+  sceneView: 0
+  isLogPrinted: 0
 --- !u!114 &6307527123159908388
 MonoBehaviour:
   m_ObjectHideFlags: 0
