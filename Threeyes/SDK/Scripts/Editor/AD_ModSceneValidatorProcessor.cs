@@ -28,6 +28,9 @@ public class AD_ModSceneValidatorProcessor : BuildEngineProcessor
     {
         ///ToAdd:
         ///-判断当前WorkshopItemInfo.itemType，如果不是Scene则忽略下述的判断
+        ///     -获取当前 WorkshopItemInfo 的方法：
+        ///         -通过SOManagerInst.CurWorkshopItemInfo获取实例，前提是每次打包时ItemManagerWindow会设置该字段，因为有可能会调用BuildAll
+        ///         -根据Scene文件查找WorkshopItemInfo，参考SceneSimulator
 
         bool validScene = true;
         string errorInfo = null;

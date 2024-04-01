@@ -73,7 +73,7 @@ public abstract class AD_SOPrefabInfoGroupBase<TSOPrefabInfo> : SOGroupBase<TSOP
         TSOInst soInst = AssetDatabase.LoadAssetAtPath<TSOInst>(assetPath);
         if (soInst == null)
         {
-            TSOInst soInstTemp  = CreateInstance<TSOInst>();
+            TSOInst soInstTemp = CreateInstance<TSOInst>();
             AssetDatabase.CreateAsset(soInstTemp, assetPath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -81,6 +81,7 @@ public abstract class AD_SOPrefabInfoGroupBase<TSOPrefabInfo> : SOGroupBase<TSOP
             //hasCreated = true;
         }
         soInst.listData = listSOPI;
+        EditorUtility.SetDirty(soInst);
         Selection.objects = new Object[] { soInst };
         //Debug.Log($"{(hasCreated ? "Create" : "Update")}  SOPreabInfoGroup at path: {assetPackPath}");
 #endif
