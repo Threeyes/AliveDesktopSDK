@@ -63,8 +63,7 @@ public abstract class AD_XRProgressInteractable<TContainer, TConfig, TPropertyBa
         ////NotifyEvent(Config.Value);
     }
     #endregion
-
-    #region AttachTransform （Ref：XRGrabInteractable）（需要保留XRGrabInteractable类似字段的命名规范）
+  #region AttachTransform （Ref：XRGrabInteractable）（需要保留XRGrabInteractable类似字段的命名规范）
     /// <summary>
     /// The grab pose will be based on the pose of the Interactor when the selection is made.
     /// Unity will create a dynamic attachment point for each Interactor that selects this component.
@@ -330,7 +329,6 @@ public abstract class AD_XRProgressInteractable<TContainer, TConfig, TPropertyBa
             dynamicAttachTransform.rotation = rotation;
     }
     #endregion
-
     #region XRBaseInteractable
     public override Transform GetAttachTransform(IXRInteractor interactor)
     {

@@ -238,7 +238,7 @@ namespace Threeyes.AliveCursor.SDK.Editor
         static void InitSelectFunc<TSerializableItem>(GameObject go, bool isGrabable = false)
             where TSerializableItem : Component, IAD_SerializableItem
         {
-            //Undo.RecordObject(go, "AD_InitSelect");//Bug:无效，待修复
+            Undo.RecordObject(go, "AD_InitSelect");//Bug:无效，待修复
 
             //#1 Add Components
             TSerializableItem aD_DefaultDecorationItem = go.AddComponentOnce<TSerializableItem>();
@@ -253,7 +253,7 @@ namespace Threeyes.AliveCursor.SDK.Editor
                 aD_XRGrabInteractable.useDynamicAttach = true;//Allow smooth grab
             }
 
-            //EditorUtility.SetDirty(go);
+            EditorUtility.SetDirty(go);
         }
 
         const string prefabInfoDirName = "PrefabInfo";

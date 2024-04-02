@@ -118,7 +118,7 @@ public class AD_XRRotater : AD_XRProgressInteractable<AD_XRRotater, AD_XRRotater
         }
         else//忽略刚体：直接移动，确保能移动到正确位置
         {
-            tfHandle.SetProperty(rotation: targetRotation);//该方法能自动使用合适的方法进行移动
+            tfHandle.SetProperty(rotation: targetRotation, isLocalSpace: false);//该方法能自动使用合适的方法进行移动
         }
     }
     /// <summary>
