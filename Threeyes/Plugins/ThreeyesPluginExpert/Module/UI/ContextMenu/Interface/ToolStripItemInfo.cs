@@ -54,7 +54,8 @@ namespace Threeyes.UI
         {
             if (click != null)
                 click.Invoke(sender, e);
-            onSelect?.Invoke();
+            if (onSelect != null)
+                onSelect.Invoke();
         }
         public ToolStripItemInfo()
         {

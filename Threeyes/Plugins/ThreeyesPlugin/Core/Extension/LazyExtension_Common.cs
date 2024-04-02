@@ -644,15 +644,24 @@ namespace Threeyes.Core
         //    return start * Quaternion.Euler(angle);
         //}
         /// <summary>
-        /// 围绕该start旋转值的指定轴，旋转某个角度
+        /// 围绕该start旋转值的指定轴，旋转某个角度（局部坐标）
         /// </summary>
         /// <param name="start"></param>
         /// <param name="axis">旋转的轴向，会自动映射到自身坐标系，如Vector3.right</param>
         /// <param name="angle">旋转值</param>
         /// <returns></returns>
-        public static Quaternion RotateAround(this Quaternion start, Vector3 axis, float angle)
+        public static Quaternion RotateAround(this Quaternion start, Vector3 axis, float angle, Space relativeTo = Space.Self)
         {
-            return start * Quaternion.AngleAxis(angle, axis);
+            //世界坐标与局部坐标旋转值的区别：https://forum.unity.com/threads/understanding-rotations-in-local-and-world-space-quaternions.153330/#post-1051063
+
+            //Rotate around a local axis: rotation = rotation * Quaternion.AngleAxis(10, Vector3.Up);
+            //Rotate around a world axis: rotation = Quaternion.AngleAxis(10, Vector3.Up) * rotation;
+            //So, as you can see above, putting the desired rotation last rotates around a local axis, putting it first rotates around a world axis. There is just one really simple rule you need to memorize: Order matters.
+
+            if (relativeTo == Space.Self)
+                return start * Quaternion.AngleAxis(angle, axis);
+            else
+                return Quaternion.AngleAxis(angle, axis) * start;
 
             //if (angle >= 180)
             //    Debug.LogError("旋转角度大于180！");

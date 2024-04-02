@@ -52,6 +52,10 @@ namespace Threeyes.ModuleHelper
         {
             SetObjs(value.x, value.y);//将值进行拆分，以便使用format处理
         }
+        public void Set(Vector3 value)
+        {
+            SetObjs(value.x, value.y, value.z);//将值进行拆分，以便使用format处理
+        }
         public void Set(int value)
         {
             SetObj(value);

@@ -401,8 +401,8 @@ public abstract class AD_XRProgressInteractable<TContainer, TConfig, TPropertyBa
     }
 
     protected IXRSelectInteractor cacheInteractor;
-    protected Vector3 lastGrabLocalPos;
-    //protected Vector3 lastGrabPos;
+    protected Vector3 lastGrabLocalPos;//(用户按需使用)
+    protected Vector3 lastGrabPos;//(用户按需使用)
     protected bool isGrabbing = false;
     //HandleParent (Rigidbody相关）
     protected Rigidbody cacheParentRigidbody;
@@ -519,9 +519,9 @@ public abstract class AD_XRProgressInteractable<TContainer, TConfig, TPropertyBa
     /// <param name="args"></param>
     protected virtual void StartGrabBeginFunc(SelectEnterEventArgs args)
     {
-        //Save grab begin pos（都存上，按需使用）
+        //Save grab begin pos（基类都存储该值，按需使用）
         lastGrabLocalPos = GetGrabLocalPosition();
-        //lastGrabPos = GetGrabPosition();
+        lastGrabPos = GetGrabPosition();
     }
 
     /// <summary>
@@ -585,13 +585,6 @@ public abstract class AD_XRProgressInteractable<TContainer, TConfig, TPropertyBa
     /// Warning:调用前需要确保m_Interactor不为空
     /// </summary>
     protected Transform InteractorAttachTransform { get { return cacheInteractor.GetAttachTransform(this); } }
-    #endregion
-
-    #region Coordinate System Utility (用于坐标系换算)
-    /// ToFix：
-    /// -【V2】tfHandleParent 可能为空，这时如果访问该字段会报错。解决办法是如果tfHandleParent为空就直接使用世界坐标信息：
-    ///     -将 tfHandleParent 的相关调用改为方法（如tfHandleParent.TransformPoint改为TransformPoint）
-    ///     -【优先】改为拓展方法（优点是能检测调用方是否为空），
     #endregion
 
     #region Editor
