@@ -31,7 +31,7 @@ public abstract class AD_XRProgressInteractable<TContainer, TConfig, TPropertyBa
     //——以下参数适用于修改Rigidbody下的子物体（如抽屉）——
     [Header("Nested Rigidbody Setting")]
     [SerializeField] protected bool tempSetParentKinematicOnGrab = true;//在抓取时，临时将父物体的Rigidbody设置为Kinematic，可以避免父物体异常抖动
-    [SerializeField] protected bool tempUseKinematicOnGrab = true;//在抓取时临时使用Kinematic抓取（如果Handle没有Rigidbody则自行添加，并在取消抓取时销毁）。优势是能够更精确的影响其他刚体，且防止被外力影响。建议tempSetParentKinematicOnGrab也要设置为true，否则会导致父子冲突而抖动。如果为false，则使用Transform。
+    [SerializeField] protected bool tempUseKinematicOnGrab = true;//在抓取时临时使用Kinematic抓取（如果Handle没有Rigidbody则临时添加，并在取消抓取时销毁）。优势是能够更精确的影响其他刚体，且防止被外力影响。建议tempSetParentKinematicOnGrab也要设置为true，否则会导致父子冲突而抖动。如果为false，则使用Transform。
     #endregion
 
     #region Init

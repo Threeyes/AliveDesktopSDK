@@ -2454,7 +2454,7 @@ GameObject:
   m_Component:
   - component: {fileID: 822232417}
   m_Layer: 0
-  m_Name: "\u2014\u2014Extend\u2014\u2014"
+  m_Name: ProgressInteractable Group
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

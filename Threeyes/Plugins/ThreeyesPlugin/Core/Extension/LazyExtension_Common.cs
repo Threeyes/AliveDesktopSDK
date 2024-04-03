@@ -647,7 +647,7 @@ namespace Threeyes.Core
         /// 围绕该start旋转值的指定轴，旋转某个角度（局部坐标）
         /// </summary>
         /// <param name="start"></param>
-        /// <param name="axis">旋转的轴向，会自动映射到自身坐标系，如Vector3.right</param>
+        /// <param name="axis">【Space.Self模式】旋转的轴向，会自动映射到自身坐标系，如Vector3.right</param>
         /// <param name="angle">旋转值</param>
         /// <returns></returns>
         public static Quaternion RotateAround(this Quaternion start, Vector3 axis, float angle, Space relativeTo = Space.Self)
@@ -670,6 +670,31 @@ namespace Threeyes.Core
             //return start * Quaternion.Euler(rotateValue);
         }
 
+        /// <summary>
+        /// 将局部旋转转变为全局旋转
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="tfParent"></param>
+        /// <returns></returns>
+        public static Quaternion ToWorld(this Quaternion source, Transform target)
+        {
+            if (target.parent)
+                return target.parent.rotation * source;//在父物体的旋转基础上，乘以该物体的旋转值，就能得到世界旋转值
+            return source;
+        }
+        /// <summary>
+        /// 将全局旋转变为局部旋转
+        /// 
+        /// Ref: https://forum.unity.com/threads/convert-world-space-rotation-to-local-space-rotation.332025/#post-2150730
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        public static Quaternion ToLocal(this Quaternion source, Transform target)
+        {
+            if (target.parent == null)
+                return source;
+            return Quaternion.Inverse(target.parent.rotation) * source;//如果有父物体，则基于父物体进行计算
+        }
         #endregion
 
         #region UnityEvent
@@ -1573,7 +1598,7 @@ namespace Threeyes.Core
                (tf) =>
                {
                    if (tReturn == null)
-                       tf.TryGetComponent(out tReturn);//Warning:不要直接使用GetComponent，因为如果TReturn为Component，其返回的是对应类型的空值而不是null而导致意外赋值给tReturn，这样会导致后续的(tReturn == null)无法进入！
+                       tf.TryGetComponent(out tReturn);//Warning:不要直接使用GetComponent，因为如果TReturn为Component，其内部会通过CastHelper<T>返回对应类型实例的Default值而不是null而导致意外赋值给tReturn，这样会导致后续的(tReturn == null)无法进入！
                },
                includeSelf
                );

@@ -65,16 +65,22 @@ public class AD_XRRotater : AD_XRProgressInteractable<AD_XRRotater, AD_XRRotater
         Vector3 grabOffset = curGrabPosition - lastGrabPos;//计算与上次抓取的位移值
         lastGrabPos = curGrabPosition;
         Vector3 grabOffsetRelatedToCamera = TfCamera.InverseTransformDirection(grabOffset);
-        //Debug.LogError(grabOffsetRelatedToCamera);//正常
 
-        //计算出对应的right轴
+
         Vector3 frontAxis = tfHandle.position - TfCamera.position;
         Vector3 upAxis = TfCamera.up;
-        Vector3 rightAxis = Vector3.Cross(upAxis, frontAxis);
-        Quaternion curRotation = tfHandle.rotation;
-        Quaternion targetRotation = curRotation.RotateAround(upAxis, -grabOffsetRelatedToCamera.x * rotateSensitivity.x, Space.World);
-        targetRotation = targetRotation.RotateAround(rightAxis, grabOffsetRelatedToCamera.y * rotateSensitivity.y, Space.World);//相对于tfHandle与相机连线的右侧，这样能够不受相机旋转影响
+        Vector3 rightAxis = Vector3.Cross(upAxis, frontAxis);//计算出对应的right轴
+
+        Vector3 localUpAxis = tfHandle.InverseTransformDirection(upAxis);//通过父物体计算的局部矢量
+        Vector3 localRightAxis = tfHandle.InverseTransformDirection(rightAxis);
+
+        //计算出目标全局旋转值
+        Quaternion curRotation = tfHandle.localRotation;
+        Quaternion targetRotation = curRotation.RotateAround(localUpAxis, -grabOffsetRelatedToCamera.x * rotateSensitivity.x, Space.Self);
+        targetRotation = targetRotation.RotateAround(localRightAxis, grabOffsetRelatedToCamera.y * rotateSensitivity.y, Space.Self);//相对于tfHandle与相机连线的右侧，这样能够不受相机旋转影响
+
         targetEulerAngle = targetRotation.eulerAngles;
+        //Debug.LogError(grabOffsetRelatedToCamera + " " + targetEulerAngle);
 
         //#2 更新Config中的数据
         Config.Value = targetEulerAngle;
@@ -86,6 +92,11 @@ public class AD_XRRotater : AD_XRProgressInteractable<AD_XRRotater, AD_XRRotater
 
     //public float sensitivity = 0.05f;
     //public float PivotThickness = 0;//默认缩放时中心的厚度，用于模拟滚动（为0则不生效）
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="modelValue">局部旋转值</param>
+    /// <param name="ignoreRigidbody"></param>
     protected override void SetModel(Vector3 modelValue, bool ignoreRigidbody = false)
     {
         if (tfHandle == null)
@@ -96,29 +107,13 @@ public class AD_XRRotater : AD_XRProgressInteractable<AD_XRRotater, AD_XRRotater
         Rigidbody rigidbody = tfHandle.GetComponent<Rigidbody>();
         if (Application.isPlaying && !ignoreRigidbody && rigidbody)//【运行模式】如果目标是刚体， 则使用刚体的移动方法，否则可能会导致刚体穿透
         {
-            //#模拟因摩擦力引起的位移：增加PivotThickness属性，根据角度差值计算对应的位置差值并传给MovePosition（需要提供Radius字段，用于计算走过的周长）（Warning：仅限于平面，不适用于其他情况，可以用射线测试前方是否有障碍物，或者由物体引擎计算）
-            ///Bug：
-            ///-移动到平面时容易抖动
-            //float deltaAngle = Quaternion.Angle(targetRotation, tfHandle.rotation);
-            //float deltaOffset = (deltaAngle / 360) * 2 * Mathf.PI * PivotThickness * tfHandle.lossyScale.x;//从偏移角度得出偏移位置(需要乘以全局缩放）
-
-            //Vector3 moveDirection = targetRotation.ToVector(Vector3.up) - tfHandle.rotation.ToVector(Vector3.up);//通过计算旋转矢量的差值可知道移动方向
-            //moveDirection.y = 0;//放在XZ平面，得到朝向值（可能有偏转问题）
-            //ToDo：根据moveDirection与原点的关系，决定方向
-            //Vector3 targetPos = tfHandle.position + moveDirection.normalized * deltaOffset;//朝向目标方向移动（因为默认Y轴为原点，所以可以根据角度知道是否需要增加还是减少
-            //rigidbody.MovePosition(targetPos);
-            ////Debug.LogError(deltaAngle + "__" + deltaOffset + "__" + moveDirection);
-
             //#更改旋转值
-            rigidbody.MoveRotation(targetRotation);
-
-            ////#实现3：使用 AddRelativeTorque/angularVelocity进行偏转，直到朝向到达一定阈值内(Bug:容易导致飘）
-            //var rotation = Quaternion.FromToRotation(tfHandle.forward, modelValue.AngleToVector(Vector3.forward)).eulerAngles * sensitivity;
-            //rigidbody.angularVelocity = rotation;
+            Quaternion worldRotation = targetRotation.ToWorld(tfHandle);//将传入的局部旋转值改为全局坐标
+            rigidbody.MoveRotation(worldRotation);
         }
         else//忽略刚体：直接移动，确保能移动到正确位置
         {
-            tfHandle.SetProperty(rotation: targetRotation, isLocalSpace: false);//该方法能自动使用合适的方法进行移动
+            tfHandle.SetProperty(rotation: targetRotation, isLocalSpace: true);//该方法能自动使用合适的方法进行移动
         }
     }
     /// <summary>
@@ -164,7 +159,7 @@ public class AD_XRRotater : AD_XRProgressInteractable<AD_XRRotater, AD_XRRotater
         public override Vector3 Value { get { return value; } set { this.value = value; } }
 
         [Tooltip("The value of the rotater")]
-        public Vector3 value = Vector3.zero;
+        public Vector3 value = Vector3.zero;//局部的旋转值
     }
 
     public class PropertyBag : ConfigurableComponentPropertyBagBase<AD_XRRotater, ConfigInfo>
