@@ -36,7 +36,7 @@ namespace Threeyes.ModuleHelper
             }
             else
             {
-                Debug.LogError("Failed to create rendertexture!");
+                Debug.LogError("Failed to create rendertexture!;");
             }
         }
 

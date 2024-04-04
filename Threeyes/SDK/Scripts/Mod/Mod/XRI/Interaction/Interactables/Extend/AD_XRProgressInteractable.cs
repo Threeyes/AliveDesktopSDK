@@ -365,6 +365,18 @@ public abstract class AD_XRProgressInteractable<TContainer, TConfig, TPropertyBa
     #endregion
 
     #region UnityMethod
+
+    /// <summary>
+    /// 手动同步配置文件
+    /// 
+    /// 用途：
+    /// -因为其他情况导致物体当前状态与Config不一致，当退出后需要调用该方法同步Config的相应状态
+    /// </summary>
+    public void ManualUpdate()
+    {
+        SetModel(Config.Value, true);//还原时需要忽略刚体
+        NotifyEvent(Config.Value);
+    }
     protected virtual void LateUpdate()//先统一在LateUpdate运行
     {
         if (!tfHandle)

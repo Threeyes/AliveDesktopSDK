@@ -25,8 +25,8 @@ public class AD_XRRotater : AD_XRProgressInteractable<AD_XRRotater, AD_XRRotater
     [Tooltip("Events to trigger when the rotater is moved")]
     Vector3Event onValueChanged = new Vector3Event();
     #endregion
-    //Runtime
 
+    //Runtime
     public Transform TfCamera
     {
         get

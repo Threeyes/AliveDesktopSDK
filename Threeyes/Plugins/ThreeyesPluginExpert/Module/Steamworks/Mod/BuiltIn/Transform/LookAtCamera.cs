@@ -7,8 +7,18 @@ namespace Threeyes.Steamworks
 {
     public class LookAtCamera : ConfigurableUpdateComponentBase<Transform, SOLookAtCameraConfig, LookAtCamera.ConfigInfo>
     {
+        public bool IsActive
+        {
+            get { return isActive; }
+            set { isActive = value; }
+        }
+        [SerializeField] protected bool isActive = true;
+
         protected override void UpdateFunc()
         {
+            if (!isActive)
+                return;
+
             base.UpdateFunc();
             Comp.LookAt(ManagerHolder.EnvironmentManager.MainCamera.transform.position, Config.worldUp);
         }
