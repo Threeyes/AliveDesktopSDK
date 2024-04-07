@@ -25,12 +25,20 @@ public sealed class AD_DefaultShellItem : AD_SerializableItemWithContextMenuBase
         string displayName = data.NameWithoutExtension; //ToUpdate：根据全局设置，决定是否带后缀
         if (data.overrideName.NotNullOrEmpty())
             displayName = data.overrideName;
-        onInitName.Invoke(displayName);
 
         Texture preview = data.externalPreview;
         if (preview == null)
             preview = data.TexturePreview;
-        onInitPreview.Invoke(preview);
+
+        try
+        {
+            onInitName.Invoke(displayName);
+            onInitPreview.Invoke(preview);
+        }
+        catch (System.Exception e)//可能错误：uMod打包导致调用了同名不同参数方法，导致报错。此时不算严重错误，可以跳过
+        {
+            Debug.LogError("Invoke event failed: " + e);
+        }
     }
 
     #region IRuntimeEditable
@@ -64,9 +72,9 @@ public sealed class AD_DefaultShellItem : AD_SerializableItemWithContextMenuBase
         [RuntimeEditorProperty] public string overrideName;
 
         [JsonIgnore] public Texture externalPreview;
-        [RuntimeEditorProperty] [PersistentAssetFilePath(nameof(externalPreview), true, defaultAssetFieldName: nameof(texturePreview))] public string overridePreviewFilePath;//支持用户自定义文件的预览图
+        [RuntimeEditorProperty][PersistentAssetFilePath(nameof(externalPreview), true, defaultAssetFieldName: nameof(texturePreview))] public string overridePreviewFilePath;//支持用户自定义文件的预览图
 
-        [HideInInspector] [JsonIgnore] [PersistentDirPath] public string PersistentDirPath;
+        [HideInInspector][JsonIgnore][PersistentDirPath] public string PersistentDirPath;
 
         public ItemInfo()
         {

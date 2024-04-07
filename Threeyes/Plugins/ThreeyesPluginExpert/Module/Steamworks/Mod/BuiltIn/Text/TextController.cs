@@ -10,7 +10,7 @@ namespace Threeyes.Steamworks
     /// 
     /// 
     /// PS：
-    /// -提供多个可选组件以及暴露UnityEvent，方便兼容Text、TextMeshPro等文本呈现组件
+    /// -提供多个可选组件以及暴露UnityEvent，方便兼容其他文本呈现组件
     /// -如果不希望更改Text的颜色，可以直接通过onSetText来设置，取消text字段的引用
     /// </summary>
     public class TextController : ConfigurableComponentBase<TextController, SOTextControllerConfig, TextController.ConfigInfo, TextController.PropertyBag>
