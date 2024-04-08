@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f6452b2a9e469545b49d2f40480d00e, type: 3}
   m_Name: ShellItem_Displaybox
   m_EditorClassIdentifier: 
-  remark: 
+  remark: "\u9ED8\u8BA4ShellType\u4E0D\u9488\u5BF9\u4EFB\u4F55\u7C7B\u578B\uFF0C\u4EC5\u4F5C\u4E3A\u6700\u7EC8Fallback\u7269\u4F53\u3002\u65B9\u4FBF\u7528\u6237\u52A0\u8F7D\u4EFB\u610F\u6A21\u578BMod\u540E\u8FDB\u884C\u66FF\u6362"
   title: Displaybox
   prefab: {fileID: 5728484840347150481, guid: ba0d449bd967bdb4990e7eaf938b9016, type: 3}
   preview: {fileID: 2800000, guid: 822c4ebba5c70a14597bc484d6534363, type: 3}
   description: 
   tooltip: 
-  shellType: 2
+  shellType: 0
   speicalFolder: 0

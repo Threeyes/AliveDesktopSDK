@@ -24,7 +24,6 @@ public abstract class AD_SerializableItemBase<TElement, TEleData, TPropertyBag> 
     where TPropertyBag : ComponentPropertyBag<TElement>, new()
 {
     #region Property & Field
-    protected static bool IsRuntimeEditorMode { get { return RuntimeEditorManagerHolder.RuntimeEditorManager.IsActive; } }
     public IAD_SerializableItemInfo BaseData { get { return data; } }
     public RuntimeSerializable_GameObject RuntimeSerialization_GameObject
     {

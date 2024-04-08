@@ -272,7 +272,7 @@ namespace Threeyes.AliveCursor.SDK.Editor
                 GameObject goRootPrefab = go.transform.root.gameObject;//查找根Prefab
                 if (goRootPrefab.GetComponent<TItem>() == null)//忽略没有挂载指定组件的物体
                 {
-                    Debug.LogError($"{goRootPrefab.name} doesn't have the required component {nameof(TItem)}! Will not create the related PrefabInfo!");
+                    Debug.LogError( $"{goRootPrefab.name} doesn't have the required component {nameof(TItem)}! Will not create the related PrefabInfo!");
                     continue;
                 }
 

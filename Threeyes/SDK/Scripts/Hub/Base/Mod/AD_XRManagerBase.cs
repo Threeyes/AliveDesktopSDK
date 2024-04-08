@@ -100,7 +100,11 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     protected Transform tfCurAttachTarget;//当前附着的物体
     public void TeleportAndAttachTo(AD_RigAttachable rigAttachable)
     {
-        //#0 初始化Locomotion设定，临时设置为无重力模式
+        //#0 主动保存Pose信息，可避免间隔保存导致滞后
+        if (!tfCurAttachTarget)//避免在不同Attachable间切换，导致保存错误的信息
+            SaveRigPose();
+
+        //#1 初始化Locomotion设定，临时设置为无重力模式
         SetMovementTypeFunc(true, true, false);
 
         //#2 使用Parent Constraints来将tfCameraRigParent附着到目标
@@ -123,14 +127,18 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
         return rigAttachable.attachTransform == tfCurAttachTarget;
     }
 
+    protected virtual Quaternion CameraRotation { get { return tfCameraEye.rotation; } }
+
+    //缓存有效的位置信息，用于备份还原或Detach
     public Pose PoseCameraRig { get { return poseCameraRig; } }
     public Pose PoseLocalCameraEye { get { return poseLocalCameraEye; } }
     public Pose PoseCameraEye { get { return poseCameraEye; } }
-    protected virtual Quaternion CameraRotation { get { return tfCameraEye.rotation; } }
-
     Pose poseCameraRig;
     Pose poseLocalCameraEye;
     Pose poseCameraEye;
+
+    float savePoseInfoFrequence = 1;//保存位置信息的频率（秒）
+    float lastSavePostInfoTime;
     protected virtual void LateUpdate()
     {
         if (tfCurAttachTarget)//Attaching中：让XRRig跟随目标。（因为此时CameraRigParent灯物体的位置有变化，所以不应该保存其信息）
@@ -138,12 +146,20 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
             tfCameraRigParent.position = tfCurAttachTarget.position;
             tfCameraRigParent.rotation = tfCurAttachTarget.rotation;
         }
-        else//非Attaching中：保存当前有效的位置信息(ToUpdate：降低更新频次，如1秒1次)
+        else//非Attaching：保存当前有效的位置信息(ToUpdate：降低更新频次，如1秒1次)
         {
-            poseCameraRig = new Pose(tfCameraRig.position, tfCameraRig.rotation);
-            poseLocalCameraEye = new Pose(tfCameraEye.localPosition, tfCameraEye.localRotation);
-            poseCameraEye = new Pose(tfCameraEye.position, CameraRotation);
+            if (Time.time - lastSavePostInfoTime < savePoseInfoFrequence)
+                return;
+            SaveRigPose();
         }
+    }
+
+    void SaveRigPose()
+    {
+        poseCameraRig = new Pose(tfCameraRig.position, tfCameraRig.rotation);
+        poseLocalCameraEye = new Pose(tfCameraEye.localPosition, tfCameraEye.localRotation);
+        poseCameraEye = new Pose(tfCameraEye.position, CameraRotation);
+        lastSavePostInfoTime = Time.time;
     }
 
     bool IsTeleportDone
@@ -162,19 +178,25 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
             Detach();
     }
 
+    static bool IsVRMode { get { return AD_ManagerHolderManager.ActivePlatformMode == AD_PlatformMode.PCVR; } }
     protected virtual void Detach()
     {
-        //#0 缓存Rig的Pose，用于后续还原
-        Pose rigPose = new Pose(tfCameraRig.position, tfCameraRig.rotation);
+        //#0 
+        //Pose rigPose = new Pose(tfCameraRig.position, tfCameraRig.rotation);//缓存Rig的Pose，用于后续还原
+        Pose rigPose = poseCameraRig;//改为使用Attach前的有效数据，能够避免旋转的Bug
 
-        //#3 还原RigParent的位置/旋转
+        //#2 还原RigParent的位置/旋转
         ResetRigParentPose();
 
-        //#2 恢复Mod的Locomotion设定
+        //#3 恢复Mod的Locomotion设定
         ActiveController.UpdateLocomotionSetting();
 
         //#3 还原Rig的位置/旋转，避免出现与Attach时不一致的瞬移
         TeleportTo(rigPose.position, rigPose.rotation, MatchOrientation.TargetUpAndForward, AD_XRDestinationRigPart.Foot);
+
+        //#4 非【VR模式】：还原相机
+        if (!IsVRMode)
+            SetCameraPose(poseLocalCameraEye.position, poseCameraEye.rotation);
 
         //Clear Data
         tfCurAttachTarget = null;
@@ -194,7 +216,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
 
     protected virtual void SetAttachState(bool isAttaching)
     {
-
+        //此方法暂不实现但不能删除，子类需要用于更新UI等
     }
 
     /// <summary>

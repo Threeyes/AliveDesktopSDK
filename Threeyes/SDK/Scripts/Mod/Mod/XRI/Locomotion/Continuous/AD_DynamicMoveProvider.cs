@@ -1,3 +1,4 @@
+using Threeyes.RuntimeEditor;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -14,7 +15,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 /// -【编辑模式】移动时忽略TimeScale对deltaTime的影响（主要方法：ComputeDesiredMove、MoveRig）
 /// </summary>
 public class AD_DynamicMoveProvider : ActionBasedContinuousMoveProvider
-    , IAD_RuntimeEditor_ModeActiveHandler
+    , IRuntimeEditor_ModeActiveHandler
 {
     //为了避免该组件禁用而无法更新leftHandValue，改为直接读取Action的值
     public Vector2 LeftHandMoveInput { get { return /*leftHandValue*/leftHandMoveAction.action?.ReadValue<Vector2>() ?? Vector2.zero; } }
@@ -299,7 +300,7 @@ public class AD_DynamicMoveProvider : ActionBasedContinuousMoveProvider
 
     #region IAD_RuntimeEditor_ModeActiveHandler
     bool isRuntimeEditorActive;
-    public void OnRuntimeEditorActiveChanged(bool isRuntimeEditorActive)
+    public void OnRuntimeEditorModeChanged(bool isRuntimeEditorActive)
     {
         this.isRuntimeEditorActive = isRuntimeEditorActive;
     }
