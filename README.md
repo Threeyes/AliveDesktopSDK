@@ -1,7 +1,7 @@
 <h1 align="center">AliveDesktopSDK</h1>
 
 <p align="center">
-    <a href="https://store.steampowered.com/app/2190810/Alive_Desktop/"><img src="https://github.com/Threeyes/AliveDesktopSDK/blob/main/Threeyes/SDK/Textures/ADSDK%20Icon.png?raw=true" alt="Logo" width="200px" height="200px" />
+    <a href="https://store.steampowered.com/app/2190810/Alive_Desktop/"><img src="https://github.com/Threeyes/AliveDesktopSDK/blob/main/Threeyes/SDK/Textures/ADSDK%20Icon_BG.png?raw=true" alt="Logo" width="200px" height="200px" style="border-radius:20%"/>
     <br />
 	<a href="https://unity.com/releases/editor/qa/lts-releases?version=2022.3"><img src="https://img.shields.io/badge/%20Unity-2022.3.10f1%20-blue" /></a>
 	<a href="https://openupm.com/packages/com.threeyes.alivedesktop.sdk/"><img src="https://img.shields.io/npm/v/com.threeyes.alivedesktop.sdk?label=openupm&amp;registry_uri=https://package.openupm.com" /></a>
