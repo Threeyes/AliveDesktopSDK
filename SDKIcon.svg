@@ -25,7 +25,7 @@
         }
 
         .container {
-          background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+          background: linear-gradient(-45deg, #cb40e7, #529bee, #23d5c6, #d58e23);
           background-size: 400% 400%;
           animation: gradient 15s ease infinite;
 
@@ -38,6 +38,7 @@
           color:  rgba(255,255,255,0.699);
           /* transform="translate(0,-200)"; */
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+          text-shadow: 2px 2px 2px rgba(80,80,80,0.4);
         }
         
         
@@ -45,6 +46,7 @@
           animation: icon 1.5s linear -0.5s infinite;
           display: inline-block;
           transform-origin: 70% 70%;
+          filter: drop-shadow(2px 2px 2px rgba(80,80,80,0.4));
         }
 
         @media (prefers-reduced-motion) {
@@ -59,18 +61,26 @@
       </style>
 
       <div class="container">
-        <h1>AliveDesktopSDK 
+        <h1
+        
+        >AliveDesktopSDK 
         <div class="icon">⭐</div>
         </h1>
       </div>
     </div>
   </foreignObject>
 
-  <image
-    x="50%"
-    y="40%"
-    width="240"
-    height="240"
-    transform="translate(-120,-120)"
-    href="https://github.com/Threeyes/AliveDesktopSDK/blob/main/Threeyes/SDK/Textures/ADSDK%20Icon.png?raw=true" />
+//以下图象数据通过https://png2svg.com/ 自动生成。之所以不使用本地图片是因为github禁止直接链接图像（相对或绝对）。
+<svg
+  x="30%"
+  width="240px" height="240px"
+  filter= "drop-shadow(2px 2px 2px rgba(80,80,80,0.4))"
+  style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<g><path style="opacity:0.865" fill="#28a9cf" d="M 75.5,160.5 C 71.7356,160.59 68.0689,159.59 64.5,157.5C 62.2835,124.792 68.4501,93.792 83,64.5C 94.3276,44.1723 110.494,29.0057 131.5,19C 134.497,18.2446 136.997,19.0779 139,21.5C 156.54,52.5827 169.04,85.5827 176.5,120.5C 175.726,121.711 174.893,121.711 174,120.5C 165.579,92.8993 154.245,66.566 140,41.5C 137.639,37.4333 134.806,33.7667 131.5,30.5C 107.686,43.7859 91.6862,63.4526 83.5,89.5C 103.724,89.357 123.39,92.5237 142.5,99C 148.112,101.139 153.446,103.806 158.5,107C 132.753,101.899 106.753,100.066 80.5,101.5C 75.3574,120.878 73.6907,140.545 75.5,160.5 Z"/></g>
+<g><path style="opacity:0.02" fill="#28aad0" d="M 159.5,107.5 C 160.833,108.167 160.833,108.167 159.5,107.5 Z"/></g>
+<g><path style="opacity:0.88" fill="#838484" d="M 64.5,157.5 C 68.0689,159.59 71.7356,160.59 75.5,160.5C 114.547,171.869 154.38,178.536 195,180.5C 206.581,180.325 218.081,179.325 229.5,177.5C 223.532,193.951 214.198,208.118 201.5,220C 189.93,221.623 178.264,221.957 166.5,221C 181.927,220.536 194.427,214.37 204,202.5C 206.5,198.667 209,194.833 211.5,191C 174.612,191.347 138.279,187.014 102.5,178C 74.3067,171.119 46.3067,163.619 18.5,155.5C 18.9579,170.638 23.1246,184.638 31,197.5C 39.5591,207.7 50.3924,214.2 63.5,217C 70.7408,218.848 78.0741,220.182 85.5,221C 39.1697,229.68 13.6697,210.513 9,163.5C 8.50034,156.174 8.33368,148.841 8.5,141.5C 27.2339,146.634 45.9006,151.967 64.5,157.5 Z"/></g>
+</svg>
+
+
 </svg>
