@@ -28,7 +28,7 @@ public interface IAD_SerializableItem :
     void UpdateSetting();
 }
 public interface IAD_SerializableItemWithContextMenu : IAD_SerializableItem
-    , IContextMenuProvider//由自身提供ContextMenu
+    , IContextMenuProvider//自身能够提供ContextMenu
 { }
 public interface IAD_ShellItem : IAD_SerializableItemWithContextMenu
     , IRuntimeEditorSelectable//运行时可选
@@ -36,6 +36,7 @@ public interface IAD_ShellItem : IAD_SerializableItemWithContextMenu
 }
 public interface IAD_DecorationItem : IAD_SerializableItemWithContextMenu
     , IRuntimeEditorSelectable//运行时可选
+    , IRuntimeEditorDeletable//运行时可删除
 {
 }
 
@@ -116,7 +117,8 @@ public interface IAD_SerializableItemController :
     IModControllerHandler,
     IFilePathModifierHolder
 {
-    public RuntimeSerializable_GameObject RuntimeSerialization_GameObjectRoot { get; }
+    Transform TfElementParent { get; }
+    RuntimeSerializable_GameObject RuntimeSerialization_GameObjectRoot { get; }
 
     void RelinkElemets();
     void InitExistElements();

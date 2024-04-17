@@ -1310,6 +1310,7 @@ GameObject:
   - component: {fileID: 3314640920964258383}
   - component: {fileID: 3621276461568461181}
   - component: {fileID: 6219585466734088765}
+  - component: {fileID: 8924839305266786558}
   m_Layer: 0
   m_Name: Short Lamp
   m_TagString: Untagged
@@ -1400,7 +1401,7 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0.2, z: 0}
+  m_CenterOfMass: {x: 0, y: 0.1, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
@@ -1594,6 +1595,21 @@ MonoBehaviour:
   onSetLightColor:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8924839305266786558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5244600701253460237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b642ce6405826dc48af88688705bcd7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  comp: {fileID: 3314640920964258383}
+  comps: []
+  centerOfMassPerUnit: {x: 0, y: 0.1, z: 0}
 --- !u!1 &5380719891237535432
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public interface IAD_ShellManager :
     IAD_SerializableItemManager<AD_ShellPrefabConfigInfo, AD_SOShellPrefabInfoGroup, AD_SOShellPrefabInfo>,
+    IHubManagerWithController<IAD_ShellController>,
     IHubManagerModPreInitHandler,
     IHubManagerModInitHandler
 {

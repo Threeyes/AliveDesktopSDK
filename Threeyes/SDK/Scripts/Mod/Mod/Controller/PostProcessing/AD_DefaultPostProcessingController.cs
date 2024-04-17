@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using Threeyes.Config;
 using Threeyes.Core;
+using Threeyes.ModuleHelper;
 using Threeyes.Persistent;
 using Threeyes.Steamworks;
 using UnityEngine;
@@ -55,142 +56,149 @@ public partial class AD_DefaultPostProcessingController : PostProcessingControll
 
         volume.gameObject.SetActive(isUse);//控制整体激活状态
 
-        ///ToUpdate:
+        ///PS:
+        ///-应该通过各模块字段的Override方法来设置，这样才能确保其有效（对应UI的Toggle）.如果单独设置value字段，则可能会因为overrideState为false导致使用默认值
+        ///
+        /// ToUpdate:
         ///-【V2】如果相关Effect没激活，那就直接移除（尝试 volume.profile.Remove）。需要比较一下性能是否比保留Effect更好，因为需要实现移除、比对等额外操作，如没必要就不实现
 
         //——Bloom——
-        if (volume.profile.TryGet(out Bloom bloom))
+        if (volume.profile.TryGetOrAdd(out Bloom bloom))
         {
             bloom.active = Config.bloom_IsActive;
-            bloom.threshold.value = Config.bloom_Threshold;
-            bloom.intensity.value = Config.bloom_Intensity;
-            bloom.scatter.value = Config.bloom_Scatter;
-            bloom.clamp.value = Config.bloom_Clamp;
-            bloom.tint.value = Config.bloom_Tint;
+            bloom.threshold.Override(Config.bloom_Threshold);
+            bloom.intensity.Override(Config.bloom_Intensity);
+            bloom.scatter.Override(Config.bloom_Scatter);
+            bloom.clamp.Override(Config.bloom_Clamp);
+            bloom.tint.Override(Config.bloom_Tint);
+            bloom.highQualityFiltering.Override(Config.bloom_HighQualityFiltering);
+            bloom.downscale.Override(Config.bloom_Downscale);
+            bloom.maxIterations.Override(Config.bloom_MaxIterations);
 
-            bloom.dirtIntensity.value = Config.bloom_DirtIntensity;
+            bloom.dirtTexture.Override(Config.bloom_DirtTexture);
+            bloom.dirtIntensity.Override(Config.bloom_DirtIntensity);
         }
-        if (volume.profile.TryGet(out ChannelMixer channelMixer))
+        if (volume.profile.TryGetOrAdd(out ChannelMixer channelMixer))
         {
             channelMixer.active = Config.channelMixer_IsActive;
-            channelMixer.redOutRedIn.value = Config.channelMixer_RedOutRedIn;
-            channelMixer.redOutGreenIn.value = Config.channelMixer_RedOutGreenIn;
-            channelMixer.redOutBlueIn.value = Config.channelMixer_RedOutBlueIn;
-            channelMixer.greenOutRedIn.value = Config.channelMixer_GreenOutRedIn;
-            channelMixer.greenOutGreenIn.value = Config.channelMixer_GreenOutGreenIn;
-            channelMixer.greenOutBlueIn.value = Config.channelMixer_GreenOutBlueIn;
-            channelMixer.blueOutRedIn.value = Config.channelMixer_BlueOutRedIn;
-            channelMixer.blueOutGreenIn.value = Config.channelMixer_BlueOutGreenIn;
-            channelMixer.blueOutBlueIn.value = Config.channelMixer_BlueOutBlueIn;
+            channelMixer.redOutRedIn.Override(Config.channelMixer_RedOutRedIn);
+            channelMixer.redOutGreenIn.Override(Config.channelMixer_RedOutGreenIn);
+            channelMixer.redOutBlueIn.Override(Config.channelMixer_RedOutBlueIn);
+            channelMixer.greenOutRedIn.Override(Config.channelMixer_GreenOutRedIn);
+            channelMixer.greenOutGreenIn.Override(Config.channelMixer_GreenOutGreenIn);
+            channelMixer.greenOutBlueIn.Override(Config.channelMixer_GreenOutBlueIn);
+            channelMixer.blueOutRedIn.Override(Config.channelMixer_BlueOutRedIn);
+            channelMixer.blueOutGreenIn.Override(Config.channelMixer_BlueOutGreenIn);
+            channelMixer.blueOutBlueIn.Override(Config.channelMixer_BlueOutBlueIn);
         }
-        if (volume.profile.TryGet(out ChromaticAberration chromaticAberration))
+        if (volume.profile.TryGetOrAdd(out ChromaticAberration chromaticAberration))
         {
             chromaticAberration.active = Config.chromaticAberration_IsActive;
-            chromaticAberration.intensity.value = Config.chromaticAberration_Intensity;
+            chromaticAberration.intensity.Override(Config.chromaticAberration_Intensity);
         }
-        if (volume.profile.TryGet(out ColorAdjustments colorAdjustments))
+        if (volume.profile.TryGetOrAdd(out ColorAdjustments colorAdjustments))
         {
             colorAdjustments.active = Config.colorAdjustments_IsActive;
-            colorAdjustments.postExposure.value = Config.colorAdjustments_PostExposure;
-            colorAdjustments.contrast.value = Config.colorAdjustments_Contrast;
-            colorAdjustments.colorFilter.value = Config.colorAdjustments_ColorFilter;
-            colorAdjustments.hueShift.value = Config.colorAdjustments_HueShift;
-            colorAdjustments.saturation.value = Config.colorAdjustments_Saturation;
+            colorAdjustments.postExposure.Override(Config.colorAdjustments_PostExposure);
+            colorAdjustments.contrast.Override(Config.colorAdjustments_Contrast);
+            colorAdjustments.colorFilter.Override(Config.colorAdjustments_ColorFilter);
+            colorAdjustments.hueShift.Override(Config.colorAdjustments_HueShift);
+            colorAdjustments.saturation.Override(Config.colorAdjustments_Saturation);
         }
-        if (volume.profile.TryGet(out ColorLookup colorLookup))
+        if (volume.profile.TryGetOrAdd(out ColorLookup colorLookup))
         {
             colorLookup.active = Config.colorLookup_IsActive;
-            colorLookup.contribution.value = Config.colorAdjustments_Contribution;
+            colorLookup.contribution.Override(Config.colorAdjustments_Contribution);
         }
-        if (volume.profile.TryGet(out DepthOfField depthOfField))
+        if (volume.profile.TryGetOrAdd(out DepthOfField depthOfField))
         {
             depthOfField.active = Config.depthOfField_IsActive;
-            depthOfField.mode.value = Config.depthOfField_Mode;
-            depthOfField.gaussianStart.value = Config.depthOfField_GaussianStart;
-            depthOfField.gaussianEnd.value = Config.depthOfField_GaussianEnd;
-            depthOfField.gaussianMaxRadius.value = Config.depthOfField_GaussianMaxRadius;
-            depthOfField.highQualitySampling.value = Config.depthOfField_HighQualitySampling;
-            depthOfField.focusDistance.value = Config.depthOfField_FocusDistance;
-            depthOfField.aperture.value = Config.depthOfField_Aperture;
-            depthOfField.focalLength.value = Config.depthOfField_FocalLength;
-            depthOfField.bladeCount.value = Config.depthOfField_BladeCount;
-            depthOfField.bladeCurvature.value = Config.depthOfField_BladeCurvature;
-            depthOfField.bladeRotation.value = Config.depthOfField_BladeRotation;
+            depthOfField.mode.Override(Config.depthOfField_Mode);
+            depthOfField.gaussianStart.Override(Config.depthOfField_GaussianStart);
+            depthOfField.gaussianEnd.Override(Config.depthOfField_GaussianEnd);
+            depthOfField.gaussianMaxRadius.Override(Config.depthOfField_GaussianMaxRadius);
+            depthOfField.highQualitySampling.Override(Config.depthOfField_HighQualitySampling);
+            depthOfField.focusDistance.Override(Config.depthOfField_FocusDistance);
+            depthOfField.aperture.Override(Config.depthOfField_Aperture);
+            depthOfField.focalLength.Override(Config.depthOfField_FocalLength);
+            depthOfField.bladeCount.Override(Config.depthOfField_BladeCount);
+            depthOfField.bladeCurvature.Override(Config.depthOfField_BladeCurvature);
+            depthOfField.bladeRotation.Override(Config.depthOfField_BladeRotation);
         }
-        if (volume.profile.TryGet(out FilmGrain filmGrain))
+        if (volume.profile.TryGetOrAdd(out FilmGrain filmGrain))
         {
             filmGrain.active = Config.filmGrain_IsActive;
-            filmGrain.type.value = Config.filmGrain_Type;
-            filmGrain.intensity.value = Config.filmGrain_Intensity;
-            filmGrain.response.value = Config.filmGrain_Response;
+            filmGrain.type.Override(Config.filmGrain_Type);
+            filmGrain.intensity.Override(Config.filmGrain_Intensity);
+            filmGrain.response.Override(Config.filmGrain_Response);
         }
-        if (volume.profile.TryGet(out LensDistortion lensDistortion))
+        if (volume.profile.TryGetOrAdd(out LensDistortion lensDistortion))
         {
             lensDistortion.active = Config.lensDistortion_IsActive;
-            lensDistortion.intensity.value = Config.lensDistortion_Intensity;
-            lensDistortion.xMultiplier.value = Config.lensDistortion_XMultiplier;
-            lensDistortion.yMultiplier.value = Config.lensDistortion_YMultiplier;
-            lensDistortion.center.value = Config.lensDistortion_Center;
-            lensDistortion.scale.value = Config.lensDistortion_Scale;
+            lensDistortion.intensity.Override(Config.lensDistortion_Intensity);
+            lensDistortion.xMultiplier.Override(Config.lensDistortion_XMultiplier);
+            lensDistortion.yMultiplier.Override(Config.lensDistortion_YMultiplier);
+            lensDistortion.center.Override(Config.lensDistortion_Center);
+            lensDistortion.scale.Override(Config.lensDistortion_Scale);
         }
-        if (volume.profile.TryGet(out LiftGammaGain liftGammaGain))
+        if (volume.profile.TryGetOrAdd(out LiftGammaGain liftGammaGain))
         {
             liftGammaGain.active = Config.liftGammaGain_IsActive;
-            liftGammaGain.lift.value = Config.liftGammaGain_Lift;
-            liftGammaGain.gamma.value = Config.liftGammaGain_Gamma;
-            liftGammaGain.gain.value = Config.liftGammaGain_Gain;
+            liftGammaGain.lift.Override(Config.liftGammaGain_Lift);
+            liftGammaGain.gamma.Override(Config.liftGammaGain_Gamma);
+            liftGammaGain.gain.Override(Config.liftGammaGain_Gain);
         }
-        if (volume.profile.TryGet(out MotionBlur motionBlur))
+        if (volume.profile.TryGetOrAdd(out MotionBlur motionBlur))
         {
             motionBlur.active = Config.motionBlur_IsActive;
-            motionBlur.mode.value = Config.motionBlur_Mode;
-            motionBlur.quality.value = Config.motionBlur_Quality;
-            motionBlur.intensity.value = Config.motionBlur_Intensity;
-            motionBlur.clamp.value = Config.motionBlur_Clamp;
+            motionBlur.mode.Override(Config.motionBlur_Mode);
+            motionBlur.quality.Override(Config.motionBlur_Quality);
+            motionBlur.intensity.Override(Config.motionBlur_Intensity);
+            motionBlur.clamp.Override(Config.motionBlur_Clamp);
         }
-        if (volume.profile.TryGet(out PaniniProjection paniniProjection))
+        if (volume.profile.TryGetOrAdd(out PaniniProjection paniniProjection))
         {
             paniniProjection.active = Config.paniniProjection_IsActive;
-            paniniProjection.distance.value = Config.paniniProjection_Distance;
-            paniniProjection.cropToFit.value = Config.paniniProjection_CropToFit;
+            paniniProjection.distance.Override(Config.paniniProjection_Distance);
+            paniniProjection.cropToFit.Override(Config.paniniProjection_CropToFit);
         }
-        if (volume.profile.TryGet(out ShadowsMidtonesHighlights shadowsMidtonesHighlights))
+        if (volume.profile.TryGetOrAdd(out ShadowsMidtonesHighlights shadowsMidtonesHighlights))
         {
             shadowsMidtonesHighlights.active = Config.shadowsMidtonesHighlights_IsActive;
-            shadowsMidtonesHighlights.shadows.value = Config.shadowsMidtonesHighlights_Shadows;
-            shadowsMidtonesHighlights.midtones.value = Config.shadowsMidtonesHighlights_Midtones;
-            shadowsMidtonesHighlights.highlights.value = Config.shadowsMidtonesHighlights_Highlights;
-            shadowsMidtonesHighlights.shadowsStart.value = Config.shadowsMidtonesHighlights_ShadowsStart;
-            shadowsMidtonesHighlights.shadowsEnd.value = Config.shadowsMidtonesHighlights_ShadowsEnd;
-            shadowsMidtonesHighlights.highlightsStart.value = Config.shadowsMidtonesHighlights_ShadowsStart;
-            shadowsMidtonesHighlights.highlightsEnd.value = Config.shadowsMidtonesHighlights_HighlightsEnd;
+            shadowsMidtonesHighlights.shadows.Override(Config.shadowsMidtonesHighlights_Shadows);
+            shadowsMidtonesHighlights.midtones.Override(Config.shadowsMidtonesHighlights_Midtones);
+            shadowsMidtonesHighlights.highlights.Override(Config.shadowsMidtonesHighlights_Highlights);
+            shadowsMidtonesHighlights.shadowsStart.Override(Config.shadowsMidtonesHighlights_ShadowsStart);
+            shadowsMidtonesHighlights.shadowsEnd.Override(Config.shadowsMidtonesHighlights_ShadowsEnd);
+            shadowsMidtonesHighlights.highlightsStart.Override(Config.shadowsMidtonesHighlights_ShadowsStart);
+            shadowsMidtonesHighlights.highlightsEnd.Override(Config.shadowsMidtonesHighlights_HighlightsEnd);
         }
-        if (volume.profile.TryGet(out SplitToning splitToning))
+        if (volume.profile.TryGetOrAdd(out SplitToning splitToning))
         {
             splitToning.active = Config.splitToning_IsActive;
-            splitToning.shadows.value = Config.splitToning_Shadows;
-            splitToning.highlights.value = Config.splitToning_Highlights;
-            splitToning.balance.value = Config.splitToning_Balance;
+            splitToning.shadows.Override(Config.splitToning_Shadows);
+            splitToning.highlights.Override(Config.splitToning_Highlights);
+            splitToning.balance.Override(Config.splitToning_Balance);
         }
-        if (volume.profile.TryGet(out Tonemapping tonemapping))
+        if (volume.profile.TryGetOrAdd(out Tonemapping tonemapping))
         {
             tonemapping.active = Config.tonemapping_IsActive;
-            tonemapping.mode.value = Config.tonemapping_Mode;
+            tonemapping.mode.Override(Config.tonemapping_Mode);
         }
-        if (volume.profile.TryGet(out Vignette vignette))
+        if (volume.profile.TryGetOrAdd(out Vignette vignette))
         {
             vignette.active = Config.vignette_IsActive;
-            vignette.color.value = Config.vignette_Color;
-            vignette.center.value = Config.vignette_Center;
-            vignette.intensity.value = Config.vignette_Intensity;
-            vignette.smoothness.value = Config.vignette_Smoothness;
-            vignette.rounded.value = Config.vignette_Rounded;
+            vignette.color.Override(Config.vignette_Color);
+            vignette.center.Override(Config.vignette_Center);
+            vignette.intensity.Override(Config.vignette_Intensity);
+            vignette.smoothness.Override(Config.vignette_Smoothness);
+            vignette.rounded.Override(Config.vignette_Rounded);
         }
-        if (volume.profile.TryGet(out WhiteBalance whiteBalance))
+        if (volume.profile.TryGetOrAdd(out WhiteBalance whiteBalance))
         {
             whiteBalance.active = Config.whiteBalance_IsActive;
-            whiteBalance.temperature.value = Config.whiteBalance_Temperature;
-            whiteBalance.tint.value = Config.whiteBalance_Tint;
+            whiteBalance.temperature.Override(Config.whiteBalance_Temperature);
+            whiteBalance.tint.Override(Config.whiteBalance_Tint);
         }
 
         base.UpdateSetting(isUse);//Notify Hub Manager to update camera setting
@@ -234,12 +242,23 @@ public partial class AD_DefaultPostProcessingController : PostProcessingControll
         [ShowIf(nameof(isBloomValid))] [AllowNesting] public float bloom_Intensity = 0f;
         [Tooltip("Set the radius of the bloom effect")]
         [ShowIf(nameof(isBloomValid))] [AllowNesting] [Range(0, 1)] public float bloom_Scatter = 0.1f;
-        [Tooltip("Use the color picker to select a color for the Bloom effect to tint to.")]
-        [ShowIf(nameof(isBloomValid))] [AllowNesting] public Color bloom_Tint = Color.white;
         [Tooltip("Set the maximum intensity that Unity uses to calculate Bloom. If pixels in your Scene are more intense than this, URP renders them at their current intensity, but uses this intensity value for the purposes of Bloom calculations.")]
         [ShowIf(nameof(isBloomValid))] [AllowNesting] public float bloom_Clamp = 65472f;
+        [Tooltip("Use the color picker to select a color for the Bloom effect to tint to.")]
+        [ShowIf(nameof(isBloomValid))] [AllowNesting] public Color bloom_Tint = Color.white;
+        [Tooltip("Use bicubic sampling instead of bilinear sampling for the upsampling passes. This is slightly more expensive but helps getting smoother visuals.")]
+        [ShowIf(nameof(isBloomValid))] [AllowNesting] public bool bloom_HighQualityFiltering = false;
+        [Tooltip("The starting resolution that this effect begins processing.")]
+        [ShowIf(nameof(isBloomValid))] [AllowNesting] public BloomDownscaleMode bloom_Downscale = BloomDownscaleMode.Half;
+        [Tooltip("The maximum number of iterations in the effect processing sequence")]
+        [ShowIf(nameof(isBloomValid))] [AllowNesting] [Range(2, 8)] public int bloom_MaxIterations = 6;
+
         //——Lens Dirt——
-        //Texture bloom_DirtTexture//图片格式没有限制，目前暂时没应用到，等后期加上
+        public Texture bloom_DirtTexture { get { return bloom_ExternalDirtTexture ? bloom_ExternalDirtTexture : bloom_DefaultDirtTexture; } }
+        [JsonIgnore] public Texture bloom_DefaultDirtTexture;
+        [Tooltip("Dirtiness texture to add smudges or dust to the bloom effect.")]
+        [JsonIgnore] public Texture bloom_ExternalDirtTexture;//加载图片的格式没有限制
+        [ShowIf(nameof(isBloomValid))] [PersistentAssetFilePath(nameof(bloom_ExternalDirtTexture), true, defaultAssetFieldName: nameof(bloom_DefaultDirtTexture))] public string bloom_ExternalDirtTextureFilePath;//缓存图片路径
         [Tooltip("Amount of dirtiness.")]
         [ShowIf(nameof(isBloomValid))] [AllowNesting] public float bloom_DirtIntensity = 0f;
         #endregion

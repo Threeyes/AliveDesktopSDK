@@ -25,7 +25,7 @@ public sealed class AD_DefaultDecorationController : AD_SerializableItemControll
 
     public void AddElement(GameObject prefab, Vector3? initPosition = null, Quaternion? initRotation = null)
     {
-        if (!prefab)
+        if (!prefab)//避免因为卸载模型Mod导致引用丢失
             return;
 
         overridePrefab = prefab;

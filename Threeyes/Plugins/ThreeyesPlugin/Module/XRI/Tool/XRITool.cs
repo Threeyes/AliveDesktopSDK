@@ -1,13 +1,17 @@
 #if Threeyes_XRI
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
-
+using Threeyes.Core;
 namespace Threeyes.XRI
 {
     public static class XRITool
     {
+        /// <summary>
+        /// 查找场景首个有效的TeleportationProvider
+        /// </summary>
         public static TeleportationProvider teleportationProvider
         {
             get
@@ -21,13 +25,18 @@ namespace Threeyes.XRI
             }
         }
         static TeleportationProvider m_TeleportationProvider;
+
+        class CacheLocomotionCallback
+        {
+
+        }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="position"></param>
         /// <param name="rotation"></param>
         /// <param name="matchOrientation">Set to None if you don't want to change the rotation</param>
-        public static bool TeleportTo(Vector3 position, Quaternion rotation, MatchOrientation matchOrientation)
+        public static bool TeleportTo(Vector3 position, Quaternion rotation, MatchOrientation matchOrientation, Action<LocomotionSystem> beginLocomotion = null, Action<LocomotionSystem> endLocomotion = null)
         {
             //Ref：UnityEngine.XR.Content.Walkthrough.WalkthroughStep.SetCameraPosition的实现（其中MatchOrientation为None）
 
@@ -41,6 +50,27 @@ namespace Threeyes.XRI
                 destinationPosition = position,
                 destinationRotation = rotation
             };
+
+            Action<LocomotionSystem> actEndLocomotionEx = null;//使用Action进行封装
+            if (endLocomotion != null)
+            {
+                actEndLocomotionEx =
+                    (lS) =>
+                    {
+                        endLocomotion.TryExecute(lS);
+
+                        //Remove Callback on complete
+                        if (beginLocomotion != null)
+                            teleportationProvider.beginLocomotion -= beginLocomotion;
+                        if (actEndLocomotionEx != null)
+                            teleportationProvider.endLocomotion -= actEndLocomotionEx;
+                    };
+            }
+
+            if (beginLocomotion != null)
+                teleportationProvider.beginLocomotion += beginLocomotion;
+            if (actEndLocomotionEx != null)
+                teleportationProvider.endLocomotion += actEndLocomotionEx;
 
             return teleportationProvider.QueueTeleportRequest(request);// if successfully queued. Otherwise, returns <see langword="false"/>
         }

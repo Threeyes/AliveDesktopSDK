@@ -8,9 +8,7 @@ namespace Threeyes.UI
     /// 用途：
     /// -方便Raycast检测
     /// </summary>
-    public interface IContextMenuTrigger
-    {
-    }
+    public interface IContextMenuTrigger { }
 
     /// <summary>
     /// 返回下拉菜单信息

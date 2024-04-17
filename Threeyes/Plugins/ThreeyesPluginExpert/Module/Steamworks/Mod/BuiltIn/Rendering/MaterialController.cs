@@ -283,6 +283,7 @@ namespace Threeyes.Steamworks
                 string propertyName = fSP.name;
                 fSP.value = targetMaterial.GetFloat(propertyName);
             }
+            UnityEditor.EditorUtility.SetDirty(this);
         }
 #endif
         #endregion

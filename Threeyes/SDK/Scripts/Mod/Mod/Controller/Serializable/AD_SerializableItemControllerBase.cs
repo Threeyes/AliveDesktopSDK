@@ -31,6 +31,8 @@ public abstract class AD_SerializableItemControllerBase<TManager, TSOPrefabInfoG
     where TConfig : AD_SerializableItemControllerConfigInfoBase<TSOPrefabInfo>
 {
     #region Property & Field
+
+    public Transform TfElementParent { get { return tfElementParent; } }
     public Transform tfElementParent;//元素的父物体
     //管理子物体的序列化/反序列化
     public SpawnPointProvider spawnPointProvider;//[Optional]提供生成位置及时间间隔

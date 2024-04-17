@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Threeyes.Steamworks;
@@ -49,11 +50,14 @@ public interface IAD_XRManager :
     void SetMovementType(bool enableFly, bool isPenetrateOnFly, bool useGravity);
 
     /// <summary>
-    /// Teleport Rig to target pos&rot
+    /// Teleport Rig to target pos
+    /// 
+    /// Warning：
+    /// -The teleport function is implemented in Update, so it will not take effect immediately(传送功能在Update中实现,因此不会立即生效)
     /// </summary>
     /// <param name="position"></param>
     /// <param name="rotation"></param>
-    void TeleportTo(Vector3 position, Quaternion rotation, MatchOrientation matchOrientation, AD_XRDestinationRigPart destinationRigPart = AD_XRDestinationRigPart.Foot);
+    void TeleportTo(Vector3 position, Quaternion rotation, MatchOrientation matchOrientation, AD_XRDestinationRigPart destinationRigPart = AD_XRDestinationRigPart.Foot, Action<LocomotionSystem> beginLocomotion = null, Action<LocomotionSystem> endLocomotion = null);
 
     /// <summary>
     /// (PC Mode only) Set vr camera's position and rotation

@@ -75,11 +75,13 @@ namespace Threeyes.Steamworks
         }
         protected virtual void OnEnable()
         {
-            ManagerHolder.SystemAudioManager.Register(this);
+            if (ManagerHolder.SystemAudioManager != null)//避免在建模场景测试时报错
+                ManagerHolder.SystemAudioManager.Register(this);
         }
         protected virtual void OnDisable()
         {
-            ManagerHolder.SystemAudioManager.UnRegister(this);
+            if (ManagerHolder.SystemAudioManager != null)//避免在建模场景测试时报错
+                ManagerHolder.SystemAudioManager.UnRegister(this);
         }
 
         void Update()

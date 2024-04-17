@@ -72,7 +72,14 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
         UseGravity = useGravity;
     }
 
-    public void TeleportTo(Vector3 position, Quaternion rotation, MatchOrientation matchOrientation, AD_XRDestinationRigPart destinationRigPart = AD_XRDestinationRigPart.Foot)
+
+    /// <summary>
+    /// Teleport Rig to target pos
+    /// 
+    /// Warning：
+    /// -The teleport function is implemented in Update, so it will not take effect immediately(传送功能在Update中实现,因此不会立即生效)
+    /// </summary>
+    public void TeleportTo(Vector3 position, Quaternion rotation, MatchOrientation matchOrientation, AD_XRDestinationRigPart destinationRigPart = AD_XRDestinationRigPart.Foot, Action<LocomotionSystem> beginLocomotion = null, Action<LocomotionSystem> endLocomotion = null)
     {
         Vector3 targetPos = position;
         if (destinationRigPart == AD_XRDestinationRigPart.Head)
@@ -82,7 +89,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
             targetPos += eyeOffset;
         }
 
-        XRITool.TeleportTo(targetPos, rotation, matchOrientation);
+        XRITool.TeleportTo(targetPos, rotation, matchOrientation, beginLocomotion, endLocomotion);
     }
 
     public virtual void SetCameraPose(Vector3? localPosition = null, Quaternion? rotation = null)
@@ -192,12 +199,14 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
         ActiveController.UpdateLocomotionSetting();
 
         //#3 还原Rig的位置/旋转，避免出现与Attach时不一致的瞬移
-        TeleportTo(rigPose.position, rigPose.rotation, MatchOrientation.TargetUpAndForward, AD_XRDestinationRigPart.Foot);
-
-        //#4 非【VR模式】：还原相机
-        if (!IsVRMode)
-            SetCameraPose(poseLocalCameraEye.position, poseCameraEye.rotation);
-
+        TeleportTo(rigPose.position, rigPose.rotation, MatchOrientation.TargetUpAndForward, AD_XRDestinationRigPart.Foot, endLocomotion:
+        (lS) =>
+        {
+            //#4 非【VR模式】：还原相机
+            if (!IsVRMode)//非【VR模式】才更改相机
+                SetCameraPose(poseLocalCameraEye.position, poseCameraEye.rotation);
+        });
+    
         //Clear Data
         tfCurAttachTarget = null;
         SetAttachState(false);

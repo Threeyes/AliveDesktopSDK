@@ -722,6 +722,32 @@ namespace Threeyes.Core
             if (unityEvent != null)
                 unityEvent.Invoke(value1);
         }
+        public static void TryExecute(this UnityEvent unityEvent)
+        {
+            try
+            {
+                if (unityEvent != null)
+                    unityEvent.Invoke();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+
+        public static void TryExecute<T1>(this UnityEvent<T1> unityEvent, T1 value1)
+        {
+            try
+            {
+                if (unityEvent != null)
+                    unityEvent.Invoke(value1);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+
         #endregion
 
         #region UnityAction
@@ -854,6 +880,61 @@ namespace Threeyes.Core
             if (action != null)
                 action(value1, value2, value3, value4, value5);
         }
+        public static void TryExecute(this Action action)
+        {
+            try
+            {
+                action.Execute();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+        public static void TryExecute<T1>(this Action<T1> action, T1 value1)
+        {
+            try
+            {
+                action.Execute(value1);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+        public static void TryExecute<T1, T2>(this Action<T1, T2> action, T1 value1, T2 value2)
+        {
+            try
+            {
+                action.Execute(value1, value2);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+        public static void TryExecute<T1, T2, T3>(this Action<T1, T2, T3> action, T1 value1, T2 value2, T3 value3)
+        {
+            try
+            {
+                action.Execute(value1, value2, value3);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
+        public static void TryExecute<T1, T2, T3, T4>(this Action<T1, T2, T3, T4> action, T1 value1, T2 value2, T3 value3, T4 value4)
+        {
+            try
+            {
+                action.Execute(value1, value2, value3, value4);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
         #endregion
 
         #region Component
@@ -922,9 +1003,9 @@ namespace Threeyes.Core
         /// <summary>
         /// 递归遍历
         /// </summary>
-        public static void Recursive<T>(this T em, Func<T, IEnumerable> getEnum, UnityAction<T> action, bool includeSelf = false)
+        public static void Recursive<T>(this T em, Func<T, IEnumerable> getEnum, UnityAction<T> action, bool includeSelf = true, int? maxDepth = null)
         {
-            AlgorithmTool.Recursive(em, getEnum, action, includeSelf);
+            AlgorithmTool.Recursive(em, getEnum, action, includeSelf, maxDepth);
         }
         /// <summary>
         /// 递归遍历
@@ -935,7 +1016,7 @@ namespace Threeyes.Core
         /// <param name="includeSelf"></param>
         public static void Recursive<T>(this T em, UnityAction<T> action, Func<T, IEnumerable> getEnum, bool includeSelf, int maxDepth)
         {
-            em.Recursive(getEnum, action, includeSelf, maxDepth);
+            AlgorithmTool.Recursive(em, getEnum, action, includeSelf, maxDepth);
         }
 
         #endregion

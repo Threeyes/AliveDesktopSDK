@@ -36,10 +36,15 @@ public class AD_DefaultXRController : AD_XRControllerBase<AD_SODefaultXRControll
         Pose exitRigPose = Config.exitRigPose;
         if (Config.isRestoreExitPose && exitRigPose != Pose.identity)//恢复到退出前的姿势
         {
+            //ToUpdate:因为TeleportTo在Update中更新，所以建议等待其传送完成后再设置相机位置（可以是通过回调）（或者是SetCameraPose需要等待TeleportTo结束后才完成）
             MatchOrientation matchOrientation = IsVRMode ? MatchOrientation.TargetUpAndForward : MatchOrientation.None;//PS:None可以防止传送时更改相机朝向
-            AD_ManagerHolder.XRManager.TeleportTo(exitRigPose.position, exitRigPose.rotation, matchOrientation);
-            if (!IsVRMode)//非【VR模式】才更改相机
-                AD_ManagerHolder.XRManager.SetCameraPose(Config.exitCameraPose.position, Config.exitCameraPose.rotation);
+            AD_ManagerHolder.XRManager.TeleportTo(exitRigPose.position, exitRigPose.rotation, matchOrientation,
+                endLocomotion:
+                (lS) =>
+                {
+                    if (!IsVRMode)//非【VR模式】才更改相机
+                        AD_ManagerHolder.XRManager.SetCameraPose(Config.exitCameraPose.position, Config.exitCameraPose.rotation);
+                });
         }
         else if (spawnPoint)//传送到初始位置
         {
@@ -113,9 +118,9 @@ public class AD_DefaultXRController : AD_XRControllerBase<AD_SODefaultXRControll
         [Tooltip("Controls whether to enable flying (unconstrained movement). This overrides the use of gravity.")]
         [AllowNesting] public bool isEnableFly = true;//【普通模式】飞行模式
         [Tooltip("Controls whether to penetrate during flying")]
-        [AllowNesting][ShowIf(nameof(isEnableFly))] public bool isPenetrateOnFly = true;
+        [AllowNesting] [ShowIf(nameof(isEnableFly))] public bool isPenetrateOnFly = true;
         [Tooltip("Controls whether gravity affects this provider when a Character Controller is used and flying is disabled.")]
-        [AllowNesting][DisableIf(nameof(isEnableFly))] public bool isUseGravity = false;//【普通模式】使用重力
+        [AllowNesting] [DisableIf(nameof(isEnableFly))] public bool isUseGravity = false;//【普通模式】使用重力
 
         ////——缓存上次的信息——
         [Tooltip("Restore exit pose when re-entering Mod scene.")]

@@ -8,7 +8,9 @@ using UnityEngine.XR.Interaction.Toolkit;
 /// Todo:
 /// -【V2】被缩放后动态更新Grid子物体的相对位置以确保不变，以及针对Grid的配置新增Gid子物体
 /// -新增设置gridParentTransform代表的锚点，方便Grid基于中心进行生成等
-///
+/// -修复还原后被吸附的物体可能错位的bug：
+///     -在还原后，模拟OnTriggerEnter进行主动调用（如利用Collider的Bounds来直接获取附近的碰撞体）（搜索关键字：unity check if trigger contain other）
+/// 
 /// PS:
 /// Grid生成参考UI，以gridParentTransform坐标系的XY轴为左下角：
 ///     -gridParentTransform作为Grid的父物体，其局部坐标系需要X为右，Y为上；

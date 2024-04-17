@@ -567,6 +567,7 @@ GameObject:
   - component: {fileID: 4052260309661255354}
   - component: {fileID: 5335390629075281145}
   - component: {fileID: 7020083602857939064}
+  - component: {fileID: 7971278969848251236}
   m_Layer: 0
   m_Name: Long Lamp
   m_TagString: Untagged
@@ -851,6 +852,21 @@ MonoBehaviour:
   onSetLightColor:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7971278969848251236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639321033759487542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b642ce6405826dc48af88688705bcd7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  comp: {fileID: 4052260309661255354}
+  comps: []
+  centerOfMassPerUnit: {x: 0, y: 0.3, z: 0}
 --- !u!1 &2338408168949651432
 GameObject:
   m_ObjectHideFlags: 0

@@ -436,6 +436,7 @@ GameObject:
   - component: {fileID: 5836306145155995346}
   - component: {fileID: 8343644900926917745}
   - component: {fileID: 2550972852586658998}
+  - component: {fileID: 418398709349903880}
   m_Layer: 0
   m_Name: Office Chair
   m_TagString: Untagged
@@ -718,6 +719,21 @@ MonoBehaviour:
   m_AttachName: 
   m_AttachTransform: {fileID: 7323535627411086039}
   destinationRigPart: 1
+--- !u!114 &418398709349903880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1204017703924979084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b642ce6405826dc48af88688705bcd7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  comp: {fileID: 5836306145155995346}
+  comps: []
+  centerOfMassPerUnit: {x: 0, y: 0.3, z: 0}
 --- !u!1 &1632608858543595610
 GameObject:
   m_ObjectHideFlags: 0
@@ -729,6 +745,7 @@ GameObject:
   - component: {fileID: 8786227577732539430}
   - component: {fileID: 7929008475207056586}
   - component: {fileID: 2910205476375188013}
+  - component: {fileID: 1516277021560980466}
   m_Layer: 0
   m_Name: Pivot
   m_TagString: Untagged
@@ -801,8 +818,8 @@ HingeJoint:
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
-  m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.00000023841858, y: 0.7898147, z: -0.07321024}
+  m_AutoConfigureConnectedAnchor: 0
+  m_ConnectedAnchor: {x: 0, y: 0.4738888, z: -0.044}
   serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
@@ -829,6 +846,21 @@ HingeJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &1516277021560980466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632608858543595610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a41316179a7ce824c98041ea43c33fee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  comp: {fileID: 2910205476375188013}
+  comps: []
+  cacheConnectedAnchor: {x: 0, y: 0, z: 0}
 --- !u!1 &2044420702776908702
 GameObject:
   m_ObjectHideFlags: 0

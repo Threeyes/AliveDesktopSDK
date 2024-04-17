@@ -13,7 +13,7 @@ namespace Threeyes.UI
     /// Represents the abstract base class that manages events and layout for all the elements that a ToolStrip or ToolStripDropDown can contain.
     /// 
     ///ToAdd:
-    ///-int Order(方便排序和归类，参考EventPlayer的Hierarchy菜单)
+    ///-Allow MultiSelect(允许多选)
     ///
     /// PS:
     /// -因为是单独把数据抽出来，因此要在类名后增加Info
