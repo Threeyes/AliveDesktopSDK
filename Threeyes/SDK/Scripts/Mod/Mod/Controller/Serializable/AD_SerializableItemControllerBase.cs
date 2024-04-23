@@ -106,7 +106,7 @@ public abstract class AD_SerializableItemControllerBase<TManager, TSOPrefabInfoG
         AddElementToList(newInst);
         overridePrefab = null; //Reset
 
-        //通知重新绑定
+        //通知重新绑定(如更新选择)
         try
         {
             actRebind.Execute(oldInst.gameObject, newInst.gameObject);
@@ -192,6 +192,7 @@ public abstract class AD_SerializableItemControllerBase<TManager, TSOPrefabInfoG
         //#1 生成物体
         GameObject prefab = GetPrefab(eleData); //从Config中获取首个有效的Prefab
         GameObject goInst = prefab.InstantiatePrefab(tfElementParent);
+        //goInst.name = prefab.name;//使用Prefab的名称，避免显示(Clone)
         TElement element = goInst.GetComponent<TElement>();
 
         //#2 如果实例有RuntimeSerialization_GameObject，则初始化其PrefabMetadata

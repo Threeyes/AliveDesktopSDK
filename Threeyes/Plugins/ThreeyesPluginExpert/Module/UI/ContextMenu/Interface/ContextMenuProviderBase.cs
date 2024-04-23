@@ -8,6 +8,6 @@ namespace Threeyes.UI
     /// </summary>
     public abstract class ContextMenuProviderBase : MonoBehaviour, IContextMenuProvider
     {
-        public abstract List<ToolStripItemInfo> GetContextMenuInfo();
+        public abstract List<ToolStripItemInfo> GetContextMenuInfos();
     }
 }

@@ -57,11 +57,15 @@ public class AD_ManagerHolderManager : ManagerHolderManager
 
     protected override List<IHubManagerModPreInitHandler> GetListManagerModPreInitOrder()
     {
+        ///PS:以下的Manager：
+        ///-ActiveController需要提前初始化，避免后续Shell/Decoration还原的物体访问到
         return new List<IHubManagerModPreInitHandler>()
         {
             AD_ManagerHolder.ShellManager,
-            AD_ManagerHolder.DecorationManager
-        };
+            AD_ManagerHolder.DecorationManager,
+            AD_ManagerHolder.EnvironmentManager,
+            AD_ManagerHolder.PostProcessingManager
+  };
     }
 
     protected override List<IHubManagerModInitHandler> GetListManagerModInitOrder()
@@ -77,7 +81,7 @@ public class AD_ManagerHolderManager : ManagerHolderManager
             AD_ManagerHolder.ShellManager,
             AD_ManagerHolder.DecorationManager,
             AD_ManagerHolder.XRManager,//执行传送等行为
-            AD_ManagerHolder.EnvironmentManager,//Sun等需要基于VR的位置进行计算
+            AD_ManagerHolder.EnvironmentManager,//Sun等需要基于VR的位置进行计算，所以要延后初始化
             AD_ManagerHolder.PostProcessingManager
          };
         }

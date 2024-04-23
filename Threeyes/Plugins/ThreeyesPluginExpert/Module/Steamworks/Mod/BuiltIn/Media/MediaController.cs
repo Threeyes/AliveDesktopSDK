@@ -233,7 +233,7 @@ namespace Threeyes.Steamworks
         #region IContextMenuProvider
 
         static readonly int contextMenuPriority_Video = 20;
-        public /*override*/ List<ToolStripItemInfo> GetContextMenuInfo()
+        public /*override*/ List<ToolStripItemInfo> GetContextMenuInfos()
         {
             //List<ToolStripItemInfo> listInfo = base.GetContextMenuInfo();
             List<ToolStripItemInfo> listInfo = new List<ToolStripItemInfo>();

@@ -13,7 +13,7 @@ namespace Threeyes.UI
             curListItemInfo = listItemInfo;
         }
 
-        public override List<ToolStripItemInfo> GetContextMenuInfo()
+        public override List<ToolStripItemInfo> GetContextMenuInfos()
         {
             return curListItemInfo;
         }

@@ -14,6 +14,7 @@ public interface IAD_SerializableItem :
     IRuntimeEditable,
     IRuntimeSerializableComponent
 {
+    bool IsValid { get; }
     IAD_SerializableItemInfo BaseData { get; }
     RuntimeSerializable_GameObject RuntimeSerialization_GameObject { get; set; }
     /// <summary>

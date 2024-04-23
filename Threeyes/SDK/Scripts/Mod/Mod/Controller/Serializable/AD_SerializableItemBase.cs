@@ -24,6 +24,7 @@ public abstract class AD_SerializableItemBase<TElement, TEleData, TPropertyBag> 
     where TPropertyBag : ComponentPropertyBag<TElement>, new()
 {
     #region Property & Field
+    public bool IsValid { get { return this != null; } }//检查是否被销毁
     public IAD_SerializableItemInfo BaseData { get { return data; } }
     public RuntimeSerializable_GameObject RuntimeSerialization_GameObject
     {
@@ -255,7 +256,7 @@ where TElement : AD_SerializableItemWithContextMenuBase<TElement, TEleData, TPro
     /// PS：方便Modder自行实现有趣的功能
     /// </summary>
     /// <returns></returns>
-    public virtual List<ToolStripItemInfo> GetContextMenuInfo() { return new List<ToolStripItemInfo>(); }
+    public virtual List<ToolStripItemInfo> GetContextMenuInfos() { return new List<ToolStripItemInfo>(); }
     #endregion
 }
 

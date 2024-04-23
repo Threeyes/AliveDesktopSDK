@@ -1,17 +1,22 @@
 using NaughtyAttributes;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Threeyes.Core;
 using Threeyes.RuntimeEditor;
 using Threeyes.Steamworks;
 using UnityEngine;
+using System.Linq;
 /// <summary>
 /// Control Environment Setting
 /// PS:
 /// 1.Default Environment Lighting/Reflections Sources come from Skybox, inheric this class if your want to change them
 ///
 /// Todo:
-/// -当太阳移动的角度（相比上次）超过一定范围（需要限制刷新频率，避免用户把真实时间调快导致频繁刷新），或者被用户拖拽后，尝试调用Controller的刷新ReflectProbe
+/// -【重要】SunEntity、Skybox都可以作为一个单独的预制物，方便直接替换。注意场景可能同时有多个被用户加入的物体。解决办法：
+///     -#1 只有最后一个的有效，其余的在Inspector中提示警告（调用TrySetSkybox方法， 并且依次入List，销毁时出栈。这样可以保证场景剩余的自定义Skybox有效）（可以用REButton来动态绘制提示）
+///     -#2 在尝试加入第二个时弹出警告（可以通过生成前，调用对应的验证组件，检查根物体是否包含有RuntimeEditorDisallowMultipleObject的标识组件）
+/// -用户添加的ReflectionProbeController可以有多个实例，并可以设置是否跟随环境回调自动更新（默认为false，避免频繁调用导致卡顿）
 /// 
 /// Warning：
 /// -If you use PersistentData_SO to manage soConfig, it is necessary to set PersistentData_SO.saveAnyway to true. Otherwise, modifying the changes to soConfig by dragging sunEntity may not be saved!（如果使用PersistentData_SO来管理Config，则需要将PersistentData_SO.saveAnyway设置为true，否则通过拖拽sunEntity从而修改Config的变更可能不会被保存！）
@@ -32,12 +37,12 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
 {
     #region Property & Field
     [Header("Sun Entity")]//太阳实体，主要用于太阳编辑
-    public AD_SunEntity sunEntity;//[Optional] Interactable gameobject to replace the sun in skybox
+    public AD_SunEntity sunEntity;//[Optional] Interactable gameobject to replace the sun in skybox  
     #endregion
 
     [Header("Debug")]
     public bool isDebugMode = false;
-    [EnableIf(nameof(isDebugMode))][Range(0, 24)] public float testRealTime_Hour;//Realtime for sunEntity
+    [EnableIf(nameof(isDebugMode))] [Range(0, 24)] public float testRealTime_Hour;//Realtime for sunEntity
 
     //Runtime
     Transform Manager_tfCameraEye { get { return AD_ManagerHolder.XRManager.TfCameraEye; } }
@@ -46,7 +51,9 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
     Transform cacheTfSunLight;
     Vector3 cacheLastSunEntitySize;
     float cacheLastSunEntityDistance;
+    Vector3 cacheLastSunLightRotation;
 
+    #region Init
     protected override void Awake()
     {
 #if UNITY_EDITOR
@@ -66,12 +73,12 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
         cacheTfMainCamera = Manager_tfCameraEye;//缓存以避免重复调用
         cacheTfSunEntity = sunEntity?.transform;
         cacheTfSunLight = sunSourceLight?.transform;
+        cacheLastSunLightRotation = Config.sunLightRotation;
 
         if (sunEntity)
         {
             sunEntity.onSelectExited.AddListener(OnSunEntitySelectExited);
         }
-        lastSunLightRotation = Config.sunLightRotation;
     }
     protected override void OnDestroy()
     {
@@ -86,7 +93,9 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
             sunEntity.onSelectExited.RemoveListener(OnSunEntitySelectExited);
         }
     }
+    #endregion
 
+    #region SunEntity
     private void OnSunEntitySelectExited()
     {
         //选择完成后，不管移动了多少距离，都强制调用一次刷新
@@ -99,16 +108,16 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
     float curSunEntityDistance;
     private void Update()
     {
-#if UNITY_EDITOR
-        if (!Application.isPlaying) //非运行模式编辑SunEntity时，同步Light及Config相关设置
-        {
-            EditorUpdateConfigBasedOnSunEntity();
-            return;
-        }
-#endif
-
         if (sunEntity)
         {
+#if UNITY_EDITOR
+            if (!Application.isPlaying) //非运行模式编辑SunEntity时，同步Light及Config相关设置
+            {
+                EditorUpdateConfigBasedOnSunEntity();
+                return;
+            }
+#endif
+
             //【编辑中】：保存通用属性(如Transform相关的distance、Szie)
             if (sunEntity.IsEditing)
             {
@@ -128,7 +137,6 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
                     cacheLastSunEntityDistance = curSunEntityDistance;
                 }
             }
-
 
             float distance = Config.sunDistance;//基于Config而不是实时距离，适用于编辑中及普通模式
 
@@ -177,22 +185,22 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
             }
         }
 
-        AutoUpdateReflection();
+        //不管有无SunEntity，都需要尝试更新反射
+        TryUpdateReflection();
     }
 
-    Vector3 lastSunLightRotation;
     /// <summary>
-    /// 尝试自动更新反射探头
+    /// 根据时间间隔，尝试自动更新反射探头
     /// </summary>
-    void AutoUpdateReflection()
+    void TryUpdateReflection()
     {
         if (!Config.isAutoUpdateReflectionProbe)
             return;
 
-        if (Time.time - lastUpdateReflectionProbeTime < Config.updateReflectionProbeIntervalTime)
+        if (Time.time - lastUpdateReflectionProbeTime < Config.updateReflectionProbeIntervalTime)//基于真实时间间隔，避免卡顿
             return;
 
-        float deltaAngle = Vector3.Angle(Config.sunLightRotation, lastSunLightRotation);
+        float deltaAngle = Vector3.Angle(Config.sunLightRotation, cacheLastSunLightRotation);
         if (deltaAngle < Config.updateReflectionProbeIntervalAngle)
             return;
         RefreshReflectionProbe();//PS：会自动更新lastUpdateReflectionProbeTime
@@ -218,11 +226,11 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
             }
         }
 
-        sunEntity.SetColorAndIntensity(hdrColor, basicColor, intensity);
+        sunEntity.SetColorAndIntensity(basicColor, hdrColor, intensity);
     }
+    #endregion
 
     #region Override
-
     protected override void UpdateSetting()
     {
         //Warning：以下调用不能使用cache字段，否则会因为未初始化而报错
@@ -250,7 +258,7 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
     {
         [Header("Sun Entity")]
         [Tooltip("X axis means Hour between [0, 24], and alpha means Intensity between [-10, 10]")]
-        [AllowNesting][GradientUsage(hdr: true)] public Gradient sunColorOverTime;//X轴代表时间，alpha代表亮度。（PS：如果sunSyncWithRealTime为true则根据现实时间计算，否则根据太阳与水平面的夹角计算时间）（通过将夜间的亮度调低，可以模拟出月亮的效果）（建议首尾颜色一致，并形成对称结构，避免越过中界线导致闪烁的情况）
+        [AllowNesting] [GradientUsage(hdr: true)] public Gradient sunColorOverTime;//X轴代表时间，alpha代表亮度。（PS：如果sunSyncWithRealTime为true则根据现实时间计算，否则根据太阳与水平面的夹角计算时间）（通过将夜间的亮度调低，可以模拟出月亮的效果）（建议首尾颜色一致，并形成对称结构，避免越过中界线导致闪烁的情况）
         public Vector3 sunRotateAxis = new Vector3(1, 0, 0);//太阳旋转轴。(PS：不要将轴限制在任意平面，这样便于后期太空场景的实现）
         public Vector3 sunSize = Vector3.one * 10;//缓存太阳尺寸，方便用户随意修改
         [Min(1)] public float sunDistance = 100;//（保存默认的距离，以及用户修改后的距离）（Warning:因为与相机的位置相关，如果相机无法还原到上次退出的位置（如【VR模式】），那么太阳也可能不会还原到正确的位置。后期可以额外存储退出时的位置，方便还原处于Socket的情况）（Warning：距离不能为0，否则会因为太阳一直推着走，导致类似飞行的效果。）
@@ -259,12 +267,12 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
         public bool isSunAffectLightIntensity = true;//使用Gradient当前值缩放灯光亮度
 
         public bool isSunSyncWithRealTime = false;//与现实时间同步(24小时值)，默认6、18时经过地平面。设置为true会由程序控制太阳轨迹，设置为false则可以自由拖动太阳
-        [EnableIf(nameof(isSunSyncWithRealTime))][Range(1, 10000)] public float realTimeScale = 1f;//针对真实时间的缩放
+        [EnableIf(nameof(isSunSyncWithRealTime))] [Range(1, 10000)] public float realTimeScale = 1f;//针对真实时间的缩放
 
         [Header("Others")]
         [Tooltip("Update the reflection probe when there is a significant change in the environment")] public bool isAutoUpdateReflectionProbe = false;//当阳光角度等影响反射球的环境变量发生变化时，更新反射探头
-        [ShowIf(nameof(isAutoUpdateReflectionProbe))][Tooltip("The sun's interval rotation angle to update the reflection probe")][Range(5, 90)] public float updateReflectionProbeIntervalAngle = 30;//更新反射探头的间隔角度
-        [ShowIf(nameof(isAutoUpdateReflectionProbe))][Tooltip("The interval time to update the reflection probe")][Range(1, 90)] public float updateReflectionProbeIntervalTime = 10;//更新反射探头的间隔时间
+        [Tooltip("The sun's interval rotation angle to update the reflection probe")] [EnableIf(nameof(isAutoUpdateReflectionProbe))] [AllowNesting] [Range(5, 90)] public float updateReflectionProbeIntervalAngle = 30;//更新反射探头的间隔角度
+        [Tooltip("The interval time to update the reflection probe")] [EnableIf(nameof(isAutoUpdateReflectionProbe))] [AllowNesting] [Range(1, 90)] public float updateReflectionProbeIntervalTime = 10;//更新反射探头的间隔时间
 
         [Newtonsoft.Json.JsonConstructor]//Use the specified constructor when deserializing that object（使用该构造函数进行初始化，才能够使用字段的默认值，否则会因为加载旧版配置文件而导致sunDistance为默认值0而报错）
         public ConfigInfo()
@@ -291,41 +299,42 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
             return;
 
         //因为可能程序未运行，因此暂定目标点为世界坐标原点（粗略计算）。后续可基于camera的位置，或XR的默认点位置
-        if (sunEntity)
+
+        var targetConfig = soOverrideConfig ? soOverrideConfig.config : defaultConfig;//不能直接通过Config获取！因为其会导致config被初始化，从而无法检测对config的修改
+
+        if (!sunSourceLight)
         {
-            var targetConfig = soOverrideConfig ? soOverrideConfig.config : defaultConfig;//不能直接通过Config获取！因为其会导致config被初始化，从而无法检测对config的修改
+            Debug.LogError($"{nameof(sunSourceLight)} can't be null!");
+            return;
 
-            if (sunSourceLight)
+        }
+        bool hasChanged = false;
+        Quaternion quaternionToOrigin = Quaternion.LookRotation(Vector3.zero - sunEntity.transform.position);//计算太阳朝向相机的方向，用于后续正确设置直射光
+        if (quaternionToOrigin.eulerAngles != targetConfig.sunLightRotation)
+        {
+            sunSourceLight.transform.rotation = quaternionToOrigin;//更新灯光旋转
+            targetConfig.sunLightRotation = sunSourceLight.transform.eulerAngles;//更新值 
+            hasChanged = true;
+        }
+
+        float distanceToOrigin = Vector3.Distance(Vector3.zero, sunEntity.transform.position);
+        if (distanceToOrigin != targetConfig.sunDistance)
+        {
+            targetConfig.sunDistance = distanceToOrigin;
+            hasChanged = true;
+        }
+
+        //针对真实修改的类，调用对应存储容器的持久化方法进行保存
+        if (hasChanged)
+        {
+            //Debug.Log("Environment Config has changed");
+            if (soOverrideConfig)//SO：需要持久化存储SOAsset
             {
-                bool hasChanged = false;
-                Quaternion quaternionToOrigin = Quaternion.LookRotation(Vector3.zero - sunEntity.transform.position);//计算太阳朝向相机的方向，用于后续正确设置直射光
-                if (quaternionToOrigin.eulerAngles != targetConfig.sunLightRotation)
-                {
-                    sunSourceLight.transform.rotation = quaternionToOrigin;//更新灯光旋转
-                    targetConfig.sunLightRotation = sunSourceLight.transform.eulerAngles;//更新值 
-                    hasChanged = true;
-                }
-
-                float distanceToOrigin = Vector3.Distance(Vector3.zero, sunEntity.transform.position);
-                if (distanceToOrigin != targetConfig.sunDistance)
-                {
-                    targetConfig.sunDistance = distanceToOrigin;
-                    hasChanged = true;
-                }
-
-                //针对真实修改的类，调用对应存储容器的持久化方法进行保存
-                if (hasChanged)
-                {
-                    //Debug.Log("Environment Config has changed");
-                    if (soOverrideConfig)//SO：需要持久化存储SOAsset
-                    {
-                        UnityEditor.EditorUtility.SetDirty(soOverrideConfig);//PS:需要调用该方法保存更改
-                    }
-                    else//defaultConfig：通知存储组件
-                    {
-                        UnityEditor.EditorUtility.SetDirty(this);
-                    }
-                }
+                UnityEditor.EditorUtility.SetDirty(soOverrideConfig);//PS:需要调用该方法保存更改
+            }
+            else//defaultConfig：通知存储组件
+            {
+                UnityEditor.EditorUtility.SetDirty(this);
             }
         }
     }

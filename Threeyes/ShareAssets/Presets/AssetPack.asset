@@ -15,6 +15,7 @@ MonoBehaviour:
   m_Guids: []
   m_Assets: []
   m_PrefabGuids:
+  - 39c37cebe63c76d4ca6cb4ee5dad19d9
   - 4fb4a74064506174b9f2c2a21c256361
   - 47ae669a305b591458aad319102a89a5
   - e29ad21330273234e93fbaaf1706b572
@@ -43,6 +44,7 @@ MonoBehaviour:
   - ba0d449bd967bdb4990e7eaf938b9016
   - 89f5289661913794c9118acdac65813b
   m_Prefabs:
+  - {fileID: 6133377415437670145, guid: 39c37cebe63c76d4ca6cb4ee5dad19d9, type: 3}
   - {fileID: 970125700271789990, guid: 4fb4a74064506174b9f2c2a21c256361, type: 3}
   - {fileID: 3261725634260163546, guid: 47ae669a305b591458aad319102a89a5, type: 3}
   - {fileID: 87885536965569933, guid: e29ad21330273234e93fbaaf1706b572, type: 3}

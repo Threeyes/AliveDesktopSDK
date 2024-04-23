@@ -6,7 +6,6 @@ using Threeyes.Steamworks;
 using Threeyes.UI;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.XR.Interaction.Toolkit;
 /// <summary>
 /// 用户控制汽车输入
 /// 
@@ -17,11 +16,8 @@ using UnityEngine.XR.Interaction.Toolkit;
 /// Warning：
 /// -【PC模式】下，LeftControllerMove传入的值为1、0、0.75XXX（如按下前右），因为其模拟的是推杆的斜向值
 /// 
-/// ToUpdate：
-/// -应该只是禁用对应Controller的输入，而不是禁用所有，方便操控多个物体
-/// -如果对另一辆车调用驾驶，则本车应该停用（可以使用一个静态字段或回调实现，类似DP）
 /// </summary>
-public class AD_XRCarUserInput : MonoBehaviour
+public class AD_XRCarUserInput : AD_XRUserInput
      , IContextMenuProvider//由XRManager处理右键菜单信息，因为涉及多语言
 {
     public CarController carController;
@@ -49,14 +45,14 @@ public class AD_XRCarUserInput : MonoBehaviour
             ///-
             onActive.Invoke();
             onActiveDeactive.Invoke(true);
-            AD_ManagerHolder.XRManager.SetLocomotion(false);//临时禁止移动（ToUpdate：如果锁定，就在状态栏上显示，图标为（两脚加斜线））
+            AD_ManagerHolder.XRManager.RegisterUserInput(this);//临时禁止移动（PS：如果锁定状态，就会在状态栏上显示，图标为（两脚加斜线））
         }
         else
         {
             onDeactive.Invoke();
             onActiveDeactive.Invoke(false);
 
-            AD_ManagerHolder.XRManager.SetLocomotion(true);//恢复移动
+            AD_ManagerHolder.XRManager.UnRegisterUserInput(this);//恢复移动
         }
         this.isActive = isActive;
     }
@@ -74,7 +70,7 @@ public class AD_XRCarUserInput : MonoBehaviour
     }
 
     #region IContextMenuProvider
-    public List<ToolStripItemInfo> GetContextMenuInfo()
+    public List<ToolStripItemInfo> GetContextMenuInfos()
     {
         List<ToolStripItemInfo> listInfo = new List<ToolStripItemInfo>();
         listInfo.Add(new ToolStripItemInfo(isActive ? "Cancel Dirve" : "Drive", (o, arg) => ActiveFunc(!isActive)));

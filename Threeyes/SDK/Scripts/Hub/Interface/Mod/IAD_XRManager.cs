@@ -32,6 +32,9 @@ public interface IAD_XRManager :
 
     void TeleportAndAttachTo(AD_RigAttachable rigAttachable);
 
+    void RegisterUserInput(AD_XRUserInput userInput);
+    void UnRegisterUserInput(AD_XRUserInput userInput);
+
     /// <summary>
     /// Enable/Disable locomotion and turn
     /// 

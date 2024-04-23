@@ -18,7 +18,7 @@ namespace Threeyes.Steamworks
         //# Runtime
         Vector3 curSize;
         Transform cacheTf;//缓存Rigidbody的Transform
-        public Vector3 cacheConnectedAnchor = new Vector3(0, 0, 0);//默认的ConnectedAnchor
+        Vector3 cacheConnectedAnchor = new Vector3(0, 0, 0);//默认的ConnectedAnchor值（该值基于局部坐标，但是需要通知刚体更新。因为不会有变化，所以不需要像RigidbodySyncCenterOfMassBySize一样需要初始化）
 
         private void Awake()
         {
@@ -27,6 +27,7 @@ namespace Threeyes.Steamworks
                 Debug.LogError($"{nameof(Comp)} not set!");
                 return;
             }
+            //缓存当前的尺寸以及对应的Anchor
             cacheTf = Comp.transform;
             cacheConnectedAnchor = Comp.connectedAnchor;
             curSize = cacheTf.lossyScale;
@@ -63,7 +64,6 @@ namespace Threeyes.Steamworks
         {
             TryStopCoroutine();
             cacheEnum = CoroutineManager.StartCoroutineEx(IEDelayReactiveAutioConfig());
-
         }
         protected virtual void TryStopCoroutine()
         {

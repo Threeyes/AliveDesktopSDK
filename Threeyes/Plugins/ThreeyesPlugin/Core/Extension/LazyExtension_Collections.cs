@@ -116,6 +116,32 @@ namespace Threeyes.Core
         #endregion
 
         #region Compare
+        /// <summary>
+        /// 获取新增的元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">旧列表</param>
+        /// <param name="newSource">新列表</param>
+        /// <returns></returns>
+        public static IEnumerable<T> GetAddedElements<T>(this IEnumerable<T> source, IEnumerable<T> newList)
+        {
+            var listSource = source.ToList();
+            var listNewList = newList.ToList();
+            return listNewList.FindAll(d => !listSource.Contains(d));//ToUpdate:默认比较相同元素，后期提供自定义判断相同的方法
+        }
+        /// <summary>
+        /// 获取被删除的元素
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">旧列表</param>
+        /// <param name="newSource">新列表</param>
+        /// <returns></returns>
+        public static IEnumerable<T> GetDeletedElements<T>(this IEnumerable<T> source, IEnumerable<T> newList)
+        {
+            var listSource = source.ToList();
+            var listNewList = newList.ToList();
+            return listSource.FindAll(d => !listNewList.Contains(d));//ToUpdate:默认比较相同元素，后期提供自定义判断相同的方法
+        }
 
         /// <summary>
         /// 检查两个列表元素是否相同，考虑排序
@@ -172,7 +198,11 @@ namespace Threeyes.Core
         #endregion
 
         #region GetOrSet
-
+        public static void AddIfNotNull<T>(this ICollection<T> list, T item)
+        {
+            if (item != null)
+                list.Add(item);
+        }
         public static void AddOnce<T>(this ICollection<T> list, T item)
         {
             if (!list.Contains(item))

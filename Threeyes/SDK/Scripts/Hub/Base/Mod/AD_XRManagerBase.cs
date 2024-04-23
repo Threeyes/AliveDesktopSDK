@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Threeyes.Core;
 using Threeyes.Persistent;
@@ -46,6 +47,28 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     [SerializeField] ActionBasedController rightController;
     [SerializeField] AD_DynamicMoveProvider dynamicMoveProvider;
     [SerializeField] CharacterController characterController;
+
+    //Runtime
+    List<AD_XRUserInput> listUserInput = new List<AD_XRUserInput>();
+
+    /// <summary>
+    /// 通过注册自定义Input，可以支持同时控制多个物体
+    /// </summary>
+    /// <param name="userInput"></param>
+    public virtual void RegisterUserInput(AD_XRUserInput userInput)
+    {
+        listUserInput.AddOnce(userInput);
+        listUserInput.Remove(null);
+        SetLocomotion(listUserInput.Count == 0);//只有当前没有Input，才能移动，否则用户的输入会被捕捉
+    }
+    public virtual void UnRegisterUserInput(AD_XRUserInput userInput)
+    {
+        listUserInput.Remove(userInput);
+        listUserInput.Remove(null);
+        SetLocomotion(listUserInput.Count == 0);
+    }
+
+
     public virtual void SetLocomotion(bool isEnable)
     {
         //PS:不调用ActionBasedControllerManager.UpdateLocomotionActions/DisableLocomotionActions，是因为该实现不需要反射，且确保相关Action正常运行（比如用于驾驶）
@@ -206,7 +229,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
             if (!IsVRMode)//非【VR模式】才更改相机
                 SetCameraPose(poseLocalCameraEye.position, poseCameraEye.rotation);
         });
-    
+
         //Clear Data
         tfCurAttachTarget = null;
         SetAttachState(false);
