@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.5.8]
+- Add SkyboxController for custom Skyboxs.
+
 ## [0.5.7]
 - Add JointSyncConnectedAnchorBySize component to update Joint's ConnectedAnchor when the related gameobject changed.
 
