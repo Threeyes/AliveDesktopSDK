@@ -703,8 +703,14 @@ MonoBehaviour:
     bloom_Threshold: 0.9
     bloom_Intensity: 0
     bloom_Scatter: 0.1
-    bloom_Tint: {r: 1, g: 1, b: 1, a: 1}
     bloom_Clamp: 65472
+    bloom_Tint: {r: 1, g: 1, b: 1, a: 1}
+    bloom_HighQualityFiltering: 0
+    bloom_Downscale: 0
+    bloom_MaxIterations: 6
+    bloom_DefaultDirtTexture: {fileID: 0}
+    bloom_ExternalDirtTexture: {fileID: 0}
+    bloom_ExternalDirtTextureFilePath: 
     bloom_DirtIntensity: 0
     channelMixer_IsActive: 0
     channelMixer_RedOutRedIn: 100
@@ -4148,7 +4154,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1503337292
 Transform:
   m_ObjectHideFlags: 0
@@ -4188,13 +4194,18 @@ MonoBehaviour:
     isUseSkybox: 1
     skyboxType: 0
     defaultSkyboxMaterial: {fileID: 0}
+    defaultSkyboxSunSize: 0.04
     panoramaSkyboxMaterial: {fileID: 0}
     defaultPanoramaTexture: {fileID: 0}
     externalPanoramaTexture: {fileID: 0}
     externalPanoramaTextureFilePath: 
     panoramaSkyboxRotation: 0
     PersistentDirPath: 
-    sunColorOverTime:
+    isSunEntityFaceCamera: 1
+    sunEntityRotateAxis: {x: 1, y: 0, z: 0}
+    sunEntitySize: {x: 10, y: 10, z: 10}
+    sunEntityDistance: 100
+    sunEntityColorOverTime:
       serializedVersion: 2
       key0: {r: 1, g: 1, b: 1, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 1}
@@ -4224,12 +4235,10 @@ MonoBehaviour:
       m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    sunRotateAxis: {x: 1, y: 0, z: 0}
-    sunSize: {x: 10, y: 10, z: 10}
-    sunDistance: 100
-    isSunAffectLightColor: 1
-    isSunAffectLightIntensity: 1
-    isSunSyncWithRealTime: 0
+    isSunEntityAffectLightColor: 1
+    isSunEntityAffectLightIntensity: 1
+    sunEntityLightIntensityScale: 5
+    isSunEntitySyncWithRealTime: 0
     realTimeScale: 1
     isAutoUpdateReflectionProbe: 0
     updateReflectionProbeIntervalAngle: 30
@@ -4238,10 +4247,9 @@ MonoBehaviour:
   goLightGroup: {fileID: 440483451}
   sunSourceLight: {fileID: 928336186}
   reflectionProbe: {fileID: 1604556634}
-  sunEntity: {fileID: 0}
   isDebugMode: 0
   testRealTime_Hour: 0
-  editorUpdateConfig: 1
+  editorSunEntityController: {fileID: 0}
 --- !u!1 &1536071120
 GameObject:
   m_ObjectHideFlags: 0

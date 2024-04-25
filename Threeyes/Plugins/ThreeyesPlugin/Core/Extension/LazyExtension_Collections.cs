@@ -177,6 +177,8 @@ namespace Threeyes.Core
         public static bool IsElementEqual<T>(this IEnumerable<T> list1, IEnumerable<T> list2)
         {
             //参考:https://stackoverflow.com/questions/12795882/quickest-way-to-compare-two-list
+            if (list1.Count() != list2.Count())
+                return false;
             var firstNotSecond = list1.Except(list2).ToList();
             var secondNotFirst = list2.Except(list1).ToList();
             return !firstNotSecond.Any() && !secondNotFirst.Any();

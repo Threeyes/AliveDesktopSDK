@@ -15,6 +15,8 @@ namespace Threeyes.Steamworks
         int CustomSkyboxCount { get; }
         void RegisterCustomSkybox(SkyboxController skyboxController);
         void UnRegisterCustomSkybox(SkyboxController skyboxController);
+
+        bool RefreshReflectionProbe();
     }
     public interface ISOEnvironmentControllerConfig
     {
@@ -30,5 +32,7 @@ namespace Threeyes.Steamworks
         public abstract int CustomSkyboxCount { get; }
         public abstract void RegisterCustomSkybox(SkyboxController skyboxController);
         public abstract void UnRegisterCustomSkybox(SkyboxController skyboxController);
+    
+        public abstract bool RefreshReflectionProbe();
     }
 }

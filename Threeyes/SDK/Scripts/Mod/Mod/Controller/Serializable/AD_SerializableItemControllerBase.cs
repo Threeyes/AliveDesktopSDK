@@ -153,7 +153,7 @@ public abstract class AD_SerializableItemControllerBase<TManager, TSOPrefabInfoG
     /// </summary>
     public virtual void RelinkElemets()
     {
-        listElement = tfElementParent.GetComponentsInChildren<TElement>().ToList();
+        listElement = tfElementParent.GetComponentsInChildren<TElement>(true).ToList();//要包括隐藏的物体
     }
     /// <summary>
     /// 调用现存的元素的Init方法

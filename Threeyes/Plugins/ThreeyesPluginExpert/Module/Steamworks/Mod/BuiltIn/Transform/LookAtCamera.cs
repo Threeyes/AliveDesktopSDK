@@ -5,6 +5,10 @@ using UnityEngine;
 
 namespace Threeyes.Steamworks
 {
+    /// <summary>
+    /// ToAdd:
+    /// -可配置朝向的轴
+    /// </summary>
     public class LookAtCamera : ConfigurableUpdateComponentBase<Transform, SOLookAtCameraConfig, LookAtCamera.ConfigInfo>
     {
         public bool IsActive

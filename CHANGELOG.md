@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.9]
+- AD_SunEntityController can now become a decoration item.
+- Fix Simulator Scene unable to initialize properly. 
+
 ## [0.5.8]
 - Add SkyboxController for custom Skyboxs.
 

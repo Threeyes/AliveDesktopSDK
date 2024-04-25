@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Threeyes.Coroutine;
 namespace Threeyes.Steamworks
 {
     /// <summary>
@@ -21,7 +22,7 @@ namespace Threeyes.Steamworks
     {
         public Material skyboxMaterial;
 
-        bool hasInit = false;
+        #region Init
         ///ToUpdate:
         ///-因为ManagerHolder.EnvironmentManager.BaseActiveController 的初始化在IHubManagerModInitHandler中调用，晚于Shell/Decoration的IHubManagerModInitHandler的执行顺序，所以要延后（或者将IHubManagerModInitHandler统一放在IHubManagerModPreInitHandler）
         ///-要等待OnModInit完成，EnvironmentController初始化完成才能设置（也可以是提供当前Mod场景已经初始化完成的字段）(或者类似XR组件，等待2帧后执行)
@@ -29,16 +30,41 @@ namespace Threeyes.Steamworks
         {
             if (hasInit)
                 return;
-            if (ManagerHolder.EnvironmentManager == null)
-                return;
-            ManagerHolder.EnvironmentManager.BaseActiveController.RegisterCustomSkybox(this);
-            hasInit = true;
+            cacheEnum_Init = CoroutineManager.StartCoroutineEx(IEInit());
         }
         private void OnDestroy()
         {
+            TryStopCoroutine_Init();
+            if (!hasInit)
+                return;
             if (ManagerHolder.EnvironmentManager == null)
                 return;
             ManagerHolder.EnvironmentManager.BaseActiveController.UnRegisterCustomSkybox(this);
         }
+
+        bool hasInit = false;
+        protected UnityEngine.Coroutine cacheEnum_Init;
+        IEnumerator IEInit()
+        {
+            hasInit = true;//因为OnEnable会导致多次进入，所以直接设置为true
+            if (ManagerHolder.SceneManager == null)
+                yield break;
+            while (ManagerHolder.SceneManager.IsChangingScene)//等待场景初始化完成（主要是ActiveController被初始化）
+                yield return null;
+
+            if (ManagerHolder.EnvironmentManager == null)
+                yield break;
+            ManagerHolder.EnvironmentManager.BaseActiveController.RegisterCustomSkybox(this);
+        }
+        protected virtual void TryStopCoroutine_Init()
+        {
+            if (cacheEnum_Init != null)
+            {
+                CoroutineManager.StopCoroutineEx(cacheEnum_Init);
+                cacheEnum_Init = null;
+            }
+        }
+
+        #endregion
     }
 }

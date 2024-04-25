@@ -16,23 +16,6 @@ namespace Threeyes.Steamworks
         #endregion
 
         #region IModHandler
-        Bloom bloom = null;
-        ChannelMixer channelMixer = null;
-        ChromaticAberration chromaticAberration = null;
-        ColorAdjustments colorAdjustments = null;
-        //ColorCurves colorCurves = null;
-        ColorLookup colorLookup = null;
-        DepthOfField depthOfField = null;
-        FilmGrain filmGrain = null;
-        LensDistortion lensDistortion = null;
-        LiftGammaGain liftGammaGain = null;
-        MotionBlur motionBlur = null;
-        PaniniProjection paniniProjection = null;
-        ShadowsMidtonesHighlights shadowsMidtonesHighlights = null;
-        SplitToning splitToning = null;
-        Tonemapping tonemapping = null;
-        Vignette vignette = null;
-        WhiteBalance whiteBalance = null;
         public override void UpdateSetting()
         {
             if (!volume)

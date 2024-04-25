@@ -45,6 +45,8 @@ namespace Threeyes.Core
         {
             onBeforeDestroy?.Invoke();//调用相关事件
         }
+        ///Warning:
+        ///-OnDestroy will only be called on game objects that have previously been active.(https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnDestroy.html)
         protected virtual void OnDestroy()
         {
             OnDespawnFunc();// PS: OnDestroy也可以调用此方法，可避免重复代码

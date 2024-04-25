@@ -15,7 +15,7 @@ MonoBehaviour:
   config:
     isUseLights: 1
     sunLightRotation: {x: 30, y: 180, z: 0}
-    sunLightIntensity: 5
+    sunLightIntensity: 1
     sunLightColor: {r: 1, g: 1, b: 1, a: 1}
     lightShadowType: 2
     isUseReflection: 1
@@ -23,6 +23,7 @@ MonoBehaviour:
     skyboxType: 0
     defaultSkyboxMaterial: {fileID: 2100000, guid: ef959ef6a12b01e4091e410ea34710d5,
       type: 2}
+    skyboxSunSize: 0.04
     panoramaSkyboxMaterial: {fileID: 2100000, guid: b18e4ba1185fcaf45b606b65f6a42651,
       type: 2}
     defaultPanoramaTexture: {fileID: 0}
@@ -30,7 +31,11 @@ MonoBehaviour:
     externalPanoramaTextureFilePath: 
     panoramaSkyboxRotation: 0
     PersistentDirPath: I:\Unity Group\My Group\App Group\AliveDesktop/Data/Save/Item/Ocean/Persistent
-    sunColorOverTime:
+    isSunEntityFaceCamera: 1
+    sunEntityRotateAxis: {x: 1, y: 0, z: 0}
+    sunEntitySize: {x: 10, y: 10, z: 10}
+    sunEntityDistance: 100
+    sunEntityColorOverTime:
       serializedVersion: 2
       key0: {r: 0, g: 0, b: 0, a: 1}
       key1: {r: 0, g: 1.254902, b: 1.4980392, a: 1}
@@ -40,13 +45,13 @@ MonoBehaviour:
       key5: {r: 0, g: 1.254902, b: 1.4980392, a: 0}
       key6: {r: 0, g: 0, b: 0, a: 0}
       key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 1298
-      ctime1: 6554
-      ctime2: 16384
-      ctime3: 32885
-      ctime4: 49151
+      ctime0: 3277
+      ctime1: 6489
+      ctime2: 19661
+      ctime3: 32768
+      ctime4: 45875
       ctime5: 58982
-      ctime6: 64224
+      ctime6: 62258
       ctime7: 0
       atime0: 0
       atime1: 65535
@@ -60,12 +65,9 @@ MonoBehaviour:
       m_ColorSpace: -1
       m_NumColorKeys: 7
       m_NumAlphaKeys: 2
-    sunRotateAxis: {x: 1, y: 0, z: 0}
-    sunSize: {x: 10, y: 10, z: 10}
-    sunDistance: 100
-    isSunAffectLightColor: 1
-    isSunAffectLightIntensity: 1
-    isSunSyncWithRealTime: 0
+    isSunEntityAffectLightColor: 1
+    isSunEntityAffectLightIntensity: 1
+    isSunEntitySyncWithRealTime: 0
     realTimeScale: 1
     isAutoUpdateReflectionProbe: 0
     updateReflectionProbeIntervalAngle: 30

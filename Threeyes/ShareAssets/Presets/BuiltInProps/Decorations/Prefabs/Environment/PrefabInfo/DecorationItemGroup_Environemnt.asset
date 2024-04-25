@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5143bc4da72b445bd078ac0b24d5a1, type: 3}
+  m_Name: DecorationItemGroup_Environemnt
+  m_EditorClassIdentifier: 
+  listData:
+  - {fileID: 11400000, guid: 09c114c7fae000b429c2dc5a40b5070e, type: 2}
+  remark: 
+  title: '[BuiltIn] Environemnt'

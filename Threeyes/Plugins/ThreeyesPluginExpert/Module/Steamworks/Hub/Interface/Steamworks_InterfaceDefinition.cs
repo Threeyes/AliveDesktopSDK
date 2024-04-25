@@ -105,6 +105,7 @@ namespace Threeyes.Steamworks
     }
     public interface IHubSceneManager
     {
+        bool IsChangingScene { get; }
         Scene HubScene { get; }
         public Scene CurModScene { get; }
     }
