@@ -143,7 +143,7 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
                 //#1 根据时间计算位置，旋转主灯光及太阳，但不更改Config的sunLightRotation（因为是实时更新，所以不需要保存到Config中）
                 float curPassedHourPercent_Shift = Mathf.Repeat(curPassedHour - 6, 24) / 24;//当前已用进度（后挪6小时），确保6、18时穿过地平线（因为当角度为0°、180°时经过地平线，所以要对时间进行位移计算）
                 float angle = curPassedHourPercent_Shift * 360;//根据当天的进度计算出角度
-                Quaternion targetRoatation = Quaternion.AngleAxis(angle, Config.sunEntityRotateAxis);//计算出对应的旋转值
+                Quaternion targetRoatation = Quaternion.AngleAxis(angle, Config.sunEntityRotateAxis);//基于SunEntity的旋转轴计算出对应的旋转值
                 tfSunLight.rotation = targetRoatation;
                 tfActiveSunEntity.position = tfMainCamera.position - tfSunLight.forward * distance;//PS:朝向与主灯光的方向相反
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.6.0]
+- Optimization: Integrate materials from built-in models to reduce rendering performance consumption.
+- Improve interfaces.
+- Add URP Material library: Measured Materials Library.
+
 ## [0.5.9]
 - AD_SunEntityController can now become a decoration item.
 - Fix Simulator Scene unable to initialize properly. 

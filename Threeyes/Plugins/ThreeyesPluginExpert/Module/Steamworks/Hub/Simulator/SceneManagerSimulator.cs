@@ -13,9 +13,6 @@ namespace Threeyes.Steamworks
 {
     public class SceneManagerSimulator : HubSceneManagerBase<SceneManagerSimulator>
     {
-        //public bool HasSceneLoaded { get { return hasSceneLoaded; } }
-        //bool hasSceneLoaded = false;
-
         [SerializeField] protected SOWorkshopItemInfo curSOWorkshopItemInfo;
         [SerializeField] protected WorkshopItemInfo curWorkshopItemInfo;
 
