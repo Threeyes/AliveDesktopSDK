@@ -4,6 +4,8 @@ using UnityEngine;
 using Threeyes.Steamworks;
 public interface IAD_EnvironmentController : IEnvironmentController
 {
-    void RegisterCustomSunEntity(AD_SunEntityController customSunEntityController);
-    void UnRegisterCustomSunEntity(AD_SunEntityController customSunEntityController);
+    AD_SunEntityController ActiveSunEntityController { get; }
+    int SunEntityControllerCount { get; }
+    void RegisterSunEntityController(AD_SunEntityController customSunEntityController);
+    void UnRegisterSunEntityController(AD_SunEntityController customSunEntityController);
 }

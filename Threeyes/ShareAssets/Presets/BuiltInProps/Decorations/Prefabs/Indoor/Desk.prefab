@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 49ee953f07bfec449af7641d613f0423, type: 2}
+  - {fileID: 2100000, guid: 19f424a3d7974c448901ad0825bbbf15, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -167,7 +167,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 49ee953f07bfec449af7641d613f0423, type: 2}
+  - {fileID: 2100000, guid: 19f424a3d7974c448901ad0825bbbf15, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -272,7 +272,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 49ee953f07bfec449af7641d613f0423, type: 2}
+  - {fileID: 2100000, guid: 19f424a3d7974c448901ad0825bbbf15, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -528,7 +528,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 49ee953f07bfec449af7641d613f0423, type: 2}
+  - {fileID: 2100000, guid: 19f424a3d7974c448901ad0825bbbf15, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -600,11 +600,11 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3669667075802150476}
   - {fileID: 5839593379398586434}
   - {fileID: 6899383691339036545}
   - {fileID: 6699982842239008755}
   - {fileID: 964748134572702421}
-  - {fileID: 3669667075802150476}
   - {fileID: 4885978639077377872}
   m_Father: {fileID: 1707017921241589216}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -720,7 +720,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 49ee953f07bfec449af7641d613f0423, type: 2}
+  - {fileID: 2100000, guid: 19f424a3d7974c448901ad0825bbbf15, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -964,7 +964,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 49ee953f07bfec449af7641d613f0423, type: 2}
+  - {fileID: 2100000, guid: 19f424a3d7974c448901ad0825bbbf15, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

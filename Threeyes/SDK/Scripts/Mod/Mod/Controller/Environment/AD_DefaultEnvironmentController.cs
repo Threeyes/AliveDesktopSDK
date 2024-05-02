@@ -43,33 +43,27 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
     Transform tfMainCamera { get { return AD_ManagerHolder.XRManager.TfCameraEye; } }
     Transform tfSunLight { get { return sunSourceLight.transform; } }
 
-    #region SunEntity (Todo:移动到父类或接口)
-    AD_SunEntityController ActiveSunEntityController
+    #region Custom SunEntity
+    public AD_SunEntityController ActiveSunEntityController { get { return activeSunEntityController; } }
+    public int SunEntityControllerCount { get { return listSunEntityController.Count; } }
+
+    AD_SunEntityController activeSunEntityController;//运行时自定义的SunEntity（为了避免被意外销毁导致为空，需要单独使用该字段保存Custom的数据）
+    List<AD_SunEntityController> listSunEntityController = new List<AD_SunEntityController>();
+    public void RegisterSunEntityController(AD_SunEntityController customSunEntityController)
     {
-        get
-        {
-            if (sunEntityController_Custom)//优先使用自定义的SunEntity
-                return sunEntityController_Custom;
-            return null;
-        }
-    }
-    AD_SunEntityController sunEntityController_Custom;//运行时自定义的SunEntity（为了避免被意外销毁导致为空，需要单独使用该字段保存Custom的数据）
-    List<AD_SunEntityController> listCustomSunEntityController = new List<AD_SunEntityController>();
-    public void RegisterCustomSunEntity(AD_SunEntityController customSunEntityController)
-    {
-        listCustomSunEntityController.AddOnce(customSunEntityController);
-        listCustomSunEntityController.Remove(null);//移除可能因场景切换等情况被删除的实例
+        listSunEntityController.AddOnce(customSunEntityController);
+        listSunEntityController.Remove(null);//移除可能因场景切换等情况被删除的实例
         if (!Config.isUseSkybox)
             return;
 
         TrySetSunEntity();
     }
-    public void UnRegisterCustomSunEntity(AD_SunEntityController customSunEntityController)
+    public void UnRegisterSunEntityController(AD_SunEntityController customSunEntityController)
     {
-        if (listCustomSunEntityController.Count > 0)
+        if (listSunEntityController.Count > 0)
         {
-            listCustomSunEntityController.Remove(customSunEntityController);
-            listCustomSunEntityController.Remove(null);//移除可能被删除的实例
+            listSunEntityController.Remove(customSunEntityController);
+            listSunEntityController.Remove(null);//移除可能被删除的实例
         }
         TrySetSunEntity();
     }
@@ -77,14 +71,15 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
     void TrySetSunEntity()
     {
         //找到目标
-        sunEntityController_Custom = listCustomSunEntityController.LastOrDefault();//获取最后加入的SunEntiry（不管是否为null）
+        activeSunEntityController = listSunEntityController.LastOrDefault();//获取最后加入的SunEntiry（不管是否为null）
 
         //初始化该Custom物体的缩放、位置、材质等(先暂时以【普通模式】【不同步时间】状态进行初始化，如果当前设置为【同步时间】，则由Update处理后续更新)
         AD_SunEntityController activeSE = ActiveSunEntityController;//激活的
         if (activeSE)
         {
-            listCustomSunEntityController.ForEach(sE => sE.SetActive(sE == activeSE));//只激活当前有效的SunEntity，避免场景存在多个
+            listSunEntityController.ForEach(sE => sE.SetActive(sE == activeSE));//只激活当前有效的SunEntity，避免场景存在多个
 
+            //Init
             activeSE.transform.localScale = Config.sunEntitySize;
             activeSE.transform.position = GetSunEntityPosition_NoSyncTime();
             SetSunColorOverTime_NoSyncTime();//设置颜色
@@ -361,6 +356,10 @@ public class AD_DefaultEnvironmentController : DefaultEnvironmentController<AD_S
     #endregion
 
     #region Define
+    /// <summary>
+    /// PS:
+    /// -之所以不让SunEntity保存自己的配置，而是放在这里，是这里作为一个全局管理，可避免更换SunEntity后其配置丢失
+    /// </summary>
     [Serializable]
     public class ConfigInfo : DefaultEnvironmentControllerConfigInfo
     {

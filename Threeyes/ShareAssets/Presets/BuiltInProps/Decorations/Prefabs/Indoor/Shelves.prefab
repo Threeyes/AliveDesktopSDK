@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b84020439f348e8478179607878e889d, type: 2}
+  - {fileID: 2100000, guid: f87456b504ce09441a577a26d6472657, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -242,14 +242,7 @@ MonoBehaviour:
   id:
     m_Guid: 4187eb9f-3b49-4b05-b151-7a2f95e65333
   runtimeEditableDisplayName: 
-  cacheDefaultConfig:
-    materialIndex: 0
-    listTextureShaderProperty: []
-    listColorShaderProperty: []
-    listIntShaderProperty: []
-    listFloatShaderProperty: []
   targetRenderer: {fileID: 5990015653279218430}
   targetMaterial: {fileID: 0}
-  isShareMaterial: 0
+  useSharedMaterial: 0
   listRendererMaterialInfo: []
-  cloneMaterial: {fileID: 0}

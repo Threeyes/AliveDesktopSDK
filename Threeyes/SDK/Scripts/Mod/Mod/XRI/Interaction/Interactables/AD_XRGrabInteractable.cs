@@ -47,7 +47,7 @@ public class AD_XRGrabInteractable : XRGrabInteractable
     {
         if (!this)//空的可能原因：创建后被立即销毁
         {
-            Debug.LogError($"({this.GetType()}) is null! Can be ignore!");
+            //Debug.LogError($"({this.GetType()}) is null! This error can be ignore!");
             return;
         }
 

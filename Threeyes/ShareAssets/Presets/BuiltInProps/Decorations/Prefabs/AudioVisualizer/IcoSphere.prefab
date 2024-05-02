@@ -582,9 +582,8 @@ MonoBehaviour:
   runtimeEditableDisplayName: Sphere
   targetRenderer: {fileID: 6298881221456362486}
   targetMaterial: {fileID: 0}
-  isShareMaterial: 0
+  useSharedMaterial: 0
   listRendererMaterialInfo: []
-  cloneMaterial: {fileID: 0}
 --- !u!114 &1659482418840838128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -614,9 +613,8 @@ MonoBehaviour:
   runtimeEditableDisplayName: Waveform
   targetRenderer: {fileID: 6916627140797215622}
   targetMaterial: {fileID: 0}
-  isShareMaterial: 0
+  useSharedMaterial: 0
   listRendererMaterialInfo: []
-  cloneMaterial: {fileID: 0}
 --- !u!114 &4944129407314840549
 MonoBehaviour:
   m_ObjectHideFlags: 0

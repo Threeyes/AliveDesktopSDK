@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.XR.Interaction.Toolkit;
 using NaughtyAttributes;
+using Threeyes.Localization;
 /// <summary>
 /// 太阳实体（因为与相机相关，所以一个场景只能激活一个）
 /// 
@@ -39,6 +40,7 @@ using NaughtyAttributes;
 /// -如果需要实现三体等特殊效果，可以在子物体中加上多个模型
 /// </summary>
 public class AD_SunEntityController : MonoBehaviour
+    , IRuntimeHierarchyItemProvider
     , IRuntimeEditorSelectEnterHandler
     , IRuntimeEditorSelectExitHandler
 {
@@ -94,7 +96,7 @@ public class AD_SunEntityController : MonoBehaviour
             return;
         if (AD_ManagerHolder.EnvironmentManager == null)
             return;
-        AD_ManagerHolder.EnvironmentManager.ActiveController.UnRegisterCustomSunEntity(this);
+        AD_ManagerHolder.EnvironmentManager.ActiveController.UnRegisterSunEntityController(this);
     }
 
     bool hasInit = false;
@@ -108,7 +110,7 @@ public class AD_SunEntityController : MonoBehaviour
 
         if (AD_ManagerHolder.EnvironmentManager == null)
             yield break;
-        AD_ManagerHolder.EnvironmentManager.ActiveController.RegisterCustomSunEntity(this);
+        AD_ManagerHolder.EnvironmentManager.ActiveController.RegisterSunEntityController(this);
         hasInit = true;
     }
     protected virtual void TryStopCoroutine_Init()
@@ -180,6 +182,20 @@ public class AD_SunEntityController : MonoBehaviour
     {
         isEditing = false;
         FireSelectEnterExitEvent(false);
+    }
+    #endregion
+
+    #region IRuntimeHierarchyItemProvider
+    public RuntimeHierarchyItemInfo GetRuntimeHierarchyItemInfo()
+    {
+        RuntimeHierarchyItemInfo runtimeHierarchyItemInfo = new RuntimeHierarchyItemInfo();
+        IAD_EnvironmentController environmentController = AD_ManagerHolder.EnvironmentManager.ActiveController;//因为只有Hub才会回调该方法，因此不用判断是否为空
+        if (environmentController.SunEntityControllerCount > 1 && environmentController.ActiveSunEntityController != this)
+        {
+            runtimeHierarchyItemInfo.warningTips = LocalizationManagerHolder.LocalizationManager.GetTranslationText("RuntimeEditor/Hierarchy/OnlyOneCanExistInTheScene");//"Only one such object can exist in the scene at the same time, and this object will not take effect!";//Todo：多语言翻译：场景只能同时存在一个此类物体，该物体不会生效！
+        }
+
+        return runtimeHierarchyItemInfo;
     }
     #endregion
 

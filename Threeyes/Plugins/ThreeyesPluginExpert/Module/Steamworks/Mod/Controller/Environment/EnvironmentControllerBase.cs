@@ -1,4 +1,5 @@
 using Threeyes.Config;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Threeyes.Steamworks
@@ -12,9 +13,11 @@ namespace Threeyes.Steamworks
     /// </summary>
     public interface IEnvironmentController : IModControllerHandler
     {
-        int CustomSkyboxCount { get; }
-        void RegisterCustomSkybox(SkyboxController skyboxController);
-        void UnRegisterCustomSkybox(SkyboxController skyboxController);
+        Light SunSourceLight { get; }
+        int SkyboxControllerCount { get; }
+        SkyboxController ActiveSkyboxController { get; }
+        void RegisterSkyboxController(SkyboxController skyboxController);
+        void UnRegisterSkyboxController(SkyboxController skyboxController);
 
         bool RefreshReflectionProbe();
     }
@@ -25,14 +28,16 @@ namespace Threeyes.Steamworks
     public abstract class EnvironmentControllerBase<TSOConfig, TConfig> : ConfigurableComponentBase<TSOConfig, TConfig>, IEnvironmentController
             where TSOConfig : SOConfigBase<TConfig>, ISOEnvironmentControllerConfig
     {
+        public abstract Light SunSourceLight { get; }
 
         public virtual void OnModControllerInit() { }
         public virtual void OnModControllerDeinit() { }
 
-        public abstract int CustomSkyboxCount { get; }
-        public abstract void RegisterCustomSkybox(SkyboxController skyboxController);
-        public abstract void UnRegisterCustomSkybox(SkyboxController skyboxController);
-    
+        public abstract int SkyboxControllerCount { get; }
+        public abstract SkyboxController ActiveSkyboxController { get; }
+        public abstract void RegisterSkyboxController(SkyboxController skyboxController);
+        public abstract void UnRegisterSkyboxController(SkyboxController skyboxController);
+
         public abstract bool RefreshReflectionProbe();
     }
 }

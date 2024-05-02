@@ -51,6 +51,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fdec1664b5f9ab46928074a50297c25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onModeActiveDeactive:
+    m_PersistentCalls:
+      m_Calls: []
   onSelectEnterExit:
     m_PersistentCalls:
       m_Calls:
@@ -1136,8 +1139,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: da341bba45dff3a43be9fba904dae5ec, type: 2}
-  - {fileID: 2100000, guid: ea1f5418e67bc944ca95bff694366f1a, type: 2}
+  - {fileID: 2100000, guid: df220114fb172224596469ea9fae8587, type: 2}
+  - {fileID: 2100000, guid: 61ad9fcc78cb51f4ebc774984e7be571, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

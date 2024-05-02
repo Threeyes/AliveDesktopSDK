@@ -27,6 +27,8 @@ namespace Threeyes.Steamworks
         where TConfig : DefaultEnvironmentControllerConfigInfo
     {
         #region Property & Field
+        public override Light SunSourceLight { get { return sunSourceLight; } }
+
         //PS：以下是场景相关的配置，暂不需要通过EnableIf来激活
         [Header("Lights")]
         [Tooltip("The Root gameobject for all lights")] [Required] [SerializeField] protected GameObject goLightGroup;
@@ -82,17 +84,18 @@ namespace Threeyes.Steamworks
 
         protected virtual void UpdateSetting()
         {
-            SetLightsActive(Config.isUseLights);
-            SetReflectionProbeActive(Config.isUseReflection);//Update ReflectionProbe's gameobject active state before skybox changes, or else the render may not update property
-            SetSkyboxActive(Config.isUseSkybox);
+            SetLight();
+            SetReflectionProbe();//Update ReflectionProbe's gameobject active state before skybox changes, or else the render may not update property
+            SetSkyboxActive();
         }
         #endregion
 
         #region Module Setting
         bool lastReflectionProbeUsed = false;//Cache state, avoid render multi times
         bool lastSkyboxUsed = false;//Cache state, avoid render multi times
-        protected virtual void SetLightsActive(bool isUse)
+        protected virtual void SetLight()
         {
+            bool isUse = Config.isUseLights;
             goLightGroup?.SetActive(isUse);
             if (isUse)
             {
@@ -106,10 +109,11 @@ namespace Threeyes.Steamworks
                 }
             }
         }
-        protected virtual void SetReflectionProbeActive(bool isUse)
+        protected virtual void SetReflectionProbe()
         {
             if (!reflectionProbe)
                 return;
+            bool isUse = Config.isUseReflection;
             bool activeStateChanged = lastReflectionProbeUsed != isUse;
             lastReflectionProbeUsed = isUse;
             reflectionProbe.gameObject.SetActive(isUse);
@@ -122,8 +126,9 @@ namespace Threeyes.Steamworks
         /// </summary>
         /// <param name="isUse"></param>
         /// <returns>If skybox changed</returns>
-        protected virtual void SetSkyboxActive(bool isUse)
+        protected virtual void SetSkyboxActive()
         {
+            bool isUse = Config.isUseSkybox;
             bool needRefresh = lastSkyboxUsed != isUse;
             lastSkyboxUsed = isUse;
             if (isUse)//使用：尝试更新参数
@@ -226,13 +231,15 @@ namespace Threeyes.Steamworks
         }
         #endregion
 
-        #region CustomSkybox
-        public override int CustomSkyboxCount { get { return listCustomSkyboxController.Count; } }//方便检查当前自定义天空盒的数量(可用于Inspector，当检查场景有多于一个SkyboxController时进行警告)
-        List<SkyboxController> listCustomSkyboxController = new List<SkyboxController>();
-        public override void RegisterCustomSkybox(SkyboxController skyboxController)
+        #region Custom Skybox
+        public override SkyboxController ActiveSkyboxController { get { return activeSkyboxController; } }
+        public override int SkyboxControllerCount { get { return listSkyboxController.Count; } }//方便检查当前自定义天空盒的数量(可用于Inspector，当检查场景有多于一个SkyboxController时进行警告)
+        SkyboxController activeSkyboxController;
+        List<SkyboxController> listSkyboxController = new List<SkyboxController>();
+        public override void RegisterSkyboxController(SkyboxController skyboxController)
         {
-            listCustomSkyboxController.AddOnce(skyboxController);
-            listCustomSkyboxController.Remove(null);//移除可能因场景切换等情况被删除的实例
+            listSkyboxController.AddOnce(skyboxController);
+            listSkyboxController.Remove(null);//移除可能因场景切换等情况被删除的实例
             if (!Config.isUseSkybox)
                 return;
 
@@ -241,12 +248,12 @@ namespace Threeyes.Steamworks
             if (needRefresh)
                 DynamicGIUpdateEnvironment();
         }
-        public override void UnRegisterCustomSkybox(SkyboxController skyboxController)
+        public override void UnRegisterSkyboxController(SkyboxController skyboxController)
         {
-            if (listCustomSkyboxController.Count > 0)
+            if (listSkyboxController.Count > 0)
             {
-                listCustomSkyboxController.Remove(skyboxController);
-                listCustomSkyboxController.Remove(null);//移除可能被删除的实例
+                listSkyboxController.Remove(skyboxController);
+                listSkyboxController.Remove(null);//移除可能被删除的实例
             }
 
             if (!Config.isUseSkybox)//控制全局是否使用Skybox（包括Custom）
@@ -263,11 +270,13 @@ namespace Threeyes.Steamworks
         bool TrySetSkybox()
         {
             Material targetMaterial = Config.SkyboxMaterial;//默认使用Config的配置，避免listCustomSkyboxController中无有效元素
-            if (listCustomSkyboxController.Count > 0)//如果有自定义的Skybox，则优先使用
+
+            activeSkyboxController = listSkyboxController.LastOrDefault();//以最后加入的自定义天空盒作为有效组件（可以为null）
+            if (activeSkyboxController)
             {
-                SkyboxController lastSC = listCustomSkyboxController.LastOrDefault();//获取最后加入的天空盒
-                if (lastSC != null)
-                    targetMaterial = lastSC.skyboxMaterial;
+                targetMaterial = activeSkyboxController.SkyboxMaterial;//如果有自定义的Skybox，则优先使用其材质
+
+                listSkyboxController.ForEach(sC => sC.SetActive(sC == activeSkyboxController));//更新所有SC的激活状态
             }
             return TrySetSkyboxFunc(targetMaterial);
         }
