@@ -2,6 +2,7 @@
 
 ## [0.6.1]
 - Optimize the code structure of ThreeyesPlugin (some items need to be repackaged).
+- Add Measured Materials Library module.
 
 ## [0.5.9]
 - AD_SunEntityController can now become a decoration item.

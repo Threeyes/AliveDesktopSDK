@@ -1,0 +1,7 @@
+Source：https://github.com/Unity-Technologies/MeasuredMaterialLibraryURP
+Version：6fa505dbd8c502757fe89bb841924c4ccdb5c794
+License：(MIT) https://github.com/Unity-Technologies/MeasuredMaterialLibraryURP/blob/master/LICENSE.md
+
+
+Note:
+-In order to reduce package size, only the ShaderGraph file of this library is built-in, and large files such as textures are removed.If you need to use the materials from this library, please download it from Github and pull the necessary textures into your own project.(为了减少包尺寸，仅内置该库的ShaderGraph文件，剔除贴图等大型文件。如果你需要使用该库的素材，请从Github上下载该库，并拉取必要的贴图到自己项目中。)
