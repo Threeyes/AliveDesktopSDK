@@ -24,53 +24,111 @@ namespace Threeyes.Steamworks
     /// -新增List<RenderInfo>otherRenderInfo,里面包含其他Renderer及对应的ID，方便针对多个物体使用类类似的材质进行修改（如车体、车门），但又不能使用sharedMaterial（因为多个实例有不同的配色）（或者通过类似EventPlayer.EventListener的方式，向其他MaterialController进行广播，参数为ConfigInfoEvent，然后接收方使用自身的序号进行更新）（或者新增一个MaterialControllerGroup，针对类似情况，先生成一个单独的克隆材质）
     /// </summary>
     public class MaterialController : ConfigurableComponentBase<MaterialController, SOMaterialControllerConfig, MaterialController.ConfigInfo, MaterialController.PropertyBag>
+        , IMaterialProvider
     {
+        #region IMaterialProvider
+        public Material TargetMaterial { get { return GetMaterial(false); } }
+        public Material TargetSharedMaterial { get { return GetMaterial(true); } }
+        #endregion
+
         #region Property & Field
         public Material Material
         {
             get
             {
-                Material renderMaterial = GetMaterial(targetRenderer, Config.materialIndex, isShareMaterial);
-                if (renderMaterial)
-                {
-                    return renderMaterial;
-                }
-                return targetMaterial;//如果无法找到，则返回指定Material资源
+                return GetMaterial(useSharedMaterial);
             }
         }
 
+        private Material GetMaterial(bool useSharedMaterial)
+        {
+            //#1 尝试从可选项中找到首个有效材质
+            Material renderMaterial = GetMaterialFromRenderer(targetRenderer, Config.materialIndex, useSharedMaterial);//因为Config.materialIndex的值可能会修改，所以每次都重新获取而不是缓存
+            //if (!renderMaterial)
+            //    renderMaterial = GetMaterialFromProvider(targetMaterialProvider, isShareMaterial);
+            if (renderMaterial)
+                return renderMaterial;
+            else//#2 如果上述无效，则从实例材质中返回
+            {
+                if (!Application.isPlaying || useSharedMaterial)
+                {
+                    return targetMaterial;//#2 如果无法找到，则返回指定Material资源
+                }
+                else
+                {
+                    if (!cloneTargetMaterial)//克隆资源并返回，可避免资源南北直接修改
+                        cloneTargetMaterial = Instantiate(targetMaterial);
+                    return cloneTargetMaterial;
+                }
+            }
+        }
 
-        //Set either one to provide material
+        [Header("Material Source")]
+        //#Only one of the following fields is required to provide a valid material
         [SerializeField] protected Renderer targetRenderer;//Where the material attached
-        [SerializeField] protected Material targetMaterial;//[Optional] Target material asset （资源文件）
-        [SerializeField] protected bool isShareMaterial = false;//是否修改共享材质（仅当targetRenderer不为空时有效），适用于多个物体共用同一个材质
+        //[ValidateInput(nameof(CheckIfTargetMaterialProviderInhericCorrectly), "This component must inherit IMaterialProvider")] [SerializeField] protected Component targetMaterialProvider;//Component inherits IMaterialProvider
+        [SerializeField] protected Material targetMaterial;//Target material asset （资源文件，会直接修改原文件）
+
+        [Header("Config")]
+        [SerializeField] protected bool useSharedMaterial = false;//是否使用共享材质（仅当targetRenderer不为空时有效），适用于多个物体共用同一个材质(ToUpdate：可以是如果为true则克隆targetMaterial并缓存到一个临时字段中)
         [SerializeField]
         protected List<RendererMaterialInfo> listRendererMaterialInfo = new List<RendererMaterialInfo>();//其他模型的材质信息，方便针对多个使用了相同或类似材质的模型进行统一修改
 
         [Header("Runtime")]
-        [ReadOnly] public Material cloneMaterial;
+        Material cloneTargetMaterial;
+        //[ReadOnly] public Material cloneMaterial;
         #endregion
+
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="materialProvider">如果找不到，则返回null</param>
+        ///// <returns></returns>
+        //Material GetMaterialFromProvider(Component materialProvider, bool isShareMaterial)
+        //{
+        //    if (materialProvider)
+        //    {
+        //        if (materialProvider is IMaterialProvider materialProviderInst)
+        //        {
+        //            if (!Application.isPlaying || isShareMaterial)//非运行模式或共享材质
+        //            {
+        //                return materialProviderInst.TargetSharedMaterial;
+        //            }
+        //            else
+        //            {
+        //                return materialProviderInst.TargetMaterial;
+        //            }
+        //        }
+        //    }
+        //    return null;
+        //}
+        //bool CheckIfTargetMaterialProviderInhericCorrectly(Component targetMaterialProvider)
+        //{
+        //    if (!targetMaterialProvider)//因为该字段是可选，所以仅非空时才判断
+        //        return true;
+        //    return targetMaterialProvider is IMaterialProvider;
+        //}
 
         #region Unity Method
         protected override void Awake()
         {
             base.Awake();
 
-#if UNITY_EDITOR
-            if (!UModTool.IsUModGameObject(this) && targetMaterial)//忽略UMod加载
-                cloneMaterial = Instantiate(targetMaterial);
-#endif
+            //#if UNITY_EDITOR
+            //            if (!UModTool.IsUModGameObject(this) && targetMaterial)//忽略UMod加载
+            //                cloneMaterial = Instantiate(targetMaterial);
+            //#endif
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
 
-#if UNITY_EDITOR
-            ///退出后,将项目的Material还原为默认值，可以是启动后直接创建一个克隆的材质，退出时用其值还原（使用Render就没这个问题，因为时针对克隆体进行操作）
-            if (Application.isEditor && targetMaterial)
-                targetMaterial.CopyPropertiesFromMaterial(cloneMaterial);
-#endif
+            //#if UNITY_EDITOR
+            //            ///退出后,将项目的Material还原为默认值，可以是启动后直接创建一个克隆的材质，退出时用其值还原（使用Render就没这个问题，因为是针对克隆体进行操作）
+            //            if (Application.isEditor && targetMaterial)
+            //                targetMaterial.CopyPropertiesFromMaterial(cloneMaterial);
+            //#endif
 
             Config.listTextureShaderProperty.ForEach(t => t?.Dispose());//卸载所有运行时加载的资源
         }
@@ -89,7 +147,7 @@ namespace Threeyes.Steamworks
         protected ConfigInfo cacheValidConfig = null;//缓存上次有效的配置
         public override void UpdateSetting()
         {
-            if (cacheValidConfig == null)
+            if (cacheValidConfig == null && cacheDefaultConfig != null)//避免因为物体未显示导致cacheDefaultConfig未初始化
                 cacheValidConfig = UnityObjectTool.DeepCopy(cacheDefaultConfig);
             ///ToUpdate:
             ///-应该只有在开始的时候才需要这样比较（或者是比较上次有效修改的材质）。
@@ -111,7 +169,7 @@ namespace Threeyes.Steamworks
             //针对额外的Renderer进行修改（因为使用的材质可能不一致，仅仅是某些字段相同，所以不能直接用Material对其他Renderer进行替换）
             foreach (var rmInfo in listRendererMaterialInfo)
             {
-                Material renderMaterial = GetMaterial(rmInfo.renderer, rmInfo.materialIndex, false);//一般不使用Share材质，否则也不用指定
+                Material renderMaterial = GetMaterialFromRenderer(rmInfo.renderer, rmInfo.materialIndex, false);//一般不使用Share材质，否则也不用指定
                 SetMaterial(renderMaterial);
             }
 
@@ -146,6 +204,12 @@ namespace Threeyes.Steamworks
             {
                 targetMaterial.SetFloat(propertyName, shaderProperty.value);
             });
+            SetListFunc(ref Config.listBoolShaderProperty,
+            (propertyName, shaderProperty) =>
+            {
+                targetMaterial.SetFloat(propertyName, shaderProperty.FloatValue);
+            });
+
         }
 
         void SetListFunc<TShaderProperty>(ref List<TShaderProperty> listProperty, Action<string, TShaderProperty> actionSetProperty)
@@ -174,7 +238,7 @@ namespace Threeyes.Steamworks
         /// <param name="materialIndex"></param>
         /// <param name="isShareMaterial"></param>
         /// <returns>如果找不到，则返回null</returns>
-        Material GetMaterial(Renderer targetRenderer, int materialIndex, bool isShareMaterial)
+        Material GetMaterialFromRenderer(Renderer targetRenderer, int materialIndex, bool isShareMaterial)
         {
             if (targetRenderer)
             {
@@ -260,7 +324,7 @@ namespace Threeyes.Steamworks
         {
             if (Application.isPlaying)//运行时跳过
                 return;
-            Material targetMaterial = Material;//非运行模式，获取的是共享材质
+            Material targetMaterial = GetMaterial(true);//非运行模式，获取的是共享材质
             foreach (var tSP in Config.listTextureShaderProperty)
             {
                 string propertyName = tSP.name;
@@ -282,6 +346,11 @@ namespace Threeyes.Steamworks
             {
                 string propertyName = fSP.name;
                 fSP.value = targetMaterial.GetFloat(propertyName);
+            }
+            foreach (var fSP in Config.listBoolShaderProperty)
+            {
+                string propertyName = fSP.name;
+                fSP.value = BoolShaderProperty.IsOn(targetMaterial.GetFloat(propertyName));
             }
             UnityEditor.EditorUtility.SetDirty(this);
         }
@@ -305,12 +374,13 @@ namespace Threeyes.Steamworks
         public class ConfigInfo : SerializableComponentConfigInfoBase
             , IEquatable<ConfigInfo>
         {
-            public int materialIndex = 0;
+            [Tooltip("Only valid when the target is Rednerer")] public int materialIndex = 0;
 
             public List<TextureShaderProperty> listTextureShaderProperty = new List<TextureShaderProperty>();
             public List<ColorShaderProperty> listColorShaderProperty = new List<ColorShaderProperty>();
             public List<IntShaderProperty> listIntShaderProperty = new List<IntShaderProperty>();
             public List<FloatShaderProperty> listFloatShaderProperty = new List<FloatShaderProperty>();
+            public List<BoolShaderProperty> listBoolShaderProperty = new List<BoolShaderProperty>();
 
             #region IEquatable
             public override bool Equals(object obj) { return Equals(obj as ConfigInfo); }
@@ -331,6 +401,7 @@ namespace Threeyes.Steamworks
                 isEqual &= listColorShaderProperty.IsSequenceEqual(other.listColorShaderProperty);
                 isEqual &= listIntShaderProperty.IsSequenceEqual(other.listIntShaderProperty);
                 isEqual &= listFloatShaderProperty.IsSequenceEqual(other.listFloatShaderProperty);
+                isEqual &= listBoolShaderProperty.IsSequenceEqual(other.listBoolShaderProperty);
 
                 return isEqual;
             }
@@ -381,7 +452,7 @@ namespace Threeyes.Steamworks
 
             //ToAdd：导入图片的类型（如通过TextureTool进一步转为noramlMap）
             //#Runtime
-            [HideInInspector] [JsonIgnore] [PersistentDirPath] public string PersistentDirPath;//必须要有，存储默认路径
+            [HideInInspector][JsonIgnore][PersistentDirPath] public string PersistentDirPath;//必须要有，存储默认路径
 
             public TextureShaderProperty()
             {
@@ -433,7 +504,7 @@ namespace Threeyes.Steamworks
             , IEquatable<ColorShaderProperty>
         {
             //使用[ColorUsage]，确保编辑模式能提供所有选项
-            [ColorUsageEx(dataOptionMemberName: nameof(dataOption_Color))] [ColorUsage(showAlpha: true, hdr: true)] public Color value;
+            [ColorUsageEx(dataOptionMemberName: nameof(dataOption_Color))][ColorUsage(showAlpha: true, hdr: true)] public Color value;
             public DataOption_Color dataOption_Color;
 
             public ColorShaderProperty()
@@ -478,7 +549,7 @@ namespace Threeyes.Steamworks
         /// <summary>
         ///
         /// 特殊值：
-        /// _AlphaClip：0为禁用；1为启用
+        /// _AlphaClip：0为禁用；1为启用（ToUpdate：全部转为BoolShaderProperty）
         /// _Cutoff：对应AlphaClipping的Threshold
         /// </summary>
         [Serializable]
@@ -500,6 +571,37 @@ namespace Threeyes.Steamworks
             }
             #endregion
         }
+
+        /// <summary>
+        /// 
+        /// PS:
+        /// -在Shader中，统一以float代替bool，且1为true，0为false(在Inspector中会绘制成Toggle)。因此在读写时需要转换为float（https://forum.unity.com/threads/shader-properties-no-bool-support.157580/）
+        /// </summary>
+        [Serializable]
+        public class BoolShaderProperty : ShaderPropertyBase
+            , IEquatable<BoolShaderProperty>
+        {
+            public float FloatValue { get { return value ? 1 : 0; } }
+            public bool value;
+
+            public static bool IsOn(float value)
+            {
+                return value != 0;
+            }
+            #region IEquatable
+            public override bool Equals(object obj) { return Equals(obj as BoolShaderProperty); }
+            public override int GetHashCode() { return base.GetHashCode(); }
+            public bool Equals(BoolShaderProperty other)
+            {
+                if (!base.Equals(other))//会同时判断是否为空，因此后续就不用判断
+                    return false;
+
+                return Equals(value, other.value);
+            }
+            #endregion
+
+        }
+
         #endregion
     }
 }

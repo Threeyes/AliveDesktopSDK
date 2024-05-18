@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.6.1]
+- Optimize the code structure of ThreeyesPlugin (some items need to be repackaged).
+
 ## [0.5.9]
 - AD_SunEntityController can now become a decoration item.
 - Fix Simulator Scene unable to initialize properly. 

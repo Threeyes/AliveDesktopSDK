@@ -16,6 +16,8 @@ using UnityEngine.Events;
 /// Warning：
 /// -【PC模式】下，LeftControllerMove传入的值为1、0、0.75XXX（如按下前右），因为其模拟的是推杆的斜向值
 /// 
+/// PS：
+/// -如果按住输入键时退出驾驶，那么车辆就会一直使用输入值进行形式，可以方便其做简单的循环运动（如绕圈）
 /// </summary>
 public class AD_XRCarUserInput : AD_XRUserInput
      , IContextMenuProvider//由XRManager处理右键菜单信息，因为涉及多语言

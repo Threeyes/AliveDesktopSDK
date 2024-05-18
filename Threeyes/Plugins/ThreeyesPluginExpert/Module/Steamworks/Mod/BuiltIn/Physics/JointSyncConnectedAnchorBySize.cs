@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Threeyes.Core;
-using Threeyes.Coroutine;
 using UnityEngine;
 namespace Threeyes.Steamworks
 {

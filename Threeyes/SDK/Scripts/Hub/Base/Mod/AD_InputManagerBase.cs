@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Threeyes.Core;
+using Threeyes.InputSystem;
 using Threeyes.Steamworks;
 using UnityEngine;
 using UnityEngine.InputSystem;

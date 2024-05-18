@@ -7,7 +7,6 @@ using UnityEngine.Rendering.Universal;
 #endif
 namespace Threeyes.ModuleHelper
 {
-
     public static class LazyExtension_URP
     {
 #if UNITY_PIPELINE_URP

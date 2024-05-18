@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Threeyes.Core;
-using Threeyes.Coroutine;
 using UnityEngine;
 
 namespace Threeyes.EventPlayer

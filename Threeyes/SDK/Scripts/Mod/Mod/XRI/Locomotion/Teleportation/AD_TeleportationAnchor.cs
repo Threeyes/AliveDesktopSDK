@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using System.Reflection;
 using Threeyes.XRI;
-using Threeyes.Coroutine;
 using Threeyes.Core;
 /// <summary>
 /// 

@@ -9,5 +9,5 @@ public interface IAD_DecorationController : IAD_SerializableItemController<AD_De
     /// </summary>
     /// <param name="sOPrefabInfoBase"></param>
     /// <param name="initPosition"></param>
-    void AddElement(GameObject prefab, Vector3? initPosition, Quaternion? initRotation = null) { }
+    GameObject AddElement(GameObject prefab, Vector3? initPosition, Quaternion? initRotation = null);
 }

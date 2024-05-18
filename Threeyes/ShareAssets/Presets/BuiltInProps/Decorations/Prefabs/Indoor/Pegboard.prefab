@@ -80,7 +80,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d75ee33a3502c064191fbe8f17a1993c, type: 2}
+  - {fileID: 2100000, guid: 074dc4fa10427764eac571294b088751, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -647,9 +647,8 @@ MonoBehaviour:
   runtimeEditableDisplayName: 
   targetRenderer: {fileID: 8080169352275953710}
   targetMaterial: {fileID: 0}
-  isShareMaterial: 0
+  useSharedMaterial: 0
   listRendererMaterialInfo: []
-  cloneMaterial: {fileID: 0}
 --- !u!1 &9134305315912847577
 GameObject:
   m_ObjectHideFlags: 0

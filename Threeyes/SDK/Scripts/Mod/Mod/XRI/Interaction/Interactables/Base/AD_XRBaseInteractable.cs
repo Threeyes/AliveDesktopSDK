@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using Threeyes.Config;
 using Threeyes.Core;
-using Threeyes.Coroutine;
 using Threeyes.Data;
 using Threeyes.Persistent;
 using Threeyes.RuntimeSerialization;

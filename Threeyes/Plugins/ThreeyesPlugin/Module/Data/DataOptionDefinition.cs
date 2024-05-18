@@ -489,7 +489,9 @@ namespace Threeyes.Data
         /// Warning:
         /// 不能直接声明Dictionary为ReadOnly，否则UMod加载会报错
         /// </summary>
-        [JsonIgnore]
+#if USE_JsonDotNet
+  [JsonIgnore]
+#endif
         public static Dictionary<string, string> defaultDicSpeicalEnumNameToDisplayName
         {
             get

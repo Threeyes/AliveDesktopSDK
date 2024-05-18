@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Threeyes.Config;
-using Threeyes.Coroutine;
 using Threeyes.SpawnPoint;
 using UnityEngine;
 using Threeyes.RuntimeSerialization;

@@ -2,6 +2,7 @@ using System.IO;
 using Threeyes.Core;
 using UnityEngine;
 using System.Collections.Generic;
+using Threeyes.Core.Editor;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

@@ -517,9 +517,8 @@ MonoBehaviour:
   runtimeEditableDisplayName: Body
   targetRenderer: {fileID: 1930432189319437980}
   targetMaterial: {fileID: 0}
-  isShareMaterial: 0
+  useSharedMaterial: 0
   listRendererMaterialInfo: []
-  cloneMaterial: {fileID: 0}
 --- !u!1 &9055935247107136732
 GameObject:
   m_ObjectHideFlags: 0

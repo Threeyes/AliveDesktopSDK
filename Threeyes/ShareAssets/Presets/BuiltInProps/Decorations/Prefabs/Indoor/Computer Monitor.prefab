@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 266ec1e61009ff049966a6ac47fdefaa, type: 2}
+  - {fileID: 2100000, guid: df220114fb172224596469ea9fae8587, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -404,7 +404,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 758cc21b12a4ba2458b9069dfede30f4, type: 2}
+  - {fileID: 2100000, guid: df220114fb172224596469ea9fae8587, type: 2}
   - {fileID: 2100000, guid: 82b4f0d192a52924395c517aebd1493d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -783,9 +783,8 @@ MonoBehaviour:
   runtimeEditableDisplayName: Monitor
   targetRenderer: {fileID: 321965517507199584}
   targetMaterial: {fileID: 0}
-  isShareMaterial: 0
+  useSharedMaterial: 0
   listRendererMaterialInfo: []
-  cloneMaterial: {fileID: 0}
 --- !u!1 &5417666320595008278
 GameObject:
   m_ObjectHideFlags: 0

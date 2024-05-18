@@ -23,10 +23,10 @@ public sealed class AD_DefaultDecorationController : AD_SerializableItemControll
         return result;
     }
 
-    public void AddElement(GameObject prefab, Vector3? initPosition = null, Quaternion? initRotation = null)
+    public GameObject AddElement(GameObject prefab, Vector3? initPosition = null, Quaternion? initRotation = null)
     {
         if (!prefab)//避免因为卸载模型Mod导致引用丢失
-            return;
+            return null;
 
         overridePrefab = prefab;
         AD_DefaultDecorationItem newInst = InitElement(new ItemInfo());//先临时创建默认Data
@@ -35,6 +35,7 @@ public sealed class AD_DefaultDecorationController : AD_SerializableItemControll
 
         //初始化Transform（参考Editor，仅设置位置，不设置旋转等）
         newInst.transform.SetProperty(initPosition, initRotation, isLocalSpace: false);//PS：SetProperty方法可避免刚体物体在初始化修改其位置/缩放时出错
+        return newInst.gameObject;
     }
 
     #region Define

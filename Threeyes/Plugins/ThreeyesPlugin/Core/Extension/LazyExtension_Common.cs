@@ -1137,15 +1137,18 @@ namespace Threeyes.Core
             Rigidbody rigidbody = tf.GetComponent<Rigidbody>();
             bool cacheIsKinematic = false;
             RigidbodyInterpolation cacheRigidbodyInterpolation = RigidbodyInterpolation.None;
-            bool shouldChangRigdibody = false;
-            if (rigidbody && rigidbody.interpolation != RigidbodyInterpolation.None)
+            bool shouldChangeRigdibody = false;
+            if (rigidbody)
             {
-                shouldChangRigdibody = true;
-                cacheIsKinematic = rigidbody.isKinematic;
-                cacheRigidbodyInterpolation = rigidbody.interpolation;
-                rigidbody.interpolation = RigidbodyInterpolation.None;
-                rigidbody.isKinematic = true;
-                rigidbody.gameObject.SetActive(false);//最重要的起作用代码（可能会导致物体的OnEnable/Disable被多次调用）
+                if (rigidbody.interpolation != RigidbodyInterpolation.None)
+                {
+                    shouldChangeRigdibody = true;
+                    cacheIsKinematic = rigidbody.isKinematic;
+                    cacheRigidbodyInterpolation = rigidbody.interpolation;
+                    rigidbody.interpolation = RigidbodyInterpolation.None;
+                    rigidbody.isKinematic = true;
+                    rigidbody.gameObject.SetActive(false);//最重要的起作用代码（可能会导致物体的OnEnable/Disable被多次调用）
+                }
             }
 
             //#2 Set
@@ -1167,11 +1170,18 @@ namespace Threeyes.Core
                 tf.localScale = scale.Value;//PS:缩放暂无全局可设置字段
 
             //#3 Restore
-            if (rigidbody && shouldChangRigdibody)
+            if (rigidbody && shouldChangeRigdibody)
             {
-                rigidbody.isKinematic = cacheIsKinematic;
-                rigidbody.interpolation = cacheRigidbodyInterpolation;
-                rigidbody.gameObject.SetActive(true);
+                if (shouldChangeRigdibody)
+                {
+                    rigidbody.isKinematic = cacheIsKinematic;
+                    rigidbody.interpolation = cacheRigidbodyInterpolation;
+                    rigidbody.gameObject.SetActive(true);
+                }
+
+                //【ToTest】重置矢量，避免因为缩放等导致其有初始速度
+                rigidbody.velocity = Vector3.zero;
+                rigidbody.angularVelocity = Vector3.zero;
             }
         }
 
