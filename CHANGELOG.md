@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.6.2]
+- Fid Customizable template scene has the same PD key (EnvironmentControllerConfig).
+
 ## [0.6.1]
 - Optimize the code structure of ThreeyesPlugin (some items need to be repackaged).
 - Add Measured Materials Library module.

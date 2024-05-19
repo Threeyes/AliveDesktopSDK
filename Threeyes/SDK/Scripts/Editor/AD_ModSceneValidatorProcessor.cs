@@ -84,9 +84,10 @@ public class AD_ModSceneValidatorProcessor : BuildEngineProcessor
         // Check for valid scene
         if (validScene == false)
         {
-            //ToAdd: 提醒对应的Mod场景名
-            string sceneErrorHeader = $"Build mod scene [{EditorPathTool.AbsToUnityRelatePath(asset.FullPath)}] failed with error:\r\n";
-            errorInfo = sceneErrorHeader + errorInfo;
+            //ToAdd: 提醒对应的Mod场景名（尝试从context.ModAssetsPath中可直接获取）
+            string errorInfoHeader = $"<color=orange>Build mod scene [{EditorPathTool.AbsToUnityRelatePath(asset.FullPath)}] failed with error</color>:\r\n";//使用颜色，更加突出
+            errorInfo = errorInfoHeader + errorInfo;
+            errorInfo += "\r\n";
             context.FailBuild(errorInfo);
         }
     }

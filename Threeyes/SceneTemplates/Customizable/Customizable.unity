@@ -174,8 +174,14 @@ MonoBehaviour:
     bloom_Threshold: 0.9
     bloom_Intensity: 0
     bloom_Scatter: 0.1
-    bloom_Tint: {r: 1, g: 1, b: 1, a: 1}
     bloom_Clamp: 65472
+    bloom_Tint: {r: 1, g: 1, b: 1, a: 1}
+    bloom_HighQualityFiltering: 0
+    bloom_Downscale: 0
+    bloom_MaxIterations: 6
+    bloom_DefaultDirtTexture: {fileID: 0}
+    bloom_ExternalDirtTexture: {fileID: 0}
+    bloom_ExternalDirtTextureFilePath: 
     bloom_DirtIntensity: 0
     channelMixer_IsActive: 0
     channelMixer_RedOutRedIn: 100
@@ -353,8 +359,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   listElement: []
-  prefabConfigInfo:
-    listSOPrefabInfoGroup: []
   tfElementParent: {fileID: 1371321725}
   spawnPointProvider: {fileID: 279746221}
   soOverrideConfig: {fileID: 0}
@@ -723,7 +727,7 @@ PrefabInstance:
     - target: {fileID: 989442846538456348, guid: 8eec2cb357258d14297877df34eda9da,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.32
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 989442846538456348, guid: 8eec2cb357258d14297877df34eda9da,
         type: 3}
@@ -1110,8 +1114,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   listElement: []
-  prefabConfigInfo:
-    listSOPrefabInfoGroup: []
   tfElementParent: {fileID: 667842750}
   spawnPointProvider: {fileID: 525429052}
   soOverrideConfig: {fileID: 0}
@@ -1168,13 +1170,18 @@ MonoBehaviour:
     skyboxType: 0
     defaultSkyboxMaterial: {fileID: 2100000, guid: 3e0cccd1cd204aa4b811d1b01e4a3f6a,
       type: 2}
+    defaultSkyboxSunSize: 0.04
     panoramaSkyboxMaterial: {fileID: 0}
     defaultPanoramaTexture: {fileID: 0}
     externalPanoramaTexture: {fileID: 0}
     externalPanoramaTextureFilePath: 
     panoramaSkyboxRotation: 0
     PersistentDirPath: 
-    sunColorOverTime:
+    isSunEntityFaceCamera: 1
+    sunEntityRotateAxis: {x: 1, y: 0, z: 0}
+    sunEntitySize: {x: 10, y: 10, z: 10}
+    sunEntityDistance: 100
+    sunEntityColorOverTime:
       serializedVersion: 2
       key0: {r: 1, g: 1, b: 1, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 1}
@@ -1204,12 +1211,10 @@ MonoBehaviour:
       m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    sunRotateAxis: {x: 1, y: 0, z: 0}
-    sunSize: {x: 10, y: 10, z: 10}
-    sunDistance: 100
-    isSunAffectLightColor: 1
-    isSunAffectLightIntensity: 1
-    isSunSyncWithRealTime: 0
+    isSunEntityAffectLightColor: 1
+    isSunEntityAffectLightIntensity: 1
+    sunEntityLightIntensityScale: 5
+    isSunEntitySyncWithRealTime: 0
     realTimeScale: 1
     isAutoUpdateReflectionProbe: 0
     updateReflectionProbeIntervalAngle: 30
@@ -1218,10 +1223,9 @@ MonoBehaviour:
   goLightGroup: {fileID: 432333357}
   sunSourceLight: {fileID: 743420679}
   reflectionProbe: {fileID: 709731569}
-  sunEntity: {fileID: 0}
   isDebugMode: 0
   testRealTime_Hour: 12
-  editorUpdateConfig: 1
+  editorSunEntityController: {fileID: 0}
 --- !u!4 &1050535547
 Transform:
   m_ObjectHideFlags: 0
@@ -1732,7 +1736,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7235b0ac84ec79d48bbd5b8d669c1fb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  key: EnvironmentControllerConfig
+  key: PostProcessingControllerConfig
   tooltip: 
   defaultValue: {fileID: 0}
   onUIChanged:

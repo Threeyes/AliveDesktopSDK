@@ -1162,6 +1162,13 @@ namespace Threeyes.Steamworks
         static bool isBuildingMod = false;
         static bool BuildItemFunc(TSOItemInfo sOWorkshopItemInfo, out string errorLog)
         {
+            //bool isUMod297OrHigher = true;
+            ////ModVersion modVersion296 = new ModVersion(2, 9, 6);
+            ////isUMod297OrHigher = !UMod.UModVersion.IsSameVersionOrLower(modVersion296);//该判断有效，但是打包后用户无法访问，暂时注释
+            ////Debug.LogError("Test Version: " + modVersion296 + " " + isUMod297OrHigher);
+            ////#针对uMod 2.9.7或更高版本:Cache
+            //string curSOInfoPath = AssetDatabase.GetAssetPath(curSOWorkshopItemInfo);
+            //string sOInfoPath = AssetDatabase.GetAssetPath(sOWorkshopItemInfo);
 
             //TestCacheLog();//【遇到打包失败且无错误提示时激活该行】编辑器调试时，通过在ReceivedLog中打断点可及时获取未打印的报错信息，避免被清空
 
@@ -1172,9 +1179,6 @@ namespace Threeyes.Steamworks
                 return false;
             }
 
-            ////#针对uMod 2.9.7或更高版本:Cache
-            string curSOInfoPath = AssetDatabase.GetAssetPath(curSOWorkshopItemInfo);
-            string sOInfoPath = AssetDatabase.GetAssetPath(sOWorkshopItemInfo);
 
 
             //——检查基本配置是否完成——
@@ -1209,10 +1213,13 @@ namespace Threeyes.Steamworks
 
                     ////#针对uMod 2.9.7或更高版本（经测试有效，但因UMod打包失败会导致SO发生变化而暂时不升级到此版本）:
                     ////-调用StartBuild后该版本增加了对自定义SO的支持，因此会对SO进行修改(临时变为LinkScriptableObjectV2，之后才会改回原状)。因此需要刷新后重新链接
-                    //AssetDatabase.Refresh();
-                    //sOWorkshopItemInfo = AssetDatabase.LoadAssetAtPath<TSOItemInfo>(sOInfoPath);
-                    //curSOWorkshopItemInfo = AssetDatabase.LoadAssetAtPath<TSOItemInfo>(curSOInfoPath);
-                    //WindowInstance.InitUI(curSOWorkshopItemInfo);//会自动初始化listValidItemInfo和SOManagerInst.CurWorkshopItemInfo
+                    //if (isUMod297OrHigher)
+                    //{
+                    //    AssetDatabase.Refresh();
+                    //    sOWorkshopItemInfo = AssetDatabase.LoadAssetAtPath<TSOItemInfo>(sOInfoPath);
+                    //    curSOWorkshopItemInfo = AssetDatabase.LoadAssetAtPath<TSOItemInfo>(curSOInfoPath);
+                    //    WindowInstance.InitUI(curSOWorkshopItemInfo);//会自动初始化listValidItemInfo和SOManagerInst.CurWorkshopItemInfo
+                    //}
 
                     if (result.Successful)
                     {
