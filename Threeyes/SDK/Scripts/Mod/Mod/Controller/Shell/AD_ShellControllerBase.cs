@@ -10,7 +10,7 @@ public abstract class AD_ShellControllerBase<TManager, TElement, TEleData, TBase
     where TElement : ElementBase<TEleData>, IAD_SerializableItem
     where TEleData : class, IAD_SerializableItemInfo, new()
     where TSOConfig : SOConfigBase<TConfig>
-    where TConfig : AD_SerializableItemControllerConfigInfoBase<AD_SOShellPrefabInfo>
+    where TConfig : AD_SerializableItemControllerConfigInfoBase<AD_SOShellPrefabInfo>, new()
 {
     #region Init
     protected override GameObject GetPrefab(TEleData eleData)

@@ -27,7 +27,7 @@ public abstract class AD_SerializableItemControllerBase<TManager, TSOPrefabInfoG
     where TElement : ElementBase<TEleData>, IAD_SerializableItem
     where TEleData : class, IAD_SerializableItemInfo, new()
     where TSOConfig : SOConfigBase<TConfig>
-    where TConfig : AD_SerializableItemControllerConfigInfoBase<TSOPrefabInfo>
+    where TConfig : AD_SerializableItemControllerConfigInfoBase<TSOPrefabInfo>, new()
 {
     #region Property & Field
 

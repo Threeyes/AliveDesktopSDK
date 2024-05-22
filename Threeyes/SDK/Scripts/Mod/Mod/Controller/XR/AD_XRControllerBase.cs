@@ -11,7 +11,7 @@ using Threeyes.Core;
 
 public abstract class AD_XRControllerBase<TSOConfig, TConfig> : ConfigurableComponentBase<TSOConfig, TConfig>, IAD_XRController
     where TSOConfig : SOConfigBase<TConfig>
-    where TConfig : AD_XRControllerConfigInfoBase
+    where TConfig : AD_XRControllerConfigInfoBase, new()
 {
     event UnityAction<PersistentChangeState> PersistentChanged;
 
