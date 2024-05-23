@@ -5,6 +5,7 @@ using UnityEngine;
 using Threeyes.Core;
 using Newtonsoft.Json;
 using NaughtyAttributes;
+using System.Linq;
 
 namespace Threeyes.Steamworks
 {
@@ -40,7 +41,7 @@ namespace Threeyes.Steamworks
         }
         public float WaterHeight { get { return TfWaterSurface.position.y; } }
 
-      [Tooltip("[Optional] Custom water surface panel")]  [SerializeField] Transform tfWaterSurface;//[Optional] 自定义的水平面
+        [Tooltip("[Optional] Custom water surface panel")] [SerializeField] Transform tfWaterSurface;//[Optional] 自定义的水平面
 
         //Runtime
         [Header("Runtime")]
@@ -72,7 +73,7 @@ namespace Threeyes.Steamworks
                         return;
 
                     buoyantObjectController = rigidbody.AddComponentOnce<BuoyantObjectController>();
-                    buoyantObjectController.ManualInit();
+                    buoyantObjectController.ManualInit();//先手动初始化
                     buoyantObjectController.Config.buoyancyStrength = Config.newlyFloatableObjStrength;//Set default strength
                 }
             }
@@ -84,30 +85,56 @@ namespace Threeyes.Steamworks
             }
         }
 
+        readonly HashSet<Collider> m_StayedColliders = new HashSet<Collider>();
+        private void OnTriggerStay(Collider other)
+        {
+            m_StayedColliders.Add(other);
+        }
         private void OnTriggerExit(Collider other)
         {
             Rigidbody rigidbody = other.attachedRigidbody;
             if (!rigidbody)
                 return;
+            if (rigidbody.isKinematic)//忽略Kinematic
+                return;
+
             BuoyantObjectController buoyantObjectController = rigidbody.GetComponent<BuoyantObjectController>();
             if (!buoyantObjectController)
                 return;
 
             if (Equals(this, buoyantObjectController.buoyantVolume))//仅当离开当前正处于的Volume时才清空，避免因为意外进入其他Volume导致丢失信息
             {
+                bool shouldDisableObjController = true;//是否应该禁用目标的Controller（条件为目标完全离开该Volume）
+
+                ///ToUpdate:
+                ///-如果该刚体含有多个碰撞体，应该是检查所有碰撞体都离开该Volume才禁用，否则会导致某个碰撞体出界就禁用该组件的Bug(或者改为由Controller触发)
+                List<Collider> listCollider = rigidbody.transform.GetComponentsInChildren<Collider>(false).ToList();//仅考虑激活的Collider
+                if (listCollider.Count > 1)//仅考虑多个碰撞体
+                {
+                    foreach (var stayedCollider in m_StayedColliders)
+                    {
+                        if (stayedCollider == null) continue;
+                        if (stayedCollider == other) continue;//忽略与当前碰撞体相同的情况
+
+                        if (listCollider.Contains(stayedCollider))
+                        {
+                            shouldDisableObjController = false;
+                            break;
+                        }
+                    }
+                }
+
                 ///ToUpdate:
                 ///-可以是所有effector都在水面上时禁用，适用于液面升降的物体（非必须）
-
-                buoyantObjectController.buoyantVolume = null;
-                buoyantObjectController.SetActive(false);//禁用
+                if (shouldDisableObjController)
+                {
+                    buoyantObjectController.buoyantVolume = null;
+                    buoyantObjectController.SetActive(false);//禁用
+                }
             }
-        }
 
-        #region IModHandler
-        public override void UpdateSetting()
-        {
+            m_StayedColliders.Remove(other);
         }
-        #endregion
 
         #region Utility
         /// <summary>
@@ -148,7 +175,7 @@ namespace Threeyes.Steamworks
         public class ConfigInfo : SerializableComponentConfigInfoBase
         {
             [Tooltip("If the rigid body that falls into the container cannot float, add corresponding components and initialize it")] public bool isMakeEnterObjFloatable = true;// 如果掉进该容器的刚体不可漂浮，则为其添加对应组件并初始化
-            [Tooltip("For automatically added objects, their default buoyancy")][ShowIf(nameof(isMakeEnterObjFloatable))][AllowNesting][Range(0.01f, 5)] public float newlyFloatableObjStrength = 1.5f;//针对自动添加的物体，其默认的浮力
+            [Tooltip("For automatically added objects, their default buoyancy")] [ShowIf(nameof(isMakeEnterObjFloatable))] [AllowNesting] [Range(0.01f, 5)] public float newlyFloatableObjStrength = 1.5f;//针对自动添加的物体，其默认的浮力
 
             [JsonConstructor]
             public ConfigInfo()

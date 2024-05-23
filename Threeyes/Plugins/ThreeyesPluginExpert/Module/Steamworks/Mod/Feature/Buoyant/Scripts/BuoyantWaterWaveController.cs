@@ -63,12 +63,6 @@ namespace Threeyes.Steamworks
             }
         }
 
-        #region IModHandler
-        public override void UpdateSetting()
-        {
-        }
-        #endregion
-
         #region Define
         [Serializable]
         public class BuoyantWaveInfo//PS:因为是材质属性，暂时不放到Config中，后期可以通过MaterialController暴露，以及改为运行时获取

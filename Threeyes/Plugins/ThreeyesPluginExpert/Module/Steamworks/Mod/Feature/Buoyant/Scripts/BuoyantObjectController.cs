@@ -3,12 +3,11 @@ using UnityEngine;
 using Threeyes.Core;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-
 namespace Threeyes.Steamworks
 {
     /// <summary>
     /// 漂浮类物体，会同时模拟重力
-    /// 
+    /// a
     /// PS:
     /// -与Rigidbody同级
     /// -会重载Rigidbody的重力，将重力平均分配到每个顶点（优点是不受重心影响，更加容易控制）
@@ -20,11 +19,12 @@ namespace Threeyes.Steamworks
     ///         -支持运行时更换目标水池
     ///         -不与Shader绑定（因为是直接修改Mesh）
     /// -确认运行时添加的组件，会不会影响序列化
-    /// -考虑指定模型的缩放，影响objectDepth
+    /// -考虑指定模型的缩放，影响 objectDepth
     /// -被拖拽时，临时禁用(【非必须】因为抓取时为Kinematic，此时不受外力影响)（还要考虑Socket的情况）
     /// -支持零重力物体及全局模式
-    /// -当运行时临时添加该组件，为其添加默认的effectors(默认都是沉底，增加该组件的目的是提供浮力。如果想漂在水上们就需要提前增加该组件)
+    /// +当运行时临时添加该组件，为其添加默认的effectors(默认都是沉底，增加该组件的目的是提供浮力。如果想漂在水上们就需要提前增加该组件)
     /// -【V2】增加配置项
+    /// 
     /// 
     /// Ref: 
     /// </summary>
@@ -36,65 +36,81 @@ namespace Threeyes.Steamworks
         public List<Transform> effectors = new List<Transform>();//Note: For square objects, they should be placed at the bottom of the object; For spherical objects, only one can be placed at the center
 
         //#Runtime
-        float rigidbodyDrag;//缓存的刚体原始阻力
-        float rigidbodyAngularDrag;//缓存的刚体原始角阻力
+        bool isActive = false;
+        float cacheRigidbodyDrag;//缓存的刚体原始阻力
+        float cacheRigidbodyAngularDrag;//缓存的刚体原始角阻力
         public IBuoyantVolumeController buoyantVolume;//当前所在的Volume
         Vector3[] effectorProjections;//保存effector的运行时目标高度(还用于Gizmo绘制)
 
-
         private void Start()
         {
-            if (!m_Rigidbody)
-                m_Rigidbody = GetComponent<Rigidbody>();
-            Init();
-
             if (!isActive)//初始化完毕后，如果没有被激活就先隐藏，避免消耗性能
                 enabled = false;
         }
 
-        bool isActive = false;
         public void SetActive(bool isActive)
         {
-            this.isActive = isActive;
-
-            this.enabled = isActive;//启用Update等
-            if (!isActive)//Restore setting on hide 
+            if (isActive)
+            {
+                TryInit();//尝试使用已有数据进行初始化
+                Setup();
+            }
+            else//Restore setting on hide 
+            {
                 Restore();
+            }
+            this.isActive = isActive;
+            this.enabled = isActive;//启用Update等
         }
 
         /// <summary>
         /// 基于当前信息进行程序化初始化
         /// </summary>
-        [ContextMenu("InitAsSimpleFloatable")]
+        [ContextMenu("ManualInit")]
         public void ManualInit()
         {
             if (!m_Rigidbody)
                 m_Rigidbody = GetComponent<Rigidbody>();
 
             CreateEffectors();
-            Init();
+            InitFunc();
         }
 
 
-        private void Init()
+        bool hasInit = false;
+        private void InitFunc()
         {
-            if (m_Rigidbody)
+            if (hasInit)
+                return;
+
+            if (m_Rigidbody)//保存初始状态
             {
-                rigidbodyDrag = m_Rigidbody.drag;
-                rigidbodyAngularDrag = m_Rigidbody.angularDrag;
+                cacheRigidbodyDrag = m_Rigidbody.drag;
+                cacheRigidbodyAngularDrag = m_Rigidbody.angularDrag;
             }
 
             effectorProjections = new Vector3[effectors.Count];
             for (var i = 0; i < effectors.Count; i++)
                 effectorProjections[i] = effectors[i].position;
+            hasInit = true;
         }
 
+        private void TryInit()
+        {
+            if (!m_Rigidbody)
+                m_Rigidbody = GetComponent<Rigidbody>();
+            InitFunc();
+        }
+        void Setup()
+        {
+            //ToAdd:缓存其他信息
+        }
         void Restore()
         {
             if (m_Rigidbody)
             {
-                m_Rigidbody.drag = rigidbodyDrag;
-                m_Rigidbody.angularDrag = rigidbodyAngularDrag;
+                m_Rigidbody.drag = cacheRigidbodyDrag;
+                m_Rigidbody.angularDrag = cacheRigidbodyAngularDrag;
             }
         }
 
@@ -108,12 +124,22 @@ namespace Threeyes.Steamworks
 
             ///PS:
             ///-ForceMode.Acceleration:忽略质量，可以专心计算加速度的差值
+            if (Config.isAverageGravity)
+            {
+                m_Rigidbody.AddForce(-Physics.gravity, ForceMode.Acceleration);//先抵消其重力（Warning：之所以不直接禁用刚体的useGravity，是因为如果漂浮时被XR抓住，会被XR记录抓住前的状态（无重力），从而导致XR取消抓取时变为无重力）
+            }
+
             var effectorAmount = effectors.Count;
             for (var i = 0; i < effectorAmount; i++)
             {
                 var effectorPosition = effectors[i].position;
                 Vector3 effectorForce = Vector3.zero;
                 Vector3 gravityOnThisEffector = Physics.gravity / effectorAmount;//该点平均分配到的重力值（负数），不管是否在Volume都会受到重力影响
+
+                if (Config.isAverageGravity)
+                {
+                    effectorForce = gravityOnThisEffector;//每个effector均分重力
+                }
 
                 effectorProjections[i] = buoyantVolume.GetClosestPointOnWaterSurface(effectorPosition);
                 var waveHeight = effectorProjections[i].y;
@@ -127,7 +153,7 @@ namespace Threeyes.Steamworks
                 }
 
                 m_Rigidbody.AddForceAtPosition(effectorForce, effectorPosition, ForceMode.Acceleration);//最终受到的力
-                m_Rigidbody.drag = Config.velocityDrag;
+                m_Rigidbody.drag = Config.drag;
                 m_Rigidbody.angularDrag = Config.angularDrag;
             }
         }
@@ -166,12 +192,6 @@ namespace Threeyes.Steamworks
                     Gizmos.DrawLine(effectors[i].position, effectorProjections[i]);
                 }
             }
-        }
-        #endregion
-
-        #region IModHandler
-        public override void UpdateSetting()
-        {
         }
         #endregion
 
@@ -267,10 +287,11 @@ namespace Threeyes.Steamworks
         public class ConfigInfo : SerializableComponentConfigInfoBase
         {
             [Header("Buoyancy")]
-            [Tooltip("The depth at which the object is completely submerged")][Range(0.01f, 5)] public float objectDepth = 1f;//Object's depth in water（可以理解为物体从水面到完全浸没的深度，用于计算对应浮力）(Warning：物体尺寸不能小于该数值，否则会出现抖动)
-            [Tooltip("Buoyancy force scaling")][Range(0.01f, 5)] public float buoyancyStrength = 1.5f;//浮力缩放值（基于重力加速度，当为1时重力与浮力相同，也就是达到平衡，类似无重力状态）
-            public float velocityDrag = 1f;
-            public float angularDrag = 0.5f;
+            [Tooltip("The depth at which the object is completely submerged")] [Range(0.01f, 5)] public float objectDepth = 1f;//Object's depth in water（可以理解为物体从水面到完全浸没的深度，用于计算对应浮力）(Warning：物体尺寸不能小于该数值，否则会出现抖动)
+            [Tooltip("Buoyancy force scaling")] [Range(0.01f, 5)] public float buoyancyStrength = 1.5f;//浮力缩放值（基于重力加速度，当为1时重力与浮力相同，也就是达到平衡，类似无重力状态）
+            [Tooltip("The linear drag of the object")] public float drag = 1f;
+            [Tooltip("The angular drag of the object")] public float angularDrag = 0.5f;
+            [Tooltip("Gravity is evenly distributed to each factor")] public bool isAverageGravity = false;//重力平均分配给每个effector，适用于船等需要保持平衡的物体（Warning：会导致增加额外的计算量）
 
             [JsonConstructor]
             public ConfigInfo()
