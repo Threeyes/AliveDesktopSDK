@@ -41,7 +41,7 @@ namespace Threeyes.Steamworks
         }
         public float WaterHeight { get { return TfWaterSurface.position.y; } }
 
-        [Tooltip("[Optional] Custom water surface panel")] [SerializeField] Transform tfWaterSurface;//[Optional] 自定义的水平面
+        [Tooltip("[Optional] Custom water surface panel")][SerializeField] Transform tfWaterSurface;//[Optional] 自定义的水平面
 
         //Runtime
         [Header("Runtime")]
@@ -108,7 +108,7 @@ namespace Threeyes.Steamworks
 
                 ///ToUpdate:
                 ///-如果该刚体含有多个碰撞体，应该是检查所有碰撞体都离开该Volume才禁用，否则会导致某个碰撞体出界就禁用该组件的Bug(或者改为由Controller触发)
-                List<Collider> listCollider = rigidbody.transform.GetComponentsInChildren<Collider>(false).ToList();//仅考虑激活的Collider
+                List<Collider> listCollider = rigidbody.GetComponentsInChildren<Collider>(false).ToList();//仅考虑激活的Collider
                 if (listCollider.Count > 1)//仅考虑多个碰撞体
                 {
                     foreach (var stayedCollider in m_StayedColliders)
@@ -175,7 +175,7 @@ namespace Threeyes.Steamworks
         public class ConfigInfo : SerializableComponentConfigInfoBase
         {
             [Tooltip("If the rigid body that falls into the container cannot float, add corresponding components and initialize it")] public bool isMakeEnterObjFloatable = true;// 如果掉进该容器的刚体不可漂浮，则为其添加对应组件并初始化
-            [Tooltip("For automatically added objects, their default buoyancy")] [ShowIf(nameof(isMakeEnterObjFloatable))] [AllowNesting] [Range(0.01f, 5)] public float newlyFloatableObjStrength = 1.5f;//针对自动添加的物体，其默认的浮力
+            [Tooltip("For automatically added objects, their default buoyancy")][ShowIf(nameof(isMakeEnterObjFloatable))][AllowNesting][Range(0.01f, 5)] public float newlyFloatableObjStrength = 1.5f;//针对自动添加的物体，其默认的浮力
 
             [JsonConstructor]
             public ConfigInfo()

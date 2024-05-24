@@ -18,7 +18,7 @@ namespace Threeyes.Steamworks
     ///     -优点：
     ///         -支持运行时更换目标水池
     ///         -不与Shader绑定（因为是直接修改Mesh）
-    /// -确认运行时添加的组件，会不会影响序列化
+    /// +确认运行时添加的组件，会不会影响序列化（结论：不影响序列化，影响运行时编辑）
     /// -考虑指定模型的缩放，影响 objectDepth
     /// -被拖拽时，临时禁用(【非必须】因为抓取时为Kinematic，此时不受外力影响)（还要考虑Socket的情况）
     /// -支持零重力物体及全局模式
@@ -204,7 +204,7 @@ namespace Threeyes.Steamworks
             ///ToUpdate:
             ///-查找N个端点，先转为世界坐标，再转为相对于Rigidbody的局部坐标，在指定位置生成对应的Effector
             ///-计算其最大的深度，用于设置objectDepth（记录所有bounds的max和min，最后计算即可）
-            List<Collider> listCollider = transform.FindComponentsInChild<Collider>(true, true).FindAll(c => c.enabled);//查找所有的碰撞体
+            List<Collider> listCollider = transform.FindComponentsInChild<Collider>(true, true).FindAll(c => c.enabled && c.gameObject.activeInHierarchy);//查找所有激活的碰撞体
             List<Bounds> listBounds = listCollider.ConvertAll(c => c.bounds); //获取所有有效Bounds。Collider.bounds: Note that this will be an empty bounding box if the collider is disabled or the game object is inactive.（Collider禁用时Bounds无效，因此上一步要排除禁用的Collider）
 
             //PS:以下记录的点都基于世界坐标
@@ -254,6 +254,8 @@ namespace Threeyes.Steamworks
             effectors.AddRange(new List<Transform>() { goEffector_F.transform, goEffector_B.transform, goEffector_R.transform, goEffector_L.transform });
 
             Config.objectDepth = maxPoint.y - minPoint.y;//计算最大深度
+            if (Config.objectDepth == 0)
+                Config.objectDepth = 0.1f;//避免某些物体运行后才生成碰撞体
             Config.buoyancyStrength = 1;//默认提供与重力相等的浮力（不假设其密度，最大保证通用性）
         }
 
@@ -287,8 +289,8 @@ namespace Threeyes.Steamworks
         public class ConfigInfo : SerializableComponentConfigInfoBase
         {
             [Header("Buoyancy")]
-            [Tooltip("The depth at which the object is completely submerged")] [Range(0.01f, 5)] public float objectDepth = 1f;//Object's depth in water（可以理解为物体从水面到完全浸没的深度，用于计算对应浮力）(Warning：物体尺寸不能小于该数值，否则会出现抖动)
-            [Tooltip("Buoyancy force scaling")] [Range(0.01f, 5)] public float buoyancyStrength = 1.5f;//浮力缩放值（基于重力加速度，当为1时重力与浮力相同，也就是达到平衡，类似无重力状态）
+            [Tooltip("The depth at which the object is completely submerged")][Range(0.01f, 5)] public float objectDepth = 1f;//Object's depth in water（可以理解为物体从水面到完全浸没的深度，用于计算对应浮力）(Warning：物体尺寸不能小于该数值，否则会出现抖动)
+            [Tooltip("Buoyancy force scaling")][Range(0.01f, 5)] public float buoyancyStrength = 1.5f;//浮力缩放值（基于重力加速度，当为1时重力与浮力相同，也就是达到平衡，类似无重力状态）
             [Tooltip("The linear drag of the object")] public float drag = 1f;
             [Tooltip("The angular drag of the object")] public float angularDrag = 0.5f;
             [Tooltip("Gravity is evenly distributed to each factor")] public bool isAverageGravity = false;//重力平均分配给每个effector，适用于船等需要保持平衡的物体（Warning：会导致增加额外的计算量）
