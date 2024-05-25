@@ -1,6 +1,4 @@
-using Threeyes.Core;
-
-namespace Threeyes.ValueHolder
+namespace Threeyes.Core
 {
     public class ReflectionValueHolder_Float : ReflectionValueHolder<float> { }
 }

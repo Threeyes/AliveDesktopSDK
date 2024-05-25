@@ -274,8 +274,8 @@ namespace Threeyes.Steamworks
         [ContextMenu("SetShaderModelConfig")]
         public void SetShaderModelConfig()
         {
-            if (Application.isPlaying)
-                return;
+            //if (Application.isPlaying)
+            //    return;
 
             //Remap the pos range to [-0.5f,0.5f]（将点重映射到区间内）
             float middlePoint = (modelVerticePosYRange.y + modelVerticePosYRange.x) / 2;
@@ -297,7 +297,7 @@ namespace Threeyes.Steamworks
         public class ConfigInfo : SerializableComponentConfigInfoBase
         {
             [Header("Common")]
-            [Tooltip("The default liquid fill amount")][Range(0, 1)] public float baseFillAmount = 0.5f;//
+            [Tooltip("The default liquid fill amount")] [Range(0, 1)] public float baseFillAmount = 0.5f;//
 
             //——Runtime Motion——
             [Header("Foam")]
@@ -322,7 +322,7 @@ namespace Threeyes.Steamworks
             [Tooltip("How fast the wobble reset to origin state")]
             public float wobbleRecovery = 0.8f;
 
-            [HideInInspector][JsonIgnore][PersistentDirPath] public string PersistentDirPath;
+            [HideInInspector] [JsonIgnore] [PersistentDirPath] public string PersistentDirPath;
         }
 
         public class PropertyBag : ConfigurableComponentPropertyBagBase<LiquidController, ConfigInfo> { }

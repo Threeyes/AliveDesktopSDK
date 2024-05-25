@@ -39,7 +39,7 @@ namespace Threeyes.Steamworks
         bool isActive = false;
         float cacheRigidbodyDrag;//缓存的刚体原始阻力
         float cacheRigidbodyAngularDrag;//缓存的刚体原始角阻力
-        public IBuoyantVolumeController buoyantVolume;//当前所在的Volume
+        public BuoyantVolumeController buoyantVolume;//当前所在的Volume
         Vector3[] effectorProjections;//保存effector的运行时目标高度(还用于Gizmo绘制)
 
         private void Start()
@@ -122,6 +122,7 @@ namespace Threeyes.Steamworks
             if (buoyantVolume == null)
                 return;
 
+            float volumeBuoyancyStrengthScale = buoyantVolume.Config.buoyancyStrengthScale;
             ///PS:
             ///-ForceMode.Acceleration:忽略质量，可以专心计算加速度的差值
             if (Config.isAverageGravity)
@@ -129,7 +130,7 @@ namespace Threeyes.Steamworks
                 m_Rigidbody.AddForce(-Physics.gravity, ForceMode.Acceleration);//先抵消其重力（Warning：之所以不直接禁用刚体的useGravity，是因为如果漂浮时被XR抓住，会被XR记录抓住前的状态（无重力），从而导致XR取消抓取时变为无重力）
             }
 
-            var effectorAmount = effectors.Count;
+            int effectorAmount = effectors.Count;
             for (var i = 0; i < effectorAmount; i++)
             {
                 var effectorPosition = effectors[i].position;
@@ -148,7 +149,7 @@ namespace Threeyes.Steamworks
                 {
                     var submersion = Mathf.Clamp01((waveHeight - effectorHeight) / Config.objectDepth);//当前浸没的比例（基于objectDepth）
 
-                    Vector3 buoyancyForce = Vector3.up * (Mathf.Abs(gravityOnThisEffector.y) * (submersion * Config.buoyancyStrength)); //浮力（向上，后期可向着水法线方向）
+                    Vector3 buoyancyForce = Vector3.up * (Mathf.Abs(gravityOnThisEffector.y) * (submersion * Config.buoyancyStrength * volumeBuoyancyStrengthScale)); //浮力（向上，后期可向着水法线方向）
                     effectorForce += buoyancyForce;
                 }
 
@@ -289,8 +290,8 @@ namespace Threeyes.Steamworks
         public class ConfigInfo : SerializableComponentConfigInfoBase
         {
             [Header("Buoyancy")]
-            [Tooltip("The depth at which the object is completely submerged")][Range(0.01f, 5)] public float objectDepth = 1f;//Object's depth in water（可以理解为物体从水面到完全浸没的深度，用于计算对应浮力）(Warning：物体尺寸不能小于该数值，否则会出现抖动)
-            [Tooltip("Buoyancy force scaling")][Range(0.01f, 5)] public float buoyancyStrength = 1.5f;//浮力缩放值（基于重力加速度，当为1时重力与浮力相同，也就是达到平衡，类似无重力状态）
+            [Tooltip("The depth at which the object is completely submerged")] [Range(0.01f, 5)] public float objectDepth = 1f;//Object's depth in water（可以理解为物体从水面到完全浸没的深度，用于计算对应浮力）(Warning：物体尺寸不能小于该数值，否则会出现抖动)
+            [Tooltip("Buoyancy force scaling")] [Range(0.01f, 5)] public float buoyancyStrength = 1.5f;//浮力缩放值（基于重力加速度，当为1时重力与浮力相同，也就是达到平衡，类似无重力状态）
             [Tooltip("The linear drag of the object")] public float drag = 1f;
             [Tooltip("The angular drag of the object")] public float angularDrag = 0.5f;
             [Tooltip("Gravity is evenly distributed to each factor")] public bool isAverageGravity = false;//重力平均分配给每个effector，适用于船等需要保持平衡的物体（Warning：会导致增加额外的计算量）

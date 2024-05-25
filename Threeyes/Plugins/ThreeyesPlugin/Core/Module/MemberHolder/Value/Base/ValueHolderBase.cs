@@ -2,6 +2,10 @@ using UnityEngine;
 using UnityEngine.Events;
 namespace Threeyes.Core
 {
+    /// <summary>
+    /// Cache and manage specific types of values
+    /// </summary>
+    /// <typeparam name="TParam"></typeparam>
     public interface IValueHolder<TParam>
     {
         TParam CurValue { get; set; }

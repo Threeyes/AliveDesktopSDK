@@ -1,5 +1,4 @@
-using Threeyes.Core;
-namespace Threeyes.ValueHolder
+namespace Threeyes.Core
 {
     public class ValueHolder_String : ValueHolderBase<StringEvent, string>
     {

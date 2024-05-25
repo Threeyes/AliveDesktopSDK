@@ -28,7 +28,6 @@ namespace Threeyes.Steamworks
     /// </summary>
     [RequireComponent(typeof(Collider))]//Require trigger collider
     public class BuoyantVolumeController : ConfigurableComponentBase<BuoyantVolumeController, SOBuoyantVolumeControllerConfig, BuoyantVolumeController.ConfigInfo, BuoyantVolumeController.PropertyBag>
-        , IBuoyantVolumeController
     {
         public Transform TfWaterSurface
         {
@@ -41,7 +40,7 @@ namespace Threeyes.Steamworks
         }
         public float WaterHeight { get { return TfWaterSurface.position.y; } }
 
-        [Tooltip("[Optional] Custom water surface panel")][SerializeField] Transform tfWaterSurface;//[Optional] 自定义的水平面
+        [Tooltip("[Optional] Custom water surface panel")] [SerializeField] Transform tfWaterSurface;//[Optional] 自定义的水平面(可通过LiquidController在运行时控制其位置及旋转)
 
         //Runtime
         [Header("Runtime")]
@@ -102,7 +101,7 @@ namespace Threeyes.Steamworks
             if (!buoyantObjectController)
                 return;
 
-            if (Equals(this, buoyantObjectController.buoyantVolume))//仅当离开当前正处于的Volume时才清空，避免因为意外进入其他Volume导致丢失信息
+            if (this == buoyantObjectController.buoyantVolume)//仅当离开当前正处于的Volume时才清空，避免因为意外进入其他Volume导致丢失信息
             {
                 bool shouldDisableObjController = true;//是否应该禁用目标的Controller（条件为目标完全离开该Volume）
 
@@ -156,13 +155,15 @@ namespace Threeyes.Steamworks
             {
                 ///PS:
                 //计算effectorPosition沿Y轴与水平面的交点（因为浮力与重力方向相反，所以使用世界坐标Y轴，而不是水平面法线），从而计算出距离水面的高度（主要针对倾斜水平面）
-                Plane plane = new Plane(TfWaterSurface.up, TfWaterSurface.position);
-                Ray ray = new Ray(new Vector3(effectorPosition.x, effectorPosition.y - 1000, effectorPosition.z), Vector3.up);//起始点放在最下方，确保能与平面相交
+                Plane plane = new Plane(TfWaterSurface.up, TfWaterSurface.position);//Warning：WaterSurface物体可能因为LiquidController的低频晃动导致Up翻转
+                Ray ray = new Ray(new Vector3(effectorPosition.x, effectorPosition.y - 1000, effectorPosition.z), Vector3.up);//起始点放在最下方，方向与重力相反，确保能与平面相交（ToUpdate：改为无端点的线）
                 if (plane.Raycast(ray, out float enter))
                 {
                     Vector3 hitPoint = ray.GetPoint(enter);//获取Y轴与水平面的交互
                     effectorProjection.y = hitPoint.y;
                 }
+                else
+                    Debug.LogError("Line not intersect with Plane!");
             }
 
             //Debug.LogError("Test: " + GerstnerWaveDisplacement.GetWaveDisplacement(effectorPosition, steepness, wavelength, speed, directions));
@@ -174,8 +175,10 @@ namespace Threeyes.Steamworks
         [Serializable]
         public class ConfigInfo : SerializableComponentConfigInfoBase
         {
+            [Min(0)] public float buoyancyStrengthScale = 1;//针对掉进来的物体的浮力缩放
+
             [Tooltip("If the rigid body that falls into the container cannot float, add corresponding components and initialize it")] public bool isMakeEnterObjFloatable = true;// 如果掉进该容器的刚体不可漂浮，则为其添加对应组件并初始化
-            [Tooltip("For automatically added objects, their default buoyancy")][ShowIf(nameof(isMakeEnterObjFloatable))][AllowNesting][Range(0.01f, 5)] public float newlyFloatableObjStrength = 1.5f;//针对自动添加的物体，其默认的浮力
+            [Tooltip("For automatically added objects, their default buoyancy")] [ShowIf(nameof(isMakeEnterObjFloatable))] [AllowNesting] [Range(0.01f, 5)] public float newlyFloatableObjStrength = 1.5f;//针对自动添加的物体，其默认的浮力
 
             [JsonConstructor]
             public ConfigInfo()
@@ -184,25 +187,5 @@ namespace Threeyes.Steamworks
         }
         public class PropertyBag : ConfigurableComponentPropertyBagBase<BuoyantVolumeController, ConfigInfo> { }
         #endregion
-    }
-
-    public interface IBuoyantVolumeController
-    {
-        ///// <summary>
-        ///// Up Axis is the Water's normal
-        ///// </summary>
-        //Transform TfWaterSurface { get; }//用于判断倾斜水平面，以及无重力等计算
-
-        ///// <summary>
-        ///// The Global height of water surface
-        ///// </summary>
-        //float WaterHeight { get; }
-
-        ///// <summary>
-        ///// (Not valid for simple water surface)
-        ///// </summary>
-        //BuoyantWaveInfo WaveInfo { get; }
-
-        Vector3 GetClosestPointOnWaterSurface(Vector3 effectorPosition);
     }
 }
