@@ -2,6 +2,9 @@
 
 ## [0.6.2]
 - Fid Customizable template scene has the same PD key (EnvironmentControllerConfig).
+- Change ValueHolder's namespace to Core (some items need to be repackaged).
+- Add reflection method Components (ReflectionMethodHolderXXX).
+
 
 ## [0.6.1]
 - Optimize the code structure of ThreeyesPlugin (some items need to be repackaged).
