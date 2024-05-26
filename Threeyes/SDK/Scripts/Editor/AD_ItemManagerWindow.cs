@@ -58,6 +58,11 @@ namespace Threeyes.AliveCursor.SDK.Editor
             base.AfterCreateItem(infoInst);
             CreateOrUpdateAssetPack(infoInst);//Item创建完成后，需要生成默认的AssetPack
         }
+
+        protected override bool CanRun(AD_SOWorkshopItemInfo sOItemInfo)
+        {
+            return sOItemInfo.itemType == AD_WSItemType.Scene;//只支持运行Scene
+        }
         #endregion
 
         #region Screenshot

@@ -31,6 +31,9 @@ namespace Threeyes.Steamworks
         //#Events
         public FloatEvent onSteerProgressChanged;//SteerAngle偏转的进度[0,1]，其中0为最小值，1为最大值（归一化，方便模型方向盘同步）
         public FloatEvent onMotorProgressChanged;//加减速的进度
+        public BoolEvent onBoostStartStop;
+        public BoolEvent onBrakeStartStop;
+
         public List<WheelAppearance> listWheelAppearance = new List<WheelAppearance>();//与listWheelInfo一一对应的引用
 
         //#Runtime
@@ -54,10 +57,12 @@ namespace Threeyes.Steamworks
         public void SetBoost(bool isBoost)
         {
             isBoosting = isBoost;
+            onBoostStartStop.Invoke(isBoost);
         }
         public void SetBrake(bool isBreak)
         {
             isBreaking = isBreak;
+            onBrakeStartStop.Invoke(isBreak);
         }
         #endregion
 

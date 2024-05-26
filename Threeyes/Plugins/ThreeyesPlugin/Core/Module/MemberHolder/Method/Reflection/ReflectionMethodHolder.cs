@@ -14,7 +14,7 @@ namespace Threeyes.Core
     {
         public override bool IsDesireMethod(MethodInfo methodInfo)
         {
-            //Method format: void Method();//仅一个参数，无返回值
+            //Method format: void Method();//无返回值，无参数
             ParameterInfo[] parameterInfos = methodInfo.GetParameters();
             return parameterInfos.Length == 0 && methodInfo.ReturnType == typeof(void);
         }

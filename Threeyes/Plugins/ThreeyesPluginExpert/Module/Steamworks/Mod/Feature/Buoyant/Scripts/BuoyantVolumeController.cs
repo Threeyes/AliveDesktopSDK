@@ -25,8 +25,14 @@ namespace Threeyes.Steamworks
     /// 
     /// Bug:
     /// -会导致附着在Socket上的物体异常抖动
+    /// 
+    /// Note：
+    /// -需要物体有任意Trigger
+    /// 
+    /// ToUpdate：
+    /// -通过TriggerEventBroadcaster等组件，把Trigger的事件发送到该组件，方便把该组件放到根物体以便RE编辑(参考ColliderEventReceiverBase，通过接口调用对应方法。为了性能，通过Mono组件引用）
     /// </summary>
-    [RequireComponent(typeof(Collider))]//Require trigger collider
+    //[RequireComponent(typeof(Collider))]//Require trigger collider （可能会导致uMod加载报错，先注释）
     public class BuoyantVolumeController : ConfigurableComponentBase<BuoyantVolumeController, SOBuoyantVolumeControllerConfig, BuoyantVolumeController.ConfigInfo, BuoyantVolumeController.PropertyBag>
     {
         public Transform TfWaterSurface
@@ -61,7 +67,6 @@ namespace Threeyes.Steamworks
             BuoyantObjectController buoyantObjectController = rigidbody.GetComponent<BuoyantObjectController>();
             if (!buoyantObjectController)
             {
-
                 if (!Config.isMakeEnterObjFloatable)
                 {
                     return;
@@ -94,8 +99,8 @@ namespace Threeyes.Steamworks
             Rigidbody rigidbody = other.attachedRigidbody;
             if (!rigidbody)
                 return;
-            if (rigidbody.isKinematic)//忽略Kinematic
-                return;
+            //if (rigidbody.isKinematic)//忽略Kinematic（Warning：不能忽略，否则会因为被XR抓取时无法执行后续的禁用方法）
+            //    return;
 
             BuoyantObjectController buoyantObjectController = rigidbody.GetComponent<BuoyantObjectController>();
             if (!buoyantObjectController)

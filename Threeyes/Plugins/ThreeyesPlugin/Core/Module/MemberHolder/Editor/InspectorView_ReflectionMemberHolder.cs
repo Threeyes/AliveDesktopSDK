@@ -30,6 +30,10 @@ namespace Threeyes.Core
             serializedObject.Update();
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("target"));
+            if (!lastTargetObj)//如果目标为空：提示警告
+            {
+                EditorGUILayout.HelpBox("Please specify Target!", MessageType.Warning);
+            }
 
             OnInspectorGUIFunc();
 
@@ -41,11 +45,6 @@ namespace Threeyes.Core
                 if (curTargetObject != lastTargetObj)//用户更改了目标：清空其他字段并保存
                 {
                     OnFieldTargetChanged();
-                }
-
-                if (!curTargetObject)//如果目标为空：提示警告
-                {
-                    EditorGUILayout.HelpBox("Please specify Target!", MessageType.Warning);
                 }
             }
         }
@@ -62,7 +61,7 @@ namespace Threeyes.Core
         static string missingMemberInfoFormat = "<Missing {0}>";
 
         /// <summary>
-        /// 绘制下拉框，以便选选中可用的元素
+        /// 绘制下拉框，以便提供可用的元素
         /// 
         /// ToUpdate:
         /// -应该是提供类似UnityEvent的菜单，能够显示该物体所有组件可用的方法
@@ -73,6 +72,8 @@ namespace Threeyes.Core
         /// <param name="gUIContent"></param>
         /// <param name="listOption">首位一定是 emptyMemberName</param>
         /// <param name="lastSelect"></param>
+        /// <param name="getter"></param>
+        /// <param name="setter">Fire when value changed</param>
         /// <returns></returns>
         protected static int DrawPopUp(Object target, GUIContent gUIContent, List<string> listOption, CustomFunc<string> getter, UnityAction<string> setter, ref bool isCurValueValid)
         {

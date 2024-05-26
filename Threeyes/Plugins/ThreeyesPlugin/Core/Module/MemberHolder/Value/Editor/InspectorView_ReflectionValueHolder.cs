@@ -14,6 +14,9 @@ namespace Threeyes.Core
     /// 
     /// PS：
     /// -仅弹出警告而不是错误，因为字段可能有其他用途，不一定要GetSet齐全
+    /// 
+    /// ToUpdate：
+    /// -【非必须，因为可能部分方法或属性只能运行时调用。可以加一个bool值开关】调用Get，获取当前值并显示（参考InspectorView_ReflectionMethodHolder的实现）
     /// </summary>
     [CanEditMultipleObjects]
     [CustomEditor(typeof(ReflectionValueHolderBase), true)]//editorForChildClasses

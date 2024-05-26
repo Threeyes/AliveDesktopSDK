@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Reflection;
+using UnityEngine.Events;
 
 namespace Threeyes.Core
 {
@@ -18,6 +19,41 @@ namespace Threeyes.Core
         [SerializeField] protected UnityEngine.Object target;
 
         #region Utility
+
+        protected bool SetMember<TMemberInfo>(TMemberInfo memberInfo, UnityAction<TMemberInfo, object, object>
+        actSetValue, object value, Func<TMemberInfo, bool> actCheckIfCanSet = null)
+            where TMemberInfo : MemberInfo
+        {
+            if (memberInfo != null)
+            {
+                bool canSet = actCheckIfCanSet != null ? actCheckIfCanSet(memberInfo) : true;//默认代表可写
+                if (canSet)
+                {
+                    if (IsSetValueValid(memberInfo, value))
+                    {
+                        try
+                        {
+                            actSetValue(memberInfo, Target, value);
+                            return true;
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogError("SetMember with error: \r\n" + e);
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 在SetValue时判断是否有效
+        /// （eg：如果需要排除值为null的情况，可以覆写该方法）
+        /// </summary>
+        /// <param name="memberInfo"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        protected virtual bool IsSetValueValid(MemberInfo memberInfo, object value) { return true; }
 
         /// <summary>
         /// 

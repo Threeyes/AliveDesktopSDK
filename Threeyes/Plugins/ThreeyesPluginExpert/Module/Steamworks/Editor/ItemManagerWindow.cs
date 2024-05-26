@@ -803,7 +803,7 @@ namespace Threeyes.Steamworks
         /// <summary>
         /// （当必须属性更新时）同步更新Build按钮的状态
         /// </summary>
-        void UpdateBuildAndUploadStateFunc()
+        protected virtual void UpdateBuildAndUploadStateFunc()
         {
             textFieldChangeLog.value = "";
             if (!curSOWorkshopItemInfo)
@@ -822,14 +822,18 @@ namespace Threeyes.Steamworks
                 helpBoxBuild.text = errorLog;
 
             buttonItemBuild.SetInteractable(isBuildValid); // 确保Build前所有必填内容都有效，否则禁用
-            buttonItemBuildAndRun.SetInteractable(isBuildValid && IsExePathValid(SOManagerInst.ItemWindow_ExePath));//在上面的基础上，需要确定exe已经配置完成
-            buttonItemRun.SetInteractable(IsExePathValid(SOManagerInst.ItemWindow_ExePath) && curSOWorkshopItemInfo.IsExported);//确认exe已经Mod是否存在
+            buttonItemBuildAndRun.SetInteractable(CanRun(curSOWorkshopItemInfo) && isBuildValid && IsExePathValid(SOManagerInst.ItemWindow_ExePath));//在上面的基础上，需要确定exe已经配置完成
+            buttonItemRun.SetInteractable(CanRun(curSOWorkshopItemInfo) && IsExePathValid(SOManagerInst.ItemWindow_ExePath) && curSOWorkshopItemInfo.IsExported);//确认exe已经Mod是否存在
 
             textFieldChangeLog.Show(curSOWorkshopItemInfo.IsItemUploaded);
             buttonItemUpload.SetInteractable(curSOWorkshopItemInfo.IsUploadValid);////PS:仅简单检查导出目录是否存在即可，具体错误在点击“Upload‘按键后会打印出来
             buttonItemReuploadAll.SetInteractable(listValidItemInfo.Any(so => so && so.IsItemUploaded));//确保任意Item已上传，则表示可以重新上传
         }
 
+        protected virtual bool CanRun(TSOItemInfo sOItemInfo)
+        {
+            return true;
+        }
         void SetPreviewHelpBoxInfo(string content = "")
         {
             SetPreviewHelpBoxInfoFunc(true, content);

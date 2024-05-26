@@ -8,9 +8,6 @@ using System.Linq;
 
 namespace Threeyes.Core
 {
-
-
-
     /// <summary>
     /// Set a certain field/property/method of an instance through reflection (applicable to situations where it cannot be displayed in UnityEvent or the corresponding field is private)
     /// 通过反射设置实例的某个字段/属性/方法（适用于在UnityEvent中无法显示或对应字段是私有的情况）
@@ -59,9 +56,9 @@ namespace Threeyes.Core
         }
         public bool IsDesireSetMethod(MethodInfo methodInfo)
         {
-            //Set Method format: AnyReturnValue Method(TValue);//仅一个参数，返回值不限
+            //Set Method format: void Method(TValue);//无返回值，仅一个参数
             ParameterInfo[] parameterInfos = methodInfo.GetParameters();
-            return parameterInfos.Length == 1 && IsValueTypeMatch(parameterInfos[0].ParameterType);
+            return parameterInfos.Length == 1 && IsValueTypeMatch(parameterInfos[0].ParameterType) && methodInfo.ReturnType == typeof(void);
         }
 
         #region Define
@@ -154,41 +151,6 @@ namespace Threeyes.Core
             }
             return default;
         }
-
-        protected bool SetMember<TMemberInfo>(TMemberInfo memberInfo, UnityAction<TMemberInfo, object, object>
-        actSetValue, object value, Func<TMemberInfo, bool> actCheckIfCanSet = null)
-            where TMemberInfo : MemberInfo
-        {
-            if (memberInfo != null)
-            {
-                bool canSet = actCheckIfCanSet != null ? actCheckIfCanSet(memberInfo) : true;//默认代表可写
-                if (canSet)
-                {
-                    if (IsSetValueValid(memberInfo, value))
-                    {
-                        try
-                        {
-                            actSetValue(memberInfo, Target, value);
-                            return true;
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.LogError("SetMember with error: \r\n" + e);
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// 在SetValue时判断是否有效
-        /// （eg：如果需要排除值为null的情况，可以覆写该方法）
-        /// </summary>
-        /// <param name="memberInfo"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        protected virtual bool IsSetValueValid(MemberInfo memberInfo, object value) { return true; }
 
         #region Editor
 #if UNITY_EDITOR
