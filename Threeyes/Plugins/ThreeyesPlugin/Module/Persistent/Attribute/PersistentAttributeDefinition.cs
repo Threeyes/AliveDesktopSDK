@@ -286,7 +286,8 @@ namespace Threeyes.Persistent
     /// Cache option list's selected index
     /// [valid for int field only]
     /// 
-    /// Usage:Generate [DataOption_OptionInfo]
+    /// Usage:
+    /// -Generate [DataOption_OptionInfo]（通过标记List和当前元素ID，生成对应的可选项DataOption_OptionInfo）
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
     public class PersistentOptionAttribute : Attribute

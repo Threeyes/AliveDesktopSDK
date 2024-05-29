@@ -576,11 +576,13 @@ MonoBehaviour:
         useRange: 0
         minValue: 0
         maxValue: 1
+    listBoolShaderProperty: []
   soOverrideConfig: {fileID: 0}
   id:
     m_Guid: c59e9c79-9062-4db8-b84a-af31856b7127
   runtimeEditableDisplayName: Sphere
   targetRenderer: {fileID: 6298881221456362486}
+  targetMaterialIndex: 0
   targetMaterial: {fileID: 0}
   useSharedMaterial: 0
   listRendererMaterialInfo: []
@@ -607,11 +609,13 @@ MonoBehaviour:
         useHDR: 1
     listIntShaderProperty: []
     listFloatShaderProperty: []
+    listBoolShaderProperty: []
   soOverrideConfig: {fileID: 0}
   id:
     m_Guid: ed5398d5-67a8-4ad7-8387-ee957c3a35c0
   runtimeEditableDisplayName: Waveform
   targetRenderer: {fileID: 6916627140797215622}
+  targetMaterialIndex: 0
   targetMaterial: {fileID: 0}
   useSharedMaterial: 0
   listRendererMaterialInfo: []

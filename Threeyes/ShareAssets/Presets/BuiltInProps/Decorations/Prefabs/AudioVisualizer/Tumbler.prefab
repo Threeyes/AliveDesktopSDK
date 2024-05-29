@@ -210,7 +210,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 1f76f51b1259b2b46b1baf255d2d9a91, type: 2}
+  m_Mesh: {fileID: 4300000, guid: a6f0cc4d1cd7bd347b53975c96698f37, type: 2}
 --- !u!1 &5872358477974473583
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,6 +599,7 @@ MonoBehaviour:
   runtimeEditableDisplayName: 
   comp: {fileID: 1519387099314717284}
   tfMotionSource: {fileID: 0}
+  tfWaterSurface: {fileID: 0}
   modelScaleFactor: 1
   modelVerticePosYRange: {x: -0.5, y: 1}
   lastVelocity: {x: 0, y: 0, z: 0}
@@ -653,15 +654,16 @@ MonoBehaviour:
         useRange: 1
         minValue: 0
         maxValue: 10
+    listBoolShaderProperty: []
   soOverrideConfig: {fileID: 0}
   id:
     m_Guid: 3842170b-7f9d-4063-a1ef-1b540acf3739
   runtimeEditableDisplayName: 
   targetRenderer: {fileID: 1519387099314717284}
+  targetMaterialIndex: 0
   targetMaterial: {fileID: 0}
-  isShareMaterial: 0
+  useSharedMaterial: 0
   listRendererMaterialInfo: []
-  cloneMaterial: {fileID: 0}
 --- !u!114 &6436987801136243192
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,11 +7,12 @@ using Newtonsoft.Json;
 using Threeyes.Config;
 using NaughtyAttributes;
 using Threeyes.Core;
+using Threeyes.Core.Editor;
 
 namespace Threeyes.Steamworks
 {
     /// <summary>
-    /// Control Material's value
+    /// Control Material's properties
     /// 
     /// PS:
     /// -You can find material's property detail in Inspector Editor mode
@@ -23,91 +24,27 @@ namespace Threeyes.Steamworks
     /// -选项：是否更改SharedMaterial
     /// -新增List<RenderInfo>otherRenderInfo,里面包含其他Renderer及对应的ID，方便针对多个物体使用类类似的材质进行修改（如车体、车门），但又不能使用sharedMaterial（因为多个实例有不同的配色）（或者通过类似EventPlayer.EventListener的方式，向其他MaterialController进行广播，参数为ConfigInfoEvent，然后接收方使用自身的序号进行更新）（或者新增一个MaterialControllerGroup，针对类似情况，先生成一个单独的克隆材质）
     /// </summary>
-    public class MaterialController : ConfigurableComponentBase<MaterialController, SOMaterialControllerConfig, MaterialController.ConfigInfo, MaterialController.PropertyBag>
+    public class MaterialController : MaterialControllerBase<MaterialController, SOMaterialControllerConfig, MaterialController.ConfigInfo, MaterialController.PropertyBag>
         , IMaterialProvider
     {
-        #region IMaterialProvider
-        public Material TargetMaterial { get { return GetMaterial(false); } }
-        public Material TargetSharedMaterial { get { return GetMaterial(true); } }
-        #endregion
-
         #region Property & Field
-        public Material Material
-        {
-            get
-            {
-                return GetMaterial(useSharedMaterial);
-            }
-        }
-
-        private Material GetMaterial(bool useSharedMaterial)
-        {
-            //#1 尝试从可选项中找到首个有效材质
-            Material renderMaterial = GetMaterialFromRenderer(targetRenderer, Config.materialIndex, useSharedMaterial);//因为Config.materialIndex的值可能会修改，所以每次都重新获取而不是缓存
-            //if (!renderMaterial)
-            //    renderMaterial = GetMaterialFromProvider(targetMaterialProvider, isShareMaterial);
-            if (renderMaterial)
-                return renderMaterial;
-            else//#2 如果上述无效，则从实例材质中返回
-            {
-                if (!Application.isPlaying || useSharedMaterial)
-                {
-                    return targetMaterial;//#2 如果无法找到，则返回指定Material资源
-                }
-                else
-                {
-                    if (!cloneTargetMaterial)//克隆资源并返回，可避免资源南北直接修改
-                        cloneTargetMaterial = Instantiate(targetMaterial);
-                    return cloneTargetMaterial;
-                }
-            }
-        }
+        public Material Material { get { return GetMaterial(useSharedMaterial, targetMaterialIndex); } }
+        public Material TargetMaterial { get { return GetMaterial(false, targetMaterialIndex); } }
+        public Material TargetSharedMaterial { get { return GetMaterial(true, targetMaterialIndex); } }
 
         [Header("Material Source")]
-        //#Only one of the following fields is required to provide a valid material
-        [SerializeField] protected Renderer targetRenderer;//Where the material attached
-        //[ValidateInput(nameof(CheckIfTargetMaterialProviderInhericCorrectly), "This component must inherit IMaterialProvider")] [SerializeField] protected Component targetMaterialProvider;//Component inherits IMaterialProvider
+        //#Note: Only one of the following fields is required to provide a valid material
+        [SerializeField] protected Renderer targetRenderer;//Where the main material attached
+        [Tooltip("Only valid when the target is Renderer")][SerializeField] protected int targetMaterialIndex = 0;
         [SerializeField] protected Material targetMaterial;//Target material asset （资源文件，会直接修改原文件）
 
         [Header("Config")]
         [SerializeField] protected bool useSharedMaterial = false;//是否使用共享材质（仅当targetRenderer不为空时有效），适用于多个物体共用同一个材质(ToUpdate：可以是如果为true则克隆targetMaterial并缓存到一个临时字段中)
-        [SerializeField]
-        protected List<RendererMaterialInfo> listRendererMaterialInfo = new List<RendererMaterialInfo>();//其他模型的材质信息，方便针对多个使用了相同或类似材质的模型进行统一修改
+        [SerializeField] protected List<RendererMaterialInfo> listRendererMaterialInfo = new List<RendererMaterialInfo>();//其他模型的材质信息，方便针对多个使用了相同或类似材质的模型进行统一修改
 
         [Header("Runtime")]
         Material cloneTargetMaterial;
-        //[ReadOnly] public Material cloneMaterial;
         #endregion
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="materialProvider">如果找不到，则返回null</param>
-        ///// <returns></returns>
-        //Material GetMaterialFromProvider(Component materialProvider, bool isShareMaterial)
-        //{
-        //    if (materialProvider)
-        //    {
-        //        if (materialProvider is IMaterialProvider materialProviderInst)
-        //        {
-        //            if (!Application.isPlaying || isShareMaterial)//非运行模式或共享材质
-        //            {
-        //                return materialProviderInst.TargetSharedMaterial;
-        //            }
-        //            else
-        //            {
-        //                return materialProviderInst.TargetMaterial;
-        //            }
-        //        }
-        //    }
-        //    return null;
-        //}
-        //bool CheckIfTargetMaterialProviderInhericCorrectly(Component targetMaterialProvider)
-        //{
-        //    if (!targetMaterialProvider)//因为该字段是可选，所以仅非空时才判断
-        //        return true;
-        //    return targetMaterialProvider is IMaterialProvider;
-        //}
 
         #region Unity Method
         protected override void Awake()
@@ -135,15 +72,6 @@ namespace Threeyes.Steamworks
         #endregion
 
         #region Callback
-        //protected override void OnPersistentChanged(PersistentChangeState persistentChangeState)
-        //{
-        //    if(persistentChangeState== PersistentChangeState.Load)
-        //    {
-
-        //    }
-        //    base.OnPersistentChanged(persistentChangeState);
-        //}
-
         protected ConfigInfo cacheValidConfig = null;//缓存上次有效的配置
         public override void UpdateSetting()
         {
@@ -164,19 +92,19 @@ namespace Threeyes.Steamworks
                 //Debug.LogError("[Debug]Checking Config not equal!");
             }
 
-            SetMaterial(Material);
+            SetMaterialProperty(Material);
 
             //针对额外的Renderer进行修改（因为使用的材质可能不一致，仅仅是某些字段相同，所以不能直接用Material对其他Renderer进行替换）
             foreach (var rmInfo in listRendererMaterialInfo)
             {
                 Material renderMaterial = GetMaterialFromRenderer(rmInfo.renderer, rmInfo.materialIndex, false);//一般不使用Share材质，否则也不用指定
-                SetMaterial(renderMaterial);
+                SetMaterialProperty(renderMaterial);
             }
 
             cacheValidConfig = UnityObjectTool.DeepCopy(Config);
         }
 
-        private void SetMaterial(Material targetMaterial)
+        void SetMaterialProperty(Material targetMaterial)
         {
             if (!targetMaterial)
                 return;
@@ -231,6 +159,25 @@ namespace Threeyes.Steamworks
         #endregion
 
         #region Utility
+        protected Material GetMaterial(bool useSharedMaterial, int materialIndex)
+        {
+            //#1 尝试从可选项中找到首个有效材质
+            Material renderMaterial = GetMaterialFromRenderer(targetRenderer, materialIndex, useSharedMaterial);//因为Config.materialIndex的值可能会修改，所以每次都重新获取而不是缓存
+            if (renderMaterial)
+                return renderMaterial;
+
+            //#2 如果上述无效，则从实例材质中返回
+            if (!Application.isPlaying || useSharedMaterial)//非运行模式，或使用share材质：返回原材质
+            {
+                return targetMaterial;
+            }
+            else//其他情况：克隆资源并返回，可避免资源直接修改
+            {
+                if (!cloneTargetMaterial)
+                    cloneTargetMaterial = Instantiate(targetMaterial);
+                return cloneTargetMaterial;
+            }
+        }
         /// <summary>
         /// 通过Renderer组件获取指定的材质
         /// </summary>
@@ -238,7 +185,7 @@ namespace Threeyes.Steamworks
         /// <param name="materialIndex"></param>
         /// <param name="isShareMaterial"></param>
         /// <returns>如果找不到，则返回null</returns>
-        Material GetMaterialFromRenderer(Renderer targetRenderer, int materialIndex, bool isShareMaterial)
+        protected Material GetMaterialFromRenderer(Renderer targetRenderer, int materialIndex, bool isShareMaterial)
         {
             if (targetRenderer)
             {
@@ -282,33 +229,6 @@ namespace Threeyes.Steamworks
             }
             return null;
         }
-        Material GetCacheMaterial(Renderer targetRenderer, int materialIndex)
-        {
-            foreach (var rmInfo in listRuntimeRMInfo)
-            {
-                if (rmInfo.renderer == targetRenderer && rmInfo.materialIndex == materialIndex && rmInfo.material != null)
-                    return rmInfo.material;
-            }
-            return null;
-        }
-        List<RuntimeRenderMaterialInfo> listRuntimeRMInfo = new List<RuntimeRenderMaterialInfo>();//缓存运行时使用的材质
-        /// <summary>
-        /// 记录运行时获取的信息
-        /// </summary>
-        class RuntimeRenderMaterialInfo
-        {
-            public Renderer renderer;
-            public int materialIndex;
-
-            public Material material;
-
-            public RuntimeRenderMaterialInfo(Renderer renderer, int materialIndex, Material material)
-            {
-                this.renderer = renderer;
-                this.materialIndex = materialIndex;
-                this.material = material;
-            }
-        }
         #endregion
 
         #region Editor
@@ -324,7 +244,7 @@ namespace Threeyes.Steamworks
         {
             if (Application.isPlaying)//运行时跳过
                 return;
-            Material targetMaterial = GetMaterial(true);//非运行模式，获取的是共享材质
+            Material targetMaterial = GetMaterial(true, targetMaterialIndex);//非运行模式，获取的是共享材质
             foreach (var tSP in Config.listTextureShaderProperty)
             {
                 string propertyName = tSP.name;
@@ -358,24 +278,12 @@ namespace Threeyes.Steamworks
         #endregion
 
         #region Define
-        /// <summary>
-        /// 针对其他模型
-        /// </summary>
-        [Serializable]
-        public class RendererMaterialInfo
-        {
-            public Renderer renderer;
-            public int materialIndex = 0;//对应的材质序号
-        }
-
         //针对每个贴图（包含默认贴图）、float、vector等定义对应数据类，并且存储在各自的List中。具体结构参考（debug模式）shader
 
         [Serializable]
         public class ConfigInfo : SerializableComponentConfigInfoBase
             , IEquatable<ConfigInfo>
         {
-            [Tooltip("Only valid when the target is Rednerer")] public int materialIndex = 0;
-
             public List<TextureShaderProperty> listTextureShaderProperty = new List<TextureShaderProperty>();
             public List<ColorShaderProperty> listColorShaderProperty = new List<ColorShaderProperty>();
             public List<IntShaderProperty> listIntShaderProperty = new List<IntShaderProperty>();
@@ -396,7 +304,7 @@ namespace Threeyes.Steamworks
                 //    listColorShaderProperty.IsSequenceEqual(other.listColorShaderProperty) &&
                 //    listIntShaderProperty.IsSequenceEqual(other.listIntShaderProperty) &&
                 //    listFloatShaderProperty.IsSequenceEqual(other.listFloatShaderProperty);
-                bool isEqual = materialIndex.Equals(other.materialIndex);
+                bool isEqual = true;// materialIndex.Equals(other.materialIndex);
                 isEqual &= listTextureShaderProperty.IsSequenceEqual(other.listTextureShaderProperty);
                 isEqual &= listColorShaderProperty.IsSequenceEqual(other.listColorShaderProperty);
                 isEqual &= listIntShaderProperty.IsSequenceEqual(other.listIntShaderProperty);
