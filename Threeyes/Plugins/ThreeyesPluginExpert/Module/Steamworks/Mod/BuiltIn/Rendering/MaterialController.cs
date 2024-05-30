@@ -267,6 +267,8 @@ namespace Threeyes.Steamworks
         }
         public class PropertyBag : ConfigurableComponentPropertyBagBase<MaterialController, ConfigInfo> { }
 
+        //——Warning:以下字段不能挪到其他位置，否则会导致用户之前的设置丢失——
+
         /// <summary>
         /// 
         /// PS:

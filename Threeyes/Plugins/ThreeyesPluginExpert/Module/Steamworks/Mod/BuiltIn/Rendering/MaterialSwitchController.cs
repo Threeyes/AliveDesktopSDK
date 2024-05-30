@@ -29,7 +29,7 @@ namespace Threeyes.Steamworks
         /// Manually set material with specified numbers in the list
         /// 
         /// Use case:
-        /// -需要与父类MaterialSwitchController同步设置的材质，如LOD
+        /// -需要与父类MaterialSwitchController同步设置的不同材质，如LOD（通过父类的onOptionMaterialIndexChanged调用该方法实现）
         /// </summary>
         /// <param name="index"></param>
         public void SetMaterialByIndex(int index)
@@ -43,7 +43,7 @@ namespace Threeyes.Steamworks
             Config.curOptionMaterial = targetMaterial;
             Config.curOptionMaterialIndex = index;
             SetMaterial(targetMaterial);
-       
+
             onOptionMaterialIndexChanged.Invoke(index);//Notify
         }
 
@@ -106,7 +106,8 @@ namespace Threeyes.Steamworks
         void EditorSetup()
         {
             //Set renderer
-            targetRenderer = GetComponent<Renderer>();
+            if (!targetRenderer)
+                targetRenderer = GetComponent<Renderer>();
             if (!targetRenderer)
             {
                 Debug.LogError("Can't find Renderer in " + gameObject);
@@ -129,7 +130,7 @@ namespace Threeyes.Steamworks
         [ContextMenu("EditorUseCurRendererMaterialAsDefault")]
         void EditorUseCurRendererMaterialAsDefault()
         {
-            Material curMaterial = targetRenderer.sharedMaterial;
+            Material curMaterial = GetMaterialFromRenderer(targetRenderer, targetMaterialIndex, true);
             int relatedIndex = Config.listOptionMaterial.IndexOf(curMaterial);
             if (relatedIndex < 0)
             {
@@ -150,7 +151,7 @@ namespace Threeyes.Steamworks
         public class ConfigInfo : SerializableComponentConfigInfoBase
         {
             [JsonIgnore] public Material curOptionMaterial;//Cur selected material (通过RuntimeEditor设置更新)
-            [Tooltip("All optional material")] [JsonIgnore] public List<Material> listOptionMaterial = new List<Material>();
+            [Tooltip("All optional material")][JsonIgnore] public List<Material> listOptionMaterial = new List<Material>();
             [PersistentOption(nameof(listOptionMaterial), nameof(curOptionMaterial))] public int curOptionMaterialIndex = 0;//提供下拉菜单选项
         }
         public class PropertyBag : ConfigurableComponentPropertyBagBase<MaterialSwitchController, ConfigInfo> { }
