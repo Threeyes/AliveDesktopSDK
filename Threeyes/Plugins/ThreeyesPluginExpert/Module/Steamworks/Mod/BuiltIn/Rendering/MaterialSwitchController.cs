@@ -7,6 +7,7 @@ using UnityEngine;
 using Threeyes.Persistent;
 using UnityEngine.Events;
 using System.Linq;
+using Threeyes.Data;
 
 namespace Threeyes.Steamworks
 {
@@ -21,72 +22,136 @@ namespace Threeyes.Steamworks
         [SerializeField] protected int targetMaterialIndex = 0;
         [SerializeField] protected List<RendererMaterialInfo> listRendererMaterialInfo = new List<RendererMaterialInfo>();//其他模型的材质信息，方便针对多个使用了相同或类似材质的模型进行统一修改
 
+        public IntEvent onOptionMaterialIndexChanged;//Notify index changed
         #endregion
 
-        protected override void Awake()
+        /// <summary>
+        /// Manually set material with specified numbers in the list
+        /// 
+        /// Use case:
+        /// -需要与父类MaterialSwitchController同步设置的材质，如LOD
+        /// </summary>
+        /// <param name="index"></param>
+        public void SetMaterialByIndex(int index)
         {
-            base.Awake();
-
-            Config.actionMaterialOptionChanged += OnMaterialOptionChanged;
-        }
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            Config.actionMaterialOptionChanged -= OnMaterialOptionChanged;
+            if (index < 0 || index >= Config.listOptionMaterial.Count)
+            {
+                Debug.LogError($"Index out of bounds! {index} in {Config.listOptionMaterial.Count}!");
+                return;
+            }
+            Material targetMaterial = Config.listOptionMaterial[index];
+            Config.curOptionMaterial = targetMaterial;
+            Config.curOptionMaterialIndex = index;
+            SetMaterial(targetMaterial);
+       
+            onOptionMaterialIndexChanged.Invoke(index);//Notify
         }
 
         public override void UpdateSetting()
         {
-            //ToDo:Init，以及根据curOptionMaterialIndex设置对应材质
+            //PS:因为可能还会设置listRendererMaterialInfo，所有暂不判断是否与当前Renderer的材质相同（仅设置材质，不更改属性应该性能消耗不大）
 
-            SetMaterialToRenderer(targetRenderer, targetMaterialIndex);
+            Material curMaterial = Config.curOptionMaterial;
+            SetMaterial(curMaterial);
+
+            onOptionMaterialIndexChanged.Invoke(Config.curOptionMaterialIndex);//Notify
+        }
+
+        void SetMaterial(Material curMaterial)
+        {
+            SetMaterialToRenderer(targetRenderer, targetMaterialIndex, curMaterial);
 
             //针对额外的Renderer进行修改（因为使用的材质可能不一致，仅仅是某些字段相同，所以不能直接用Material对其他Renderer进行替换）
             foreach (var rmInfo in listRendererMaterialInfo)
             {
-                SetMaterialToRenderer(rmInfo.renderer, rmInfo.materialIndex);
+                SetMaterialToRenderer(rmInfo.renderer, rmInfo.materialIndex, curMaterial);
             }
-        }
-        private void OnMaterialOptionChanged()
-        {
-            //ToDelete
         }
 
         #region Utility
-        void SetMaterialToRenderer(Renderer renderer, int materialIndex)
+        void SetMaterialToRenderer(Renderer renderer, int materialIndex, Material material)
         {
             if (!renderer)
                 return;
 
-            var materials = renderer.sharedMaterials.ToList();//使用共享材质，避免克隆原材质
-
-            if (materialIndex <= materials.Count - 1)
+            if (!material)
             {
-                materials[materialIndex] = Config.curOptionMaterial;
+                //Debug.LogError("Cur material is null!");
+                return;
+            }
+
+            if (materialIndex == 0)
+            {
+                renderer.material = material;
             }
             else
             {
-                Debug.LogError($"Index out of bounds! {materialIndex} in {materials.Count}!");
+                var materials = renderer.sharedMaterials.ToList();//使用共享材质，避免克隆原材质
+                if (materialIndex <= materials.Count - 1)
+                {
+                    materials[materialIndex] = material;
+                    renderer.materials = materials.ToArray();
+                }
+                else
+                {
+                    Debug.LogError($"Index out of bounds! {materialIndex} in {materials.Count}!");
+                }
             }
         }
+        #endregion
+
+        #region Editor
+#if UNITY_EDITOR
+        [ContextMenu("EditorSetup")]
+        void EditorSetup()
+        {
+            //Set renderer
+            targetRenderer = GetComponent<Renderer>();
+            if (!targetRenderer)
+            {
+                Debug.LogError("Can't find Renderer in " + gameObject);
+            }
+
+            //Set cur index and material (尽量与Renderer当前材质相同)
+            if (Config.curOptionMaterialIndex < Config.listOptionMaterial.Count)
+            {
+                Config.curOptionMaterial = Config.listOptionMaterial[Config.curOptionMaterialIndex];
+            }
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        /// <summary>
+        /// 使用当前Renderer的材质，作为默认序号
+        /// 
+        /// Warning:
+        /// -You should Init other field first, you can first invoke EditorSetup
+        /// </summary>
+        [ContextMenu("EditorUseCurRendererMaterialAsDefault")]
+        void EditorUseCurRendererMaterialAsDefault()
+        {
+            Material curMaterial = targetRenderer.sharedMaterial;
+            int relatedIndex = Config.listOptionMaterial.IndexOf(curMaterial);
+            if (relatedIndex < 0)
+            {
+                Debug.LogError($"{gameObject}'s Material [{curMaterial}] not exist in list!");
+            }
+            else
+            {
+                Config.curOptionMaterialIndex = relatedIndex;
+                Config.curOptionMaterial = Config.listOptionMaterial[Config.curOptionMaterialIndex];
+                UnityEditor.EditorUtility.SetDirty(this);
+            }
+        }
+#endif
         #endregion
 
         #region Define
         [Serializable]
         public class ConfigInfo : SerializableComponentConfigInfoBase
         {
-            public UnityAction actionMaterialOptionChanged;
-
-            [JsonIgnore] public Material curOptionMaterial;//Cur selected material
-            [Tooltip("All optional material")][JsonIgnore] public List<Material> listOptionMaterial = new List<Material>();
-            [PersistentOption(nameof(listOptionMaterial), nameof(curOptionMaterial))][PersistentValueChanged(nameof(OnOptionMaterialChanged))] public int curOptionMaterialIndex = 0;//提供下拉菜单选项
-
-            #region Callback
-            void OnOptionMaterialChanged(int oldValue, int newValue, PersistentChangeState persistentChangeState)
-            {
-                actionMaterialOptionChanged.Execute();
-            }
-            #endregion
+            [JsonIgnore] public Material curOptionMaterial;//Cur selected material (通过RuntimeEditor设置更新)
+            [Tooltip("All optional material")] [JsonIgnore] public List<Material> listOptionMaterial = new List<Material>();
+            [PersistentOption(nameof(listOptionMaterial), nameof(curOptionMaterial))] public int curOptionMaterialIndex = 0;//提供下拉菜单选项
         }
         public class PropertyBag : ConfigurableComponentPropertyBagBase<MaterialSwitchController, ConfigInfo> { }
 

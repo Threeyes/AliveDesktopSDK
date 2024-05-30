@@ -129,57 +129,62 @@ namespace Threeyes.Core
                     var dstList = fieldInfo.GetValue(dstObj) as IList;
                     if (srcList != null && dstList != null)//排除List未初始化导致为null的情况
                     {
-                        Type elementType = ReflectionTool.GetCollectionElementType(fieldType);
 
-                        if (elementType != null && elementType.IsInherit(UnityObjectType)) //UnityEngine.Object的子类：其作用是为了供程序内部引用，为了避免引用丢失，需要迭代调用本方法复制其字段内容而不是返回原值（前提是SO的具体类型一致）【太复杂，ToDelete】
-                        {
-                            if (dstList.Count == srcList.Count)//只有合集长度相同才复制，避免影响原来的List的长度、位置或顺序
-                            {
-                                for (int i = 0; i != dstList.Count; i++)
-                                {
-                                    CopyFields(srcList[i], dstList[i], bindingAttr, funcCopyFilter, maxDepth);
-                                }
-                            }
-                        }
-                        else//其他元素：直接使用新List覆盖
-                        {
-                            //#1 确保元素数量一致
-                            if (srcList.Count > dstList.Count)//Dst元素过少：填充对应的默认实例
-                            {
-                                int startIndex = dstList.Count;
-                                int totalCount = srcList.Count;
-                                for (int i = startIndex; i != totalCount; i++)
-                                {
-                                    object tempElement = ReflectionTool.CreateInstance(elementType);
-                                    dstList.Add(tempElement);
-                                }
-                            }
-                            else if (srcList.Count < dstList.Count)//Dst元素过多：删掉多余元素
-                            {
-                                while (srcList.Count != dstList.Count)
-                                    dstList.RemoveAt(dstList.Count - 1);//移除最后一位直到数量相同
-                            }
+                        #region ——旧版实现——
+                        //    Type elementType = ReflectionTool.GetCollectionElementType(fieldType);
+                        //    if (elementType != null && elementType.IsInherit(UnityObjectType)) //UnityEngine.Object的子类：其作用是为了供程序内部引用，为了避免引用丢失，需要迭代调用本方法复制其字段内容而不是返回原值（前提是SO的具体类型一致【ToDelete。太复杂，不应该再引用其他SO】）
+                        //    {
+                        //        if (dstList.Count == srcList.Count)//只有合集长度相同才复制，避免影响原来的List的长度、位置或顺序
+                        //        {
+                        //            for (int i = 0; i != dstList.Count; i++)
+                        //            {
+                        //                CopyFields(srcList[i], dstList[i], bindingAttr, funcCopyFilter, maxDepth);
+                        //            }
+                        //        }
+                        //    }
+                        //    else//其他元素：直接使用新List覆盖
+                        //    {
+                        //        //#1 确保元素数量一致
+                        //        if (srcList.Count > dstList.Count)//Dst元素过少：填充对应的默认实例
+                        //        {
+                        //            int startIndex = dstList.Count;
+                        //            int totalCount = srcList.Count;
+                        //            for (int i = startIndex; i != totalCount; i++)
+                        //            {
+                        //                object tempElement = ReflectionTool.CreateInstance(elementType);
+                        //                dstList.Add(tempElement);
+                        //            }
+                        //        }
+                        //        else if (srcList.Count < dstList.Count)//Dst元素过多：删掉多余元素
+                        //        {
+                        //            while (srcList.Count != dstList.Count)
+                        //                dstList.RemoveAt(dstList.Count - 1);//移除最后一位直到数量相同
+                        //        }
 
-                            //#2 克隆相同元素
-                            for (int i = 0; i != dstList.Count; i++)
-                            {
-                                //ToUpdate：针对Texture，不应该拷贝，否则List<Class>中的Texture会被拷贝（参考CopyFields(srcList[i], dstList[i], bindingAttr, funcCopyFilter, maxDepth);的正确实现）
-                                if (IsSimpleType(elementType))
-                                    dstList[i] = GetFieldClone(srcList[i], funcCopyFilter, maxDepth, bindingAttr);
-                                else
-                                    CopyFields(srcList[i], dstList[i], bindingAttr, funcCopyFilter, maxDepth);
-                            }
-                            //else//数量不同：直接复制List整体值
-                            //{
-                            //	//【Bug】【ToFix】：会直接克隆list字段，导致引用相同；另外List中的部分字段可能是不应该克隆的（如Texture）。应该更新为逐个元素筛选及克隆
-                            //	fieldInfo.SetValue(dstObj, GetFieldClone(fieldInfo.GetValue(srcObj), funcCopyFilter, maxDepth, bindingAttr));
+                        //        //#2 克隆相同元素
+                        //        for (int i = 0; i != dstList.Count; i++)
+                        //        {
+                        //            //ToUpdate：针对Texture，不应该拷贝，否则List<Class>中的Texture会被拷贝（参考CopyFields(srcList[i], dstList[i], bindingAttr, funcCopyFilter, maxDepth);的正确实现）
+                        //            if (IsSimpleType(elementType))
+                        //                dstList[i] = GetFieldClone(srcList[i], funcCopyFilter, maxDepth, bindingAttr);
+                        //            else
+                        //                CopyFields(srcList[i], dstList[i], bindingAttr, funcCopyFilter, maxDepth);
+                        //        }
+                        //        //else//数量不同：直接复制List整体值
+                        //        //{
+                        //        //	//【Bug】【ToFix】：会直接克隆list字段，导致引用相同；另外List中的部分字段可能是不应该克隆的（如Texture）。应该更新为逐个元素筛选及克隆
+                        //        //	fieldInfo.SetValue(dstObj, GetFieldClone(fieldInfo.GetValue(srcObj), funcCopyFilter, maxDepth, bindingAttr));
 
-                            //	//for (int i = 0; i != dstList.Count; i++)
-                            //	//{
-                            //	//		CopyFields(srcList[i], dstList[i], bindingAttr, funcCopyFilter, maxDepth);
-                            //	//}
-                            //}
-                        }
+                        //        //	//for (int i = 0; i != dstList.Count; i++)
+                        //        //	//{
+                        //        //	//		CopyFields(srcList[i], dstList[i], bindingAttr, funcCopyFilter, maxDepth);
+                        //        //	//}
+                        //        //}
+                        //    }
+                        #endregion
+
+                        //新版实现。能够拷贝UnityObject列表，适用于通过PersistentOption提供可选的Material列表
+                        fieldInfo.SetValue(dstObj, ReflectionTool.DoCopy(srcList));
                     }
                 }
                 else if (fieldType.IsClass)// 自定义Class -> Recursion (克隆并筛选)

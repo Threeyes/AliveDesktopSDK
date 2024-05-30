@@ -548,7 +548,7 @@ namespace Threeyes.Core
         }
 
 
-        static readonly MethodInfo CloneMethod = typeof(object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
+        static readonly MethodInfo MemberwiseCloneInfo = typeof(object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
 
         //DeepCopy （https://stackoverflow.com/questions/39092168/c-sharp-copying-unityevent-information-using-reflection）
 
@@ -739,11 +739,11 @@ namespace Threeyes.Core
 
                 try
                 {
-                    //#1 克隆引用（更优，UnityObjectTool应参考该实现）
+                    //#1 克隆引用实例（更优，UnityObjectTool应参考该实现）
                     if (HasDefaultConstructor(type))
                         copy = Activator.CreateInstance(obj.GetType());//Warnging：需要该类有对应的无参构造函数，否则会报错（包括根object）
                     else
-                        copy = CloneMethod.Invoke(obj, null);//使用反射来调用protected方法
+                        copy = MemberwiseCloneInfo.Invoke(obj, null);//使用反射来调用MemberwiseClone方法
 
                     //#2 复制字段
                     var fields = type.GetAllFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
