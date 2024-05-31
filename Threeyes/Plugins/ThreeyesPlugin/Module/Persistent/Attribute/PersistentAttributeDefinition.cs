@@ -342,12 +342,17 @@ namespace Threeyes.Persistent
                     for (int i = 0; i != listInst.Count; i++)
                     {
                         string optionText = i.ToString();//默认使用序号
-                   
-                        if(UseStringAsOptionName)//尝试使用该物体的ToString
+
+                        if (UseStringAsOptionName)//尝试使用该物体的ToString
                         {
                             object element = listInst[i];
                             if (element != null)
-                                optionText = element.ToString();
+                            {
+                                if (element is UnityEngine.Object unityObj)
+                                    optionText = unityObj.name;
+                                else
+                                    optionText = element.ToString();
+                            }
                         }
 
                         DataOption_OptionInfo.OptionData optionData = new DataOption_OptionInfo.OptionData(optionText);

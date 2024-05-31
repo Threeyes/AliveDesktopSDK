@@ -130,6 +130,12 @@ namespace Threeyes.Steamworks
         [ContextMenu("EditorUseCurRendererMaterialAsDefault")]
         void EditorUseCurRendererMaterialAsDefault()
         {
+            if (!targetRenderer)
+            {
+                Debug.LogError("targetRenderer is null!");
+                return;
+            }
+
             Material curMaterial = GetMaterialFromRenderer(targetRenderer, targetMaterialIndex, true);
             int relatedIndex = Config.listOptionMaterial.IndexOf(curMaterial);
             if (relatedIndex < 0)
