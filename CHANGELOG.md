@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.6.3]
+- Add MaterialSwitchController.
+- Update MaterialController's structure.
+
 ## [0.6.2]
 - Fix Customizable template scene has the same PD key (EnvironmentControllerConfig).
 - Change ValueHolder's namespace to Core (some items need to be repackaged).

@@ -35,7 +35,7 @@ namespace Threeyes.Steamworks
         [Header("Material Source")]
         //#Note: Only one of the following fields is required to provide a valid material
         [SerializeField] protected Renderer targetRenderer;//Where the main material attached
-        [Tooltip("Only valid when the target is Renderer")][SerializeField] protected int targetMaterialIndex = 0;
+        [Tooltip("Only valid when the target is Renderer")] [SerializeField] protected int targetMaterialIndex = 0;
         [SerializeField] protected Material targetMaterial;//Target material asset （资源文件，会直接修改原文件）
 
         [Header("Config")]
@@ -97,6 +97,8 @@ namespace Threeyes.Steamworks
             //针对额外的Renderer进行修改（因为使用的材质可能不一致，仅仅是某些字段相同，所以不能直接用Material对其他Renderer进行替换）
             foreach (var rmInfo in listRendererMaterialInfo)
             {
+                if (rmInfo == null) continue;
+
                 Material renderMaterial = GetMaterialFromRenderer(rmInfo.renderer, rmInfo.materialIndex, false);//一般不使用Share材质，否则也不用指定
                 SetMaterialProperty(renderMaterial);
             }
@@ -312,7 +314,7 @@ namespace Threeyes.Steamworks
 
             //ToAdd：导入图片的类型（如通过TextureTool进一步转为noramlMap）
             //#Runtime
-            [HideInInspector][JsonIgnore][PersistentDirPath] public string PersistentDirPath;//必须要有，存储默认路径
+            [HideInInspector] [JsonIgnore] [PersistentDirPath] public string PersistentDirPath;//必须要有，存储默认路径
 
             public TextureShaderProperty()
             {
@@ -364,7 +366,7 @@ namespace Threeyes.Steamworks
             , IEquatable<ColorShaderProperty>
         {
             //使用[ColorUsage]，确保编辑模式能提供所有选项
-            [ColorUsageEx(dataOptionMemberName: nameof(dataOption_Color))][ColorUsage(showAlpha: true, hdr: true)] public Color value;
+            [ColorUsageEx(dataOptionMemberName: nameof(dataOption_Color))] [ColorUsage(showAlpha: true, hdr: true)] public Color value;
             public DataOption_Color dataOption_Color;
 
             public ColorShaderProperty()

@@ -3,8 +3,9 @@ using System.Linq;
 using Threeyes.Core;
 using Threeyes.Steamworks;
 using UnityEngine.SceneManagement;
-public interface IAD_SerializableItemManager<TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo>
-    where TPrefabConfigInfo : AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>, new()
+public interface IAD_SerializableItemManager<TPrefabConfigInfo, TPrefabInfoCategory, TSOPrefabInfoGroup, TSOPrefabInfo>
+    where TPrefabConfigInfo : AD_PrefabConfigInfo<TPrefabInfoCategory, TSOPrefabInfoGroup, TSOPrefabInfo>, new()
+    where TPrefabInfoCategory : AD_PrefabInfoCategoryBase<TSOPrefabInfoGroup, TSOPrefabInfo>
     where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
     where TSOPrefabInfo : AD_SOPrefabInfo
 {
@@ -25,14 +26,15 @@ public interface IAD_SerializableItemManager<TPrefabConfigInfo, TSOPrefabInfoGro
 /// <typeparam name="TControllerInterface"></typeparam>
 /// <typeparam name="TDefaultController"></typeparam>
 /// <typeparam name="TBaseEleData"></typeparam>
-public abstract class AD_SerializableItemManagerBase<T, TControllerInterface, TDefaultController, TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData> : HubManagerWithControllerBase<T, TControllerInterface, TDefaultController>
-    , IAD_SerializableItemManager<TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo>
+public abstract class AD_SerializableItemManagerBase<T, TControllerInterface, TDefaultController, TPrefabConfigInfo, TPrefabInfoCategory, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData> : HubManagerWithControllerBase<T, TControllerInterface, TDefaultController>
+    , IAD_SerializableItemManager<TPrefabConfigInfo, TPrefabInfoCategory, TSOPrefabInfoGroup, TSOPrefabInfo>
     , IHubManagerModPreInitHandler
     , IHubManagerModInitHandler
     where T : HubManagerWithControllerBase<T, TControllerInterface, TDefaultController>
     where TControllerInterface : class, IAD_SerializableItemController<TBaseEleData>
     where TDefaultController : TControllerInterface
-    where TPrefabConfigInfo : AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>, new()
+    where TPrefabConfigInfo : AD_PrefabConfigInfo<TPrefabInfoCategory, TSOPrefabInfoGroup, TSOPrefabInfo>, new()
+    where TPrefabInfoCategory : AD_PrefabInfoCategoryBase<TSOPrefabInfoGroup, TSOPrefabInfo>
     where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
     where TSOPrefabInfo : AD_SOPrefabInfo
     where TBaseEleData : class, IAD_SerializableItemInfo

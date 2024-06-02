@@ -2242,6 +2242,10 @@ MonoBehaviour:
   isDontDestroyOnLoad: 0
   defaultController: {fileID: 0}
   sdkPrefabConfigInfo:
+    listPrefabInfoCategory:
+    - title: '[Simulator]'
+      listData:
+      - {fileID: 11400000, guid: 68d6addba22d8444f82db761f6ab22fa, type: 2}
     listSOPrefabInfoGroup:
     - {fileID: 11400000, guid: 68d6addba22d8444f82db761f6ab22fa, type: 2}
   soDefaultConfig: {fileID: 11400000, guid: dbfd12704a081bc4eba6186a6b56dbd2, type: 2}
@@ -2865,6 +2869,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDontDestroyOnLoad: 0
+  isChangingScene: 0
   curSOWorkshopItemInfo: {fileID: 0}
   curWorkshopItemInfo:
     title: 
@@ -5084,6 +5089,12 @@ MonoBehaviour:
   isDontDestroyOnLoad: 0
   defaultController: {fileID: 0}
   sdkPrefabConfigInfo:
+    listPrefabInfoCategory:
+    - title: '[BuiltIn]'
+      listData:
+      - {fileID: 11400000, guid: 7f890134600782641a3b91f1fe3b4564, type: 2}
+      - {fileID: 11400000, guid: 68277ca979b137847977bb57439bf18c, type: 2}
+      - {fileID: 11400000, guid: 17c0b486771806846a38a4d1e15db06c, type: 2}
     listSOPrefabInfoGroup:
     - {fileID: 11400000, guid: 7f890134600782641a3b91f1fe3b4564, type: 2}
     - {fileID: 11400000, guid: 68277ca979b137847977bb57439bf18c, type: 2}

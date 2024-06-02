@@ -37,4 +37,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4947e0f6e9379a445ab66edd02508754, type: 2}
   - {fileID: 11400000, guid: a1eb0d98069a532419b3fc808a15bacb, type: 2}
   remark: Indoor Objects
-  title: '[BuiltIn] Indoor'
+  title: Indoor

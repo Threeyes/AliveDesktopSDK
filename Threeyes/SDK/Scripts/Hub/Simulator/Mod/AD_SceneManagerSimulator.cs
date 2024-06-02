@@ -5,14 +5,13 @@ public class AD_SceneManagerSimulator : SceneManagerSimulator
     , IAD_SceneManager
 {
     #region IAD_SceneManager
-    public AD_DecorationPrefabConfigInfo DecorationPrefabConfigInfo
-    {
-        get { return new AD_DecorationPrefabConfigInfo() { ListSOPrefabInfoGroup = curListDecorationGroup }; }
-    }
-
     public AD_ShellPrefabConfigInfo ShellPrefabConfigInfo
     {
-        get { return new AD_ShellPrefabConfigInfo() { ListSOPrefabInfoGroup = curListShellGroup }; }
+        get { return new AD_ShellPrefabConfigInfo(new AD_ShellPrefabInfoCategory(curWorkshopItemInfo.title, curListShellGroup)); }
+    }
+    public AD_DecorationPrefabConfigInfo DecorationPrefabConfigInfo
+    {
+        get { return new AD_DecorationPrefabConfigInfo(new AD_DecorationPrefabInfoCategory(curWorkshopItemInfo.title, curListDecorationGroup)); }
     }
     #endregion
 

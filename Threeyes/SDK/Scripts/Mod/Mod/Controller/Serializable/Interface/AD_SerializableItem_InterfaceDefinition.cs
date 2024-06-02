@@ -9,6 +9,7 @@ using Threeyes.Data;
 using Threeyes.Persistent;
 using System;
 using Threeyes.Core;
+using System.Linq;
 //——Item——
 public interface IAD_SerializableItem :
     IRuntimeEditable,
@@ -78,10 +79,14 @@ public interface IAD_SerializableItemInfo : IDisposable
 //——ItemController——
 
 /// <summary>
-/// 存储统一区域内所有预制物信息
+/// 保存相同域（如Mod）内的TSOPrefabInfoGroup清单
+/// 
+/// PS：
+/// -用于在Inspector中编辑，以及存储每个Mod对应的信息
+/// -可在运行时生成
 /// </summary>
 [Serializable]
-public class AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>
+public class AD_PrefabInfoCategoryBase<TSOPrefabInfoGroup, TSOPrefabInfo>
     where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
     where TSOPrefabInfo : AD_SOPrefabInfo
 {
@@ -89,25 +94,74 @@ public class AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>
     {
         get
         {
-            return listSOPrefabInfoGroup.Count > 0;
+            return listData.Count > 0;
         }
     }
-    public List<TSOPrefabInfoGroup> ListSOPrefabInfoGroup { get { return listSOPrefabInfoGroup; } set { listSOPrefabInfoGroup = value; } }
-    [SerializeField] List<TSOPrefabInfoGroup> listSOPrefabInfoGroup = new List<TSOPrefabInfoGroup>();
 
-    public AD_PrefabConfigInfo()
+    public string title;//Category name
+    public List<TSOPrefabInfoGroup> ListData { get { return listData; } set { listData = value; } }
+    [SerializeField] List<TSOPrefabInfoGroup> listData = new List<TSOPrefabInfoGroup>();
+
+    public AD_PrefabInfoCategoryBase() { }
+
+    public AD_PrefabInfoCategoryBase(string title, List<TSOPrefabInfoGroup> listSOPrefabInfoGroup)
     {
+        this.title = title;
+        this.listData = listSOPrefabInfoGroup;
     }
 
     public List<TSOPrefabInfo> FindAllPrefabInfo(Predicate<TSOPrefabInfo> match = null)
     {
         List<TSOPrefabInfo> listResult = new List<TSOPrefabInfo>();
-        foreach (var soGroup in listSOPrefabInfoGroup)
+        foreach (var soGroup in listData)
         {
             if (match != null)
                 listResult.AddRange(soGroup.ListData.FindAll(match));
             else
                 listResult.AddRange(soGroup.ListData);
+        }
+        return listResult;
+    }
+}
+
+/// <summary>
+/// 存储内所有预制物信息
+/// 
+/// #结构：
+/// Category
+///     -Group (SOPrefabInfoGroup)
+///         -Element (SOPrefabInfo)
+/// </summary>
+[Serializable]
+public class AD_PrefabConfigInfo<TPrefabInfoCategory, TSOPrefabInfoGroup, TSOPrefabInfo>
+    where TPrefabInfoCategory : AD_PrefabInfoCategoryBase<TSOPrefabInfoGroup, TSOPrefabInfo>
+    where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
+    where TSOPrefabInfo : AD_SOPrefabInfo
+{
+    public bool HasElement
+    {
+        get
+        {
+            return listPrefabInfoCategory.Any(c => c.HasElement);
+        }
+    }
+
+    public List<TPrefabInfoCategory> ListPrefabInfoCategory { get { return listPrefabInfoCategory; } set { listPrefabInfoCategory = value; } }
+    [SerializeField] List<TPrefabInfoCategory> listPrefabInfoCategory = new List<TPrefabInfoCategory>();
+
+    public AD_PrefabConfigInfo() { }
+
+    public AD_PrefabConfigInfo(List<TPrefabInfoCategory> listPrefabInfoCategory)
+    {
+        this.listPrefabInfoCategory = listPrefabInfoCategory;
+    }
+
+    public List<TSOPrefabInfo> FindAllPrefabInfo(Predicate<TSOPrefabInfo> match = null)
+    {
+        List<TSOPrefabInfo> listResult = new List<TSOPrefabInfo>();
+        foreach (var catelogy in listPrefabInfoCategory)
+        {
+            listResult.AddRange(catelogy.FindAllPrefabInfo(match));
         }
         return listResult;
     }

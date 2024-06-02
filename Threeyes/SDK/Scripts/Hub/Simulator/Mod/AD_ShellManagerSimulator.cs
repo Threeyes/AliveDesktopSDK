@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Threeyes.Core;
-public class AD_ShellManagerSimulator : AD_SerializableItemManagerSimulatorBase<AD_ShellManagerSimulator, IAD_ShellController, AD_DefaultShellController, AD_ShellPrefabConfigInfo, AD_SOShellPrefabInfoGroup, AD_SOShellPrefabInfo, AD_ShellItemInfo>
+public class AD_ShellManagerSimulator : AD_SerializableItemManagerSimulatorBase<AD_ShellManagerSimulator, IAD_ShellController, AD_DefaultShellController, AD_ShellPrefabConfigInfo, AD_ShellPrefabInfoCategory, AD_SOShellPrefabInfoGroup, AD_SOShellPrefabInfo, AD_ShellItemInfo>
     , IAD_ShellManager
 {
     public AD_SOShellManagerSimulatorConfig soDefaultConfig;//SDK默认的配置

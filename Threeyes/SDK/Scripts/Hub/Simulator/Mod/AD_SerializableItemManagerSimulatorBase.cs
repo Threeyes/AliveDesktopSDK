@@ -6,11 +6,12 @@ using Threeyes.Steamworks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public abstract class AD_SerializableItemManagerSimulatorBase<T, TControllerInterface, TDefaultController, TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData> : AD_SerializableItemManagerBase<T, TControllerInterface, TDefaultController, TPrefabConfigInfo, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData>
+public abstract class AD_SerializableItemManagerSimulatorBase<T, TControllerInterface, TDefaultController, TPrefabConfigInfo, TPrefabInfoCategory, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData> : AD_SerializableItemManagerBase<T, TControllerInterface, TDefaultController, TPrefabConfigInfo, TPrefabInfoCategory, TSOPrefabInfoGroup, TSOPrefabInfo, TBaseEleData>
     where T : HubManagerWithControllerBase<T, TControllerInterface, TDefaultController>
     where TControllerInterface : class, IAD_SerializableItemController<TBaseEleData>
     where TDefaultController : TControllerInterface
-    where TPrefabConfigInfo : AD_PrefabConfigInfo<TSOPrefabInfoGroup, TSOPrefabInfo>, new()
+    where TPrefabConfigInfo : AD_PrefabConfigInfo<TPrefabInfoCategory, TSOPrefabInfoGroup, TSOPrefabInfo>, new()
+    where TPrefabInfoCategory : AD_PrefabInfoCategoryBase<TSOPrefabInfoGroup, TSOPrefabInfo>
     where TSOPrefabInfoGroup : AD_SOPrefabInfoGroupBase<TSOPrefabInfo>
     where TSOPrefabInfo : AD_SOPrefabInfo
     where TBaseEleData : class, IAD_SerializableItemInfo

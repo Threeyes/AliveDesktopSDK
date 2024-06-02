@@ -17,4 +17,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1e19604f807ab68419d9780e7f416c59, type: 2}
   - {fileID: 11400000, guid: ca127c128dbaaaa4dbe6e4a4ebbd4001, type: 2}
   remark: AudioVisualizer Objects
-  title: '[BuiltIn] AudioVisualizer'
+  title: AudioVisualizer

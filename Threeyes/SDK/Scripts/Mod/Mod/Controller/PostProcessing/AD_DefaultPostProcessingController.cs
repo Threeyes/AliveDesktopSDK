@@ -204,6 +204,231 @@ public partial class AD_DefaultPostProcessingController : PostProcessingControll
         base.UpdateSetting(isUse);//Notify Hub Manager to update camera setting
     }
     #endregion
+ 
+    #region Editor Method
+#if UNITY_EDITOR
+    [ContextMenu("UpdateConfigUsingComponentData")]
+    void EditorUpdateConfigUsingComponentData()
+    {
+        ///PS:
+        ///-初始化时不调用profile，也不调用TryGetOrAdd，避免意外添加模块，导致不方便查看哪些是需要激活的
+        VolumeProfile volumeProfile = volume.sharedProfile;//避免返回克隆
+
+        //——Bloom——
+        if (volumeProfile.TryGet(out Bloom bloom))
+        {
+            Config.bloom_IsActive = bloom.active;
+            Config.bloom_Threshold = bloom.threshold.value;
+            Config.bloom_Intensity = bloom.intensity.value;
+            Config.bloom_Scatter = bloom.scatter.value;
+            Config.bloom_Clamp = bloom.clamp.value;
+            Config.bloom_Tint = bloom.tint.value;
+            Config.bloom_HighQualityFiltering = bloom.highQualityFiltering.value;
+            Config.bloom_Downscale = bloom.downscale.value;
+            Config.bloom_MaxIterations = bloom.maxIterations.value;
+
+            Config.bloom_DefaultDirtTexture = bloom.dirtTexture.value;//Save Default Texture
+            Config.bloom_DirtIntensity = bloom.dirtIntensity.value;
+        }
+        else
+        {
+            Config.bloom_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out ChannelMixer channelMixer))
+        {
+            Config.channelMixer_IsActive = channelMixer.active;
+            Config.channelMixer_RedOutRedIn = channelMixer.redOutRedIn.value;
+            Config.channelMixer_RedOutGreenIn = channelMixer.redOutGreenIn.value;
+            Config.channelMixer_RedOutBlueIn = channelMixer.redOutBlueIn.value;
+            Config.channelMixer_GreenOutRedIn = channelMixer.greenOutRedIn.value;
+            Config.channelMixer_GreenOutGreenIn = channelMixer.greenOutGreenIn.value;
+            Config.channelMixer_GreenOutBlueIn = channelMixer.greenOutBlueIn.value;
+            Config.channelMixer_BlueOutRedIn = channelMixer.blueOutRedIn.value;
+            Config.channelMixer_BlueOutGreenIn = channelMixer.blueOutGreenIn.value;
+            Config.channelMixer_BlueOutBlueIn = channelMixer.blueOutBlueIn.value;
+        }
+        else
+        {
+            Config.channelMixer_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out ChromaticAberration chromaticAberration))
+        {
+            Config.chromaticAberration_IsActive = chromaticAberration.active;
+            Config.chromaticAberration_Intensity = chromaticAberration.intensity.value;
+        }
+        else
+        {
+            Config.chromaticAberration_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out ColorAdjustments colorAdjustments))
+        {
+            Config.colorAdjustments_IsActive = colorAdjustments.active;
+            Config.colorAdjustments_PostExposure = colorAdjustments.postExposure.value;
+            Config.colorAdjustments_Contrast = colorAdjustments.contrast.value;
+            Config.colorAdjustments_ColorFilter = colorAdjustments.colorFilter.value;
+            Config.colorAdjustments_HueShift = colorAdjustments.hueShift.value;
+            Config.colorAdjustments_Saturation = colorAdjustments.saturation.value;
+        }
+        else
+        {
+            Config.colorAdjustments_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out ColorLookup colorLookup))
+        {
+            Config.colorLookup_IsActive = colorLookup.active;
+            Config.colorAdjustments_Contribution = colorLookup.contribution.value;
+        }
+        else
+        {
+            Config.colorLookup_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out DepthOfField depthOfField))
+        {
+            Config.depthOfField_IsActive = depthOfField.active;
+            Config.depthOfField_Mode = depthOfField.mode.value;
+            Config.depthOfField_GaussianStart = depthOfField.gaussianStart.value;
+            Config.depthOfField_GaussianEnd = depthOfField.gaussianEnd.value;
+            Config.depthOfField_GaussianMaxRadius = depthOfField.gaussianMaxRadius.value;
+            Config.depthOfField_HighQualitySampling = depthOfField.highQualitySampling.value;
+            Config.depthOfField_FocusDistance = depthOfField.focusDistance.value;
+            Config.depthOfField_Aperture = depthOfField.aperture.value;
+            Config.depthOfField_FocalLength = depthOfField.focalLength.value;
+            Config.depthOfField_BladeCount = depthOfField.bladeCount.value;
+            Config.depthOfField_BladeCurvature = depthOfField.bladeCurvature.value;
+            Config.depthOfField_BladeRotation = depthOfField.bladeRotation.value;
+        }
+        else
+        {
+            Config.depthOfField_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out FilmGrain filmGrain))
+        {
+            Config.filmGrain_IsActive = filmGrain.active;
+            Config.filmGrain_Type = filmGrain.type.value;
+            Config.filmGrain_Intensity = filmGrain.intensity.value;
+            Config.filmGrain_Response = filmGrain.response.value;
+        }
+        else
+        {
+            Config.filmGrain_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out LensDistortion lensDistortion))
+        {
+            Config.lensDistortion_IsActive = lensDistortion.active;
+            Config.lensDistortion_Intensity = lensDistortion.intensity.value;
+            Config.lensDistortion_XMultiplier = lensDistortion.xMultiplier.value;
+            Config.lensDistortion_YMultiplier = lensDistortion.yMultiplier.value;
+            Config.lensDistortion_Center = lensDistortion.center.value;
+            Config.lensDistortion_Scale = lensDistortion.scale.value;
+        }
+        else
+        {
+            Config.lensDistortion_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out LiftGammaGain liftGammaGain))
+        {
+            Config.liftGammaGain_IsActive = liftGammaGain.active;
+            Config.liftGammaGain_Lift = liftGammaGain.lift.value;
+            Config.liftGammaGain_Gamma = liftGammaGain.gamma.value;
+            Config.liftGammaGain_Gain = liftGammaGain.gain.value;
+        }
+        else
+        {
+            Config.liftGammaGain_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out MotionBlur motionBlur))
+        {
+            Config.motionBlur_IsActive = motionBlur.active;
+            Config.motionBlur_Mode = motionBlur.mode.value;
+            Config.motionBlur_Quality = motionBlur.quality.value;
+            Config.motionBlur_Intensity = motionBlur.intensity.value;
+            Config.motionBlur_Clamp = motionBlur.clamp.value;
+        }
+        else
+        {
+            Config.motionBlur_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out PaniniProjection paniniProjection))
+        {
+            Config.paniniProjection_IsActive = paniniProjection.active;
+            Config.paniniProjection_Distance = paniniProjection.distance.value;
+            Config.paniniProjection_CropToFit = paniniProjection.cropToFit.value;
+        }
+        else
+        {
+            Config.paniniProjection_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out ShadowsMidtonesHighlights shadowsMidtonesHighlights))
+        {
+            Config.shadowsMidtonesHighlights_IsActive = shadowsMidtonesHighlights.active;
+            Config.shadowsMidtonesHighlights_Shadows = shadowsMidtonesHighlights.shadows.value;
+            Config.shadowsMidtonesHighlights_Midtones = shadowsMidtonesHighlights.midtones.value;
+            Config.shadowsMidtonesHighlights_Highlights = shadowsMidtonesHighlights.highlights.value;
+            Config.shadowsMidtonesHighlights_ShadowsStart = shadowsMidtonesHighlights.shadowsStart.value;
+            Config.shadowsMidtonesHighlights_ShadowsEnd = shadowsMidtonesHighlights.shadowsEnd.value;
+            Config.shadowsMidtonesHighlights_ShadowsStart = shadowsMidtonesHighlights.highlightsStart.value;
+            Config.shadowsMidtonesHighlights_HighlightsEnd = shadowsMidtonesHighlights.highlightsEnd.value;
+        }
+        else
+        {
+            Config.shadowsMidtonesHighlights_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out SplitToning splitToning))
+        {
+            Config.splitToning_IsActive = splitToning.active;
+            Config.splitToning_Shadows = splitToning.shadows.value;
+            Config.splitToning_Highlights = splitToning.highlights.value;
+            Config.splitToning_Balance = splitToning.balance.value;
+        }
+        else
+        {
+            Config.splitToning_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out Tonemapping tonemapping))
+        {
+            Config.tonemapping_IsActive = tonemapping.active;
+            Config.tonemapping_Mode = tonemapping.mode.value;
+        }
+        else
+        {
+            Config.tonemapping_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out Vignette vignette))
+        {
+            Config.vignette_IsActive = vignette.active;
+            Config.vignette_Color = vignette.color.value;
+            Config.vignette_Center = vignette.center.value;
+            Config.vignette_Intensity = vignette.intensity.value;
+            Config.vignette_Smoothness = vignette.smoothness.value;
+            Config.vignette_Rounded = vignette.rounded.value;
+        }
+        else
+        {
+            Config.vignette_IsActive = false;
+        }
+        if (volumeProfile.TryGet(out WhiteBalance whiteBalance))
+        {
+            Config.whiteBalance_IsActive = whiteBalance.active;
+            Config.whiteBalance_Temperature = whiteBalance.temperature.value;
+            Config.whiteBalance_Tint = whiteBalance.tint.value;
+        }
+        else
+        {
+            Config.whiteBalance_IsActive = false;
+        }
+
+        UnityEditor.EditorUtility.SetDirty(this);
+    }
+
+    //——MenuItem——
+    static string instName = "DefaultPostProcessingController";
+    [UnityEditor.MenuItem(AD_EditorDefinition.HierarchyMenuPrefix_Root_Mod_Controller_PostProcessing + "Default", false)]
+    public static void CreateInst()
+    {
+        Threeyes.Core.Editor.EditorTool.CreateGameObjectAsChild<AD_DefaultPostProcessingController>(instName);
+    }
+#endif
+    #endregion
 
     #region Define
     /// <summary>
@@ -507,228 +732,5 @@ public partial class AD_DefaultPostProcessingController : PostProcessingControll
         bool isWhiteBalanceValid { get { return isUsePostProcessing && whiteBalance_IsActive; } }
         #endregion
     }
-    #endregion
-
-    #region Editor Method
-#if UNITY_EDITOR
-    [ContextMenu("UpdateConfigUsingComponentData")]
-    void EditorUpdateConfigUsingComponentData()
-    {
-        ///PS:
-        ///-初始化时不调用profile，也不调用TryGetOrAdd，避免意外添加模块，导致不方便查看哪些是需要激活的
-        VolumeProfile volumeProfile = volume.sharedProfile;//避免返回克隆
-
-        //——Bloom——
-        if (volumeProfile.TryGet(out Bloom bloom))
-        {
-            Config.bloom_IsActive = bloom.active;
-            Config.bloom_Threshold = bloom.threshold.value;
-            Config.bloom_Intensity = bloom.intensity.value;
-            Config.bloom_Scatter = bloom.scatter.value;
-            Config.bloom_Clamp = bloom.clamp.value;
-            Config.bloom_Tint = bloom.tint.value;
-            Config.bloom_HighQualityFiltering = bloom.highQualityFiltering.value;
-            Config.bloom_Downscale = bloom.downscale.value;
-            Config.bloom_MaxIterations = bloom.maxIterations.value;
-
-            Config.bloom_DefaultDirtTexture = bloom.dirtTexture.value;//Save Default Texture
-            Config.bloom_DirtIntensity = bloom.dirtIntensity.value;
-        }
-        else
-        {
-            Config.bloom_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out ChannelMixer channelMixer))
-        {
-            Config.channelMixer_IsActive = channelMixer.active;
-            Config.channelMixer_RedOutRedIn = channelMixer.redOutRedIn.value;
-            Config.channelMixer_RedOutGreenIn = channelMixer.redOutGreenIn.value;
-            Config.channelMixer_RedOutBlueIn = channelMixer.redOutBlueIn.value;
-            Config.channelMixer_GreenOutRedIn = channelMixer.greenOutRedIn.value;
-            Config.channelMixer_GreenOutGreenIn = channelMixer.greenOutGreenIn.value;
-            Config.channelMixer_GreenOutBlueIn = channelMixer.greenOutBlueIn.value;
-            Config.channelMixer_BlueOutRedIn = channelMixer.blueOutRedIn.value;
-            Config.channelMixer_BlueOutGreenIn = channelMixer.blueOutGreenIn.value;
-            Config.channelMixer_BlueOutBlueIn = channelMixer.blueOutBlueIn.value;
-        }
-        else
-        {
-            Config.channelMixer_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out ChromaticAberration chromaticAberration))
-        {
-            Config.chromaticAberration_IsActive = chromaticAberration.active;
-            Config.chromaticAberration_Intensity = chromaticAberration.intensity.value;
-        }
-        else
-        {
-            Config.chromaticAberration_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out ColorAdjustments colorAdjustments))
-        {
-            Config.colorAdjustments_IsActive = colorAdjustments.active;
-            Config.colorAdjustments_PostExposure = colorAdjustments.postExposure.value;
-            Config.colorAdjustments_Contrast = colorAdjustments.contrast.value;
-            Config.colorAdjustments_ColorFilter = colorAdjustments.colorFilter.value;
-            Config.colorAdjustments_HueShift = colorAdjustments.hueShift.value;
-            Config.colorAdjustments_Saturation = colorAdjustments.saturation.value;
-        }
-        else
-        {
-            Config.colorAdjustments_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out ColorLookup colorLookup))
-        {
-            Config.colorLookup_IsActive = colorLookup.active;
-            Config.colorAdjustments_Contribution = colorLookup.contribution.value;
-        }
-        else
-        {
-            Config.colorLookup_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out DepthOfField depthOfField))
-        {
-            Config.depthOfField_IsActive = depthOfField.active;
-            Config.depthOfField_Mode = depthOfField.mode.value;
-            Config.depthOfField_GaussianStart = depthOfField.gaussianStart.value;
-            Config.depthOfField_GaussianEnd = depthOfField.gaussianEnd.value;
-            Config.depthOfField_GaussianMaxRadius = depthOfField.gaussianMaxRadius.value;
-            Config.depthOfField_HighQualitySampling = depthOfField.highQualitySampling.value;
-            Config.depthOfField_FocusDistance = depthOfField.focusDistance.value;
-            Config.depthOfField_Aperture = depthOfField.aperture.value;
-            Config.depthOfField_FocalLength = depthOfField.focalLength.value;
-            Config.depthOfField_BladeCount = depthOfField.bladeCount.value;
-            Config.depthOfField_BladeCurvature = depthOfField.bladeCurvature.value;
-            Config.depthOfField_BladeRotation = depthOfField.bladeRotation.value;
-        }
-        else
-        {
-            Config.depthOfField_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out FilmGrain filmGrain))
-        {
-            Config.filmGrain_IsActive = filmGrain.active;
-            Config.filmGrain_Type = filmGrain.type.value;
-            Config.filmGrain_Intensity = filmGrain.intensity.value;
-            Config.filmGrain_Response = filmGrain.response.value;
-        }
-        else
-        {
-            Config.filmGrain_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out LensDistortion lensDistortion))
-        {
-            Config.lensDistortion_IsActive = lensDistortion.active;
-            Config.lensDistortion_Intensity = lensDistortion.intensity.value;
-            Config.lensDistortion_XMultiplier = lensDistortion.xMultiplier.value;
-            Config.lensDistortion_YMultiplier = lensDistortion.yMultiplier.value;
-            Config.lensDistortion_Center = lensDistortion.center.value;
-            Config.lensDistortion_Scale = lensDistortion.scale.value;
-        }
-        else
-        {
-            Config.lensDistortion_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out LiftGammaGain liftGammaGain))
-        {
-            Config.liftGammaGain_IsActive = liftGammaGain.active;
-            Config.liftGammaGain_Lift = liftGammaGain.lift.value;
-            Config.liftGammaGain_Gamma = liftGammaGain.gamma.value;
-            Config.liftGammaGain_Gain = liftGammaGain.gain.value;
-        }
-        else
-        {
-            Config.liftGammaGain_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out MotionBlur motionBlur))
-        {
-            Config.motionBlur_IsActive = motionBlur.active;
-            Config.motionBlur_Mode = motionBlur.mode.value;
-            Config.motionBlur_Quality = motionBlur.quality.value;
-            Config.motionBlur_Intensity = motionBlur.intensity.value;
-            Config.motionBlur_Clamp = motionBlur.clamp.value;
-        }
-        else
-        {
-            Config.motionBlur_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out PaniniProjection paniniProjection))
-        {
-            Config.paniniProjection_IsActive = paniniProjection.active;
-            Config.paniniProjection_Distance = paniniProjection.distance.value;
-            Config.paniniProjection_CropToFit = paniniProjection.cropToFit.value;
-        }
-        else
-        {
-            Config.paniniProjection_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out ShadowsMidtonesHighlights shadowsMidtonesHighlights))
-        {
-            Config.shadowsMidtonesHighlights_IsActive = shadowsMidtonesHighlights.active;
-            Config.shadowsMidtonesHighlights_Shadows = shadowsMidtonesHighlights.shadows.value;
-            Config.shadowsMidtonesHighlights_Midtones = shadowsMidtonesHighlights.midtones.value;
-            Config.shadowsMidtonesHighlights_Highlights = shadowsMidtonesHighlights.highlights.value;
-            Config.shadowsMidtonesHighlights_ShadowsStart = shadowsMidtonesHighlights.shadowsStart.value;
-            Config.shadowsMidtonesHighlights_ShadowsEnd = shadowsMidtonesHighlights.shadowsEnd.value;
-            Config.shadowsMidtonesHighlights_ShadowsStart = shadowsMidtonesHighlights.highlightsStart.value;
-            Config.shadowsMidtonesHighlights_HighlightsEnd = shadowsMidtonesHighlights.highlightsEnd.value;
-        }
-        else
-        {
-            Config.shadowsMidtonesHighlights_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out SplitToning splitToning))
-        {
-            Config.splitToning_IsActive = splitToning.active;
-            Config.splitToning_Shadows = splitToning.shadows.value;
-            Config.splitToning_Highlights = splitToning.highlights.value;
-            Config.splitToning_Balance = splitToning.balance.value;
-        }
-        else
-        {
-            Config.splitToning_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out Tonemapping tonemapping))
-        {
-            Config.tonemapping_IsActive = tonemapping.active;
-            Config.tonemapping_Mode = tonemapping.mode.value;
-        }
-        else
-        {
-            Config.tonemapping_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out Vignette vignette))
-        {
-            Config.vignette_IsActive = vignette.active;
-            Config.vignette_Color = vignette.color.value;
-            Config.vignette_Center = vignette.center.value;
-            Config.vignette_Intensity = vignette.intensity.value;
-            Config.vignette_Smoothness = vignette.smoothness.value;
-            Config.vignette_Rounded = vignette.rounded.value;
-        }
-        else
-        {
-            Config.vignette_IsActive = false;
-        }
-        if (volumeProfile.TryGet(out WhiteBalance whiteBalance))
-        {
-            Config.whiteBalance_IsActive = whiteBalance.active;
-            Config.whiteBalance_Temperature = whiteBalance.temperature.value;
-            Config.whiteBalance_Tint = whiteBalance.tint.value;
-        }
-        else
-        {
-            Config.whiteBalance_IsActive = false;
-        }
-    }
-
-    //——MenuItem——
-    static string instName = "DefaultPostProcessingController";
-    [UnityEditor.MenuItem(AD_EditorDefinition.HierarchyMenuPrefix_Root_Mod_Controller_PostProcessing + "Default", false)]
-    public static void CreateInst()
-    {
-        Threeyes.Core.Editor.EditorTool.CreateGameObjectAsChild<AD_DefaultPostProcessingController>(instName);
-    }
-#endif
     #endregion
 }
