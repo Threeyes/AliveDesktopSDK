@@ -2246,8 +2246,6 @@ MonoBehaviour:
     - title: '[Simulator]'
       listData:
       - {fileID: 11400000, guid: 68d6addba22d8444f82db761f6ab22fa, type: 2}
-    listSOPrefabInfoGroup:
-    - {fileID: 11400000, guid: 68d6addba22d8444f82db761f6ab22fa, type: 2}
   soDefaultConfig: {fileID: 11400000, guid: dbfd12704a081bc4eba6186a6b56dbd2, type: 2}
 --- !u!1 &740263132
 GameObject:
@@ -4022,6 +4020,7 @@ MonoBehaviour:
   leftController: {fileID: 1003582247}
   rightController: {fileID: 1003582250}
   dynamicMoveProvider: {fileID: 1003582251}
+  teleportationProvider: {fileID: 2077290583}
   characterController: {fileID: 1003582252}
   goXRDeviceSimulator: {fileID: 891958531}
 --- !u!1 &1492902940
@@ -5095,9 +5094,6 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 7f890134600782641a3b91f1fe3b4564, type: 2}
       - {fileID: 11400000, guid: 68277ca979b137847977bb57439bf18c, type: 2}
       - {fileID: 11400000, guid: 17c0b486771806846a38a4d1e15db06c, type: 2}
-    listSOPrefabInfoGroup:
-    - {fileID: 11400000, guid: 7f890134600782641a3b91f1fe3b4564, type: 2}
-    - {fileID: 11400000, guid: 68277ca979b137847977bb57439bf18c, type: 2}
 --- !u!1 &1854506609
 GameObject:
   m_ObjectHideFlags: 0
@@ -5585,6 +5581,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1958967023}
   m_CullTransparentMesh: 1
+--- !u!114 &2077290583 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1426880353265768787, guid: 2992d74a439570145b951da0e068bf04,
+    type: 3}
+  m_PrefabInstance: {fileID: 1003582240}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 677654b5ca8c978478e30eae42aab2a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2108669354
 GameObject:
   m_ObjectHideFlags: 0

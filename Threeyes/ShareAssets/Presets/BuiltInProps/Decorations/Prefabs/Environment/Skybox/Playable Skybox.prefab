@@ -233,6 +233,15 @@ MonoBehaviour:
   targetMaterialProvider: {fileID: 3863561918872739157}
   skyboxMaterial: {fileID: 0}
   useSharedMaterial: 0
+  onActivateDeactivate:
+    m_PersistentCalls:
+      m_Calls: []
+  onActivate:
+    m_PersistentCalls:
+      m_Calls: []
+  onDeactivate:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &3907514010008507347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -279,7 +288,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultConfig:
-    materialIndex: 0
     listTextureShaderProperty: []
     listColorShaderProperty:
     - name: _Tint
@@ -301,11 +309,13 @@ MonoBehaviour:
         useRange: 1
         minValue: 0
         maxValue: 360
+    listBoolShaderProperty: []
   soOverrideConfig: {fileID: 0}
   id:
     m_Guid: bbd9013a-11e0-46e7-b399-cc5cd531be25
   runtimeEditableDisplayName: Monitor
   targetRenderer: {fileID: 5300826909662394112}
+  targetMaterialIndex: 0
   targetMaterial: {fileID: 0}
   useSharedMaterial: 0
   listRendererMaterialInfo: []
@@ -326,6 +336,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: c323763c91fe0664daeb093545ec6a81
 --- !u!114 &8234846674692737672
 MonoBehaviour:
   m_ObjectHideFlags: 0

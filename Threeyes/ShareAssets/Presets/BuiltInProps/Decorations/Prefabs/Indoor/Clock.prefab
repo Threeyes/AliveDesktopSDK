@@ -665,8 +665,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 54060521788647007}
   isLocalSpace: 1
+  startPosition: {x: 0, y: 0, z: 0}
+  targetPosition: {x: 0, y: 0, z: 0}
   startRotation: {x: 0, y: 0, z: 0}
   targetRotation: {x: 0, y: 0, z: 360}
+  startScale: {x: 1, y: 1, z: 1}
+  targetScale: {x: 1, y: 1, z: 1}
 --- !u!1 &5683290315748645924
 GameObject:
   m_ObjectHideFlags: 0
@@ -828,8 +832,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 271016245051049107}
   isLocalSpace: 1
+  startPosition: {x: 0, y: 0, z: 0}
+  targetPosition: {x: 0, y: 0, z: 0}
   startRotation: {x: 0, y: 0, z: 0}
   targetRotation: {x: 0, y: 0, z: 360}
+  startScale: {x: 1, y: 1, z: 1}
+  targetScale: {x: 1, y: 1, z: 1}
 --- !u!1 &6632988799960154025
 GameObject:
   m_ObjectHideFlags: 0
@@ -1341,8 +1349,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 4227081873399690307}
   isLocalSpace: 1
+  startPosition: {x: 0, y: 0, z: 0}
+  targetPosition: {x: 0, y: 0, z: 0}
   startRotation: {x: 0, y: 0, z: 0}
   targetRotation: {x: 0, y: 0, z: 360}
+  startScale: {x: 1, y: 1, z: 1}
+  targetScale: {x: 1, y: 1, z: 1}
 --- !u!1 &7950077532190581185
 GameObject:
   m_ObjectHideFlags: 0
@@ -1503,6 +1515,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 574f70f73d6aea04598665b15d5f2c24
 --- !u!114 &5605574887257506303
 MonoBehaviour:
   m_ObjectHideFlags: 0

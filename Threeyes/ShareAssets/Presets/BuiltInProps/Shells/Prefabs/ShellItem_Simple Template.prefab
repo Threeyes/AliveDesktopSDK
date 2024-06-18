@@ -103,6 +103,20 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   runtimeSerialization_GameObject: {fileID: 374472029392517651}
+  cacheDefaultData:
+    name: 
+    itemShellType: 2
+    path: 
+    specialFolder: 0
+    targetShellType: 0
+    targetPath: 
+    texturePreview: {fileID: 0}
+    overrideName: 
+    externalPreview: {fileID: 0}
+    overridePreviewFilePath: 
+    PersistentDirPath: 
+  id:
+    m_Guid: e503e7e2-8c51-43db-b54d-c4f328ed847d
   onInitName:
     m_PersistentCalls:
       m_Calls: []
@@ -148,10 +162,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93630d9d205166c4c80c2eaf5312d1c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cachePrefabMetadata:
+  cacheInstanceID:
     m_Guid: 
-  cacheInstanceMetadata:
+  cachePrefabID:
     m_Guid: 
+  cacheScope: 
+  persistentPrefabID:
+    m_Guid: 89f5289661913794c9118acdac65813b
 --- !u!114 &7863135308687170498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,6 +181,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46cd867d94071b74e894ce7a67019ac6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id:
+    m_Guid: 4d5c7fe4-2381-48c9-8461-0e9b5d36aa59
 --- !u!114 &3088475460170911425
 MonoBehaviour:
   m_ObjectHideFlags: 0

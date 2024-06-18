@@ -8,7 +8,7 @@ public sealed class AD_DefaultDecorationItem : AD_SerializableItemWithContextMen
     #region IRuntimeEditorDeletable
     public void RuntimeEditorDelete()
     {
-        AD_ManagerHolder.DecorationManager.ActiveController.DeleteElement(this);//由父物体负责删除，并移除相关引用
+        AD_ManagerHolder.DecorationManager.DeleteElement(this);//由父物体负责删除，并移除相关引用(PS:由DecorationManager删除，以便实现undo)
     }
     #endregion
 

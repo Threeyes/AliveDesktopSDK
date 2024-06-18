@@ -160,6 +160,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 
 --- !u!1 &3486593435952052136
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,6 +239,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 29869f6d3f328884b83d5833c27ddead
 --- !u!114 &2897609728659677681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -745,6 +749,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 
 --- !u!114 &3312290419068098098
 MonoBehaviour:
   m_ObjectHideFlags: 0

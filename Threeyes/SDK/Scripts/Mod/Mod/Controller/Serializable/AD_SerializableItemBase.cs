@@ -210,7 +210,7 @@ public abstract class AD_SerializableItemBase<TElement, TEleData, TPropertyBag> 
             Debug.LogError($"Deserialization Content for {ContainerType} is null!");
         }
     }
-    public virtual void DeserializeBase(IComponentPropertyBag basePropertyBag, IDeserializationOption baseOption = null)
+    public virtual void DeserializeBase(IPropertyBag basePropertyBag, IDeserializationOption baseOption = null)
     {
         if (basePropertyBag is TPropertyBag realPropertyBag)
             DeserializeFunc(realPropertyBag, baseOption);

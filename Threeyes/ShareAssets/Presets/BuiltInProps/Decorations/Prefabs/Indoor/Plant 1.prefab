@@ -430,10 +430,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cacheInstanceID:
-    m_Guid: f6452e09-2d7e-4466-9027-758d73933ab5
+    m_Guid: 
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 80b81dacb0d43cb4395343e7810e5440
 --- !u!114 &7136000950329545038
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -35,6 +35,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     public bool UseGravity { get => dynamicMoveProvider.useGravity; protected set => dynamicMoveProvider.useGravity = value; }
 
     //public AD_DynamicMoveProvider DynamicMoveProvider { get { return dynamicMoveProvider; } }//PS：暂不提供，等后续用户有需要自定义再公开
+    //public AD_TeleportationProvider TeleportationProvider { get { return teleportationProvider; } }
 
     //#Runtime
     [SerializeField] Transform tfCameraRigParent;//[XR Interaction Setup]
@@ -46,26 +47,52 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     [SerializeField] ActionBasedController leftController;
     [SerializeField] ActionBasedController rightController;
     [SerializeField] AD_DynamicMoveProvider dynamicMoveProvider;
+    [SerializeField] AD_TeleportationProvider teleportationProvider;
     [SerializeField] CharacterController characterController;
 
     //Runtime
-    List<AD_XRUserInput> listUserInput = new List<AD_XRUserInput>();
+    List<IAD_XRUserInput> listUserInput = new List<IAD_XRUserInput>();
 
     /// <summary>
     /// 通过注册自定义Input，可以支持同时控制多个物体
     /// </summary>
     /// <param name="userInput"></param>
-    public virtual void RegisterUserInput(AD_XRUserInput userInput)
+    public virtual void RegisterUserInput(IAD_XRUserInput userInput)
     {
+        EventArgs eventArgs = new EventArgs();//暂未使用
+        userInput.OnRegistered(eventArgs);
+
         listUserInput.AddOnce(userInput);
-        listUserInput.Remove(null);
+        listUserInput.Remove(null);//移除可能因销毁或切换场景导致为空的物体
         SetLocomotion(listUserInput.Count == 0);//只有当前没有Input，才能移动，否则用户的输入会被捕捉
     }
-    public virtual void UnRegisterUserInput(AD_XRUserInput userInput)
+    public virtual void UnRegisterUserInput(IAD_XRUserInput userInput)
     {
-        listUserInput.Remove(userInput);
+        try
+        {
+            EventArgs eventArgs = new EventArgs();//暂未使用
+            userInput.OnUnregistered(eventArgs);
+
+            listUserInput.Remove(userInput);
+            listUserInput.Remove(null);
+            SetLocomotion(listUserInput.Count == 0);//只有当无有效UserInput时，才可恢复移动（便于）
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError(ex);
+        }
+    }
+    void UnRegisterAllUserInput()
+    {
         listUserInput.Remove(null);
-        SetLocomotion(listUserInput.Count == 0);
+        while (listUserInput.Count > 0)
+        {
+            IAD_XRUserInput userInput = listUserInput[0];
+            if (userInput != null)
+            {
+                UnRegisterUserInput(userInput);
+            }
+        }
     }
 
 
@@ -171,7 +198,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     float lastSavePostInfoTime;
     protected virtual void LateUpdate()
     {
-        if (tfCurAttachTarget)//Attaching中：让XRRig跟随目标。（因为此时CameraRigParent灯物体的位置有变化，所以不应该保存其信息）
+        if (tfCurAttachTarget)//Attaching中：让XRRig跟随目标。（因为此时CameraRigParent等物体的位置有变化，所以不应该保存其信息）
         {
             tfCameraRigParent.position = tfCurAttachTarget.position;
             tfCameraRigParent.rotation = tfCurAttachTarget.rotation;
@@ -192,7 +219,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
         lastSavePostInfoTime = Time.time;
     }
 
-    bool IsTeleportDone
+    public bool IsTeleportDone
     {
         get
         {
@@ -211,9 +238,17 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     static bool IsVRMode { get { return AD_ManagerHolderManager.ActivePlatformMode == AD_PlatformMode.PCVR; } }
     protected virtual void Detach()
     {
-        //#0 
-        //Pose rigPose = new Pose(tfCameraRig.position, tfCameraRig.rotation);//缓存Rig的Pose，用于后续还原
-        Pose rigPose = poseCameraRig;//改为使用Attach前的有效数据，能够避免旋转的Bug
+        //Bug:还原时还是有问题，表现为Rig的旋转仍未重置，需要确认是否AD_XRDeviceSimulator的问题
+        //#1 计算要还原的Rig
+        //Pose rigPose = new Pose(tfCameraRig.position, tfCameraRig.rotation);//方式1：传送到当前的位置
+        //Pose rigPose = poseCameraRig;//方式2：改为使用Attach前的有效数据，能够避免旋转的Bug
+
+        //方式3：基于当前位置，但是相机的Z旋转(避免附着到其他朝向导致旋转Bug)
+        Vector3 cameraDirection = tfCameraEye.forward;
+        cameraDirection.y = 0;//使朝向轴放在XZ平面
+        Quaternion cameraRotation = Quaternion.LookRotation(cameraDirection, Vector3.up);// Quaternion.identity;//tfCameraEye.rotation; //poseCameraEye.rotation;//重置相机的当前朝向
+
+        Pose rigPose = new Pose(tfCameraEye.position, cameraRotation/*Quaternion.identity*/);// new Pose(tfCameraRig.position, Quaternion.identity);//Warning：因为是传送到相机位置，因此直接对应相机的朝向值
 
         //#2 还原RigParent的位置/旋转
         ResetRigParentPose();
@@ -221,13 +256,16 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
         //#3 恢复Mod的Locomotion设定
         ActiveController.UpdateLocomotionSetting();
 
-        //#3 还原Rig的位置/旋转，避免出现与Attach时不一致的瞬移
-        TeleportTo(rigPose.position, rigPose.rotation, MatchOrientation.TargetUpAndForward, AD_XRDestinationRigPart.Foot, endLocomotion:
+        //#3 还原Rig的位置/旋转，避免出现与Attach时不一致的瞬移(直接传送到头部位置，能省去多余计算)
+        //Bug:没有正常改变Rig的旋转，应该是Simulator控制导致的
+        TeleportTo(rigPose.position, rigPose.rotation, MatchOrientation.TargetUpAndForward, AD_XRDestinationRigPart.Head, endLocomotion:
         (lS) =>
         {
-            //#4 非【VR模式】：还原相机
-            if (!IsVRMode)//非【VR模式】才更改相机
-                SetCameraPose(poseLocalCameraEye.position, poseCameraEye.rotation);
+            ////#4 非【VR模式】：还原相机
+            //if (!IsVRMode)//非【VR模式】：更改相机的位置及朝向
+            //{
+            //    SetCameraPose(/*poseLocalCameraEye.position,*/rotation: cameraRotation);
+            //}
         });
 
         //Clear Data
@@ -243,6 +281,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
         ActiveController.ResetRigPose();
 
         //重新激活Locomotion，避免因为驾驶车辆出错导致无法移动
+        UnRegisterAllUserInput();//取消所有Input
         SetLocomotion(true);
     }
 
@@ -252,7 +291,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     }
 
     /// <summary>
-    /// //重置RigParent位置及朝向，可避免因为Attach到墙上物体导致相机偏转出错的Bug
+    /// //重置RigParent位置及朝向到世界坐标原点，可避免因为Attach到墙上物体导致相机偏转出错的Bug
     /// </summary>
     void ResetRigParentPose()
     {

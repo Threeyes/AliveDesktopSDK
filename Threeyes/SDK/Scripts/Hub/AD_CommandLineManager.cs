@@ -8,9 +8,12 @@ using UnityEngine;
 /// </summary>
 public static class AD_CommandLineManager
 {
+    //# PlatformMode
     const string commandArg_VRMode = "-vrMode";
-    const string commandArg_WindowMode = "-window";
+
+    //# Window Mode
     const string commandArg_FullScreenMode = "-fullScreen";
+    const string commandArg_WindowMode = "-window";
     const string commandArg_ScreenWidth = "-screen-width";//Unity的参数
     const string commandArg_ScreenHeight = "-screen-height";//Unity的参数
 

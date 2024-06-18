@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.6.4]
+- RuntimeSerializable_GameObject add persistentPrefabID.
+
 ## [0.6.3]
 - Add MaterialSwitchController.
 - Update MaterialController's structure.

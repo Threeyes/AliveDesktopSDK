@@ -365,6 +365,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 
 --- !u!1 &4396492726975296367
 GameObject:
   m_ObjectHideFlags: 0
@@ -415,6 +417,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 
 --- !u!1 &5258723130661619980
 GameObject:
   m_ObjectHideFlags: 0
@@ -466,6 +470,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 
 --- !u!1 &5723508038621786478
 GameObject:
   m_ObjectHideFlags: 0
@@ -658,6 +664,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 
 --- !u!1 &6056163017726989382
 GameObject:
   m_ObjectHideFlags: 0
@@ -841,6 +849,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 5e237634d0035d244b680bca83044e64
 --- !u!114 &4590048314876196620
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1059,6 +1069,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 
 --- !u!1001 &1826951579703218122
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1121,6 +1133,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Drawer
+      objectReference: {fileID: 0}
+    - target: {fileID: 2560106791839564397, guid: 4fb4a74064506174b9f2c2a21c256361,
+        type: 3}
+      propertyPath: cacheInstanceID.m_Guid
+      value: 96b099f6-0f83-4171-b480-0e9772549796
+      objectReference: {fileID: 0}
+    - target: {fileID: 2560106791839564397, guid: 4fb4a74064506174b9f2c2a21c256361,
+        type: 3}
+      propertyPath: persistentPrefabID.m_Guid
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1196,6 +1218,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Drawer
       objectReference: {fileID: 0}
+    - target: {fileID: 2560106791839564397, guid: 4fb4a74064506174b9f2c2a21c256361,
+        type: 3}
+      propertyPath: cacheInstanceID.m_Guid
+      value: 96b099f6-0f83-4171-b480-0e9772549796
+      objectReference: {fileID: 0}
+    - target: {fileID: 2560106791839564397, guid: 4fb4a74064506174b9f2c2a21c256361,
+        type: 3}
+      propertyPath: persistentPrefabID.m_Guid
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1269,6 +1301,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Drawer
+      objectReference: {fileID: 0}
+    - target: {fileID: 2560106791839564397, guid: 4fb4a74064506174b9f2c2a21c256361,
+        type: 3}
+      propertyPath: cacheInstanceID.m_Guid
+      value: 96b099f6-0f83-4171-b480-0e9772549796
+      objectReference: {fileID: 0}
+    - target: {fileID: 2560106791839564397, guid: 4fb4a74064506174b9f2c2a21c256361,
+        type: 3}
+      propertyPath: persistentPrefabID.m_Guid
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

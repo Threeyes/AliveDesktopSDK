@@ -78,10 +78,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cacheInstanceID:
-    m_Guid: a205e4ef-fb14-4fa3-8c81-9cbba7c50dd4
+    m_Guid: 
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: e29ad21330273234e93fbaaf1706b572
 --- !u!114 &5460984533581904887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -368,7 +370,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultConfig:
-    materialIndex: 0
     listTextureShaderProperty: []
     listColorShaderProperty:
     - name: _EmissionColor
@@ -378,11 +379,13 @@ MonoBehaviour:
         useHDR: 1
     listIntShaderProperty: []
     listFloatShaderProperty: []
+    listBoolShaderProperty: []
   soOverrideConfig: {fileID: 0}
   id:
     m_Guid: fc30d934-4a5a-40a5-98bd-a0ddaa8b7d54
   runtimeEditableDisplayName: LightStrip
   targetRenderer: {fileID: 7521946868702195475}
+  targetMaterialIndex: 0
   targetMaterial: {fileID: 0}
   useSharedMaterial: 0
   listRendererMaterialInfo: []

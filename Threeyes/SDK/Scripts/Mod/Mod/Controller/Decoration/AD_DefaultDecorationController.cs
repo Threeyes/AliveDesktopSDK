@@ -16,26 +16,47 @@ using static AD_DefaultDecorationItem;
 public sealed class AD_DefaultDecorationController : AD_SerializableItemControllerBase<AD_DefaultDecorationController, AD_SODecorationPrefabInfoGroup, AD_SODecorationPrefabInfo, AD_DefaultDecorationItem, ItemInfo, AD_DecorationItemInfo, AD_SODefaultDecorationControllerConfig, AD_DefaultDecorationController.ConfigInfo>
     , IAD_DecorationController
 {
+    #region IAD_DecorationController
+    public GameObject CreateElement(GameObject prefab, Vector3? initPosition = null, Quaternion? initRotation = null, Action<GameObject> actionCreateCompleted = null)
+    {
+        if (!prefab)//避免因为卸载模型Mod导致引用丢失
+            return null;
+
+        //# Create
+        overridePrefab = prefab;
+        var data = new ItemInfo();
+        AD_DefaultDecorationItem newInst = CreateElementFunc(data);//先临时创建默认Data
+        actionCreateCompleted.TryExecute(newInst.gameObject);//创建完成后的回调，可用已有数据进行反序列化
+       
+        //# Init
+        newInst.transform.SetProperty(initPosition, initRotation, isLocalSpace: false);//初始化Transform（参考Editor，仅设置位置，不设置旋转等）。PS：SetProperty方法可避免刚体物体在初始化修改其位置/缩放时出错
+        InitData(newInst, data);//InitData会初始化IRuntimeEditable，并基于RS的数据初始化配置
+        AddElementToList(newInst);
+
+        //#Reset
+        overridePrefab = null;
+
+        return newInst.gameObject;
+    }
+
+    public void DeleteElement(IAD_DecorationItem item)
+    {
+        DeleteElementFunc(item as AD_DefaultDecorationItem);
+    }
+    void DeleteElementFunc(AD_DefaultDecorationItem element)
+    {
+        if (!element)
+            return;
+        listElement.Remove(element);
+        element.gameObject.DestroyAtOnce();
+    }
+    #endregion
+
     protected override ItemInfo ConvertFromBaseData(AD_DecorationItemInfo baseEleData)
     {
         var result = new ItemInfo(baseEleData);
         result.IsBaseType = true;
         return result;
-    }
-
-    public GameObject AddElement(GameObject prefab, Vector3? initPosition = null, Quaternion? initRotation = null)
-    {
-        if (!prefab)//避免因为卸载模型Mod导致引用丢失
-            return null;
-
-        overridePrefab = prefab;
-        AD_DefaultDecorationItem newInst = InitElement(new ItemInfo());//先临时创建默认Data
-        AddElementToList(newInst);
-        overridePrefab = null; //Reset
-
-        //初始化Transform（参考Editor，仅设置位置，不设置旋转等）
-        newInst.transform.SetProperty(initPosition, initRotation, isLocalSpace: false);//PS：SetProperty方法可避免刚体物体在初始化修改其位置/缩放时出错
-        return newInst.gameObject;
     }
 
     #region Define

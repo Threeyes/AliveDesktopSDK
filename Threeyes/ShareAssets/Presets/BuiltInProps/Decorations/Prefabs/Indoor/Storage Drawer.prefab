@@ -75,10 +75,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cacheInstanceID:
-    m_Guid: 3d197a64-4b21-4a3d-adad-79fbffa7827d
+    m_Guid: 
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 98cc03e4b209e8b4286041c589a6af08
 --- !u!114 &4249930684228109081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -697,6 +699,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 
 --- !u!1 &7282577913602112015
 GameObject:
   m_ObjectHideFlags: 0
@@ -864,6 +868,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Drawer
+      objectReference: {fileID: 0}
+    - target: {fileID: 2560106791839564397, guid: 4fb4a74064506174b9f2c2a21c256361,
+        type: 3}
+      propertyPath: cacheInstanceID.m_Guid
+      value: 96b099f6-0f83-4171-b480-0e9772549796
+      objectReference: {fileID: 0}
+    - target: {fileID: 2560106791839564397, guid: 4fb4a74064506174b9f2c2a21c256361,
+        type: 3}
+      propertyPath: persistentPrefabID.m_Guid
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

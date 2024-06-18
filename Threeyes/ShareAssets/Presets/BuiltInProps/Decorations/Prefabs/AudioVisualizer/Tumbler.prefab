@@ -372,10 +372,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cacheInstanceID:
-    m_Guid: d181acb5-6d52-4401-9b7b-32272c22504d
+    m_Guid: 
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 69b28668cd1d3fc4a88b19e29ccbde1c
 --- !u!114 &5271323949387854130
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -616,7 +618,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultConfig:
-    materialIndex: 0
     listTextureShaderProperty:
     - name: _BaseMap
       defaultTexture: {fileID: 0}

@@ -67,63 +67,39 @@ public abstract class AD_SerializableItemControllerBase<TManager, TSOPrefabInfoG
     #endregion
 
     #region IAD_SerializableItemController
-    public void DeleteElement(IAD_SerializableItem item)
+    public IAD_SerializableItem ChangeElement(IAD_SerializableItem oldInst, GameObject prefab, UnityAction<GameObject, GameObject> actRebind)
     {
-        DeleteElementFunc(item as TElement);
-    }
-    protected virtual void DeleteElementFunc(TElement element)
-    {
-        if (!element)
-            return;
-        listElement.Remove(element);//PS：如果物体是DecorationController/Permanent下的物体，这一步操作就无效，但是不会报错，可以忽略
-        element.gameObject.DestroyAtOnce();
-    }
-    public IAD_SerializableItem ChangeElementStyle(IAD_SerializableItem oldInst, GameObject prefab, UnityAction<GameObject, GameObject> actRebind)
-    {
-        return ChangeElementStyleFunc(oldInst as TElement, prefab, actRebind);
+        return ChangeElementFunc(oldInst as TElement, prefab, actRebind);
     }
 
     /// <summary>
-    /// 使用传入的预制物与数据重新创建实例，适用于更换主题（保留位置、旋转、缩放等关系）
+    /// 使用传入的预制物与数据重新创建实例，适用于更换主题（保留位置、旋转等属性）
     /// </summary>
     /// <param name="oldInst">当前实例</param>
     /// <param name="data"></param>
     /// <param name="prefab"></param>
-    protected virtual TElement ChangeElementStyleFunc(TElement oldInst, GameObject prefab, UnityAction<GameObject, GameObject> actRebind)
+    protected virtual TElement ChangeElementFunc(TElement oldInst, GameObject prefab, UnityAction<GameObject, GameObject> actRebind)
     {
         //缓存数据
-        Vector3 pos = oldInst.transform.localPosition;
-        Quaternion rot = oldInst.transform.localRotation;
-        //Vector3 scale = oldInst.transform.localScale;//保留默认缩放（因为每个模型的默认尺寸不一样）
-
-
-        oldInst.data.IsDestroyRuntimeAssetsOnDispose = false;//标记禁止旧物体被销毁时Dispose数据，以便保留Manager外部加载的资源（如texturePreview），后续通过CopyAllMembersFrom复制字段
+        Vector3 pos = oldInst.transform.position;
+        Quaternion rot = oldInst.transform.rotation;
+        //Vector3 scale = oldInst.transform.localScale;//保留新示例的+默认缩放（因为每个模型的默认尺寸不一样）
 
         //生成实例
+        oldInst.data.IsDestroyRuntimeAssetsOnDispose = false;//标记禁止旧物体被销毁时Dispose数据，以便保留Manager外部加载的资源（如texturePreview），后续通过CopyAllMembersFrom复制字段
         overridePrefab = prefab;//临时更改为目标Prefab
         TElement newInst = InitElement(oldInst.data);//让新元素拷贝旧元素的data并初始化
+        actRebind.TryExecute(oldInst.gameObject, newInst.gameObject);//通知重新绑定(如更新选择)
+  
+        //# Init
+        newInst.transform.SetProperty(pos, rot, isLocalSpace: false);//使用旧实例的位置
         AddElementToList(newInst);
-        overridePrefab = null; //Reset
 
-        //通知重新绑定(如更新选择)
-        try
-        {
-            actRebind.Execute(oldInst.gameObject, newInst.gameObject);
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError("Rebind error: " + e);
-        }
-
-        //删除旧实例
-        listElement.Remove(oldInst);
+        //# Reset
+        listElement.Remove(oldInst);//删除旧实例
         oldInst.gameObject.DestroyAtOnce();//PS：会Dispose掉data运行时加载的资源
+        overridePrefab = null;
 
-
-        //使用旧实例的位置
-        newInst.transform.localPosition = pos;
-        newInst.transform.localRotation = rot;
-        //newInst.transform.localScale = scale;//暂时不使用旧物体的缩放，因为每个Prefab的默认尺寸都有差异
         return newInst;
     }
 
@@ -194,10 +170,10 @@ public abstract class AD_SerializableItemControllerBase<TManager, TSOPrefabInfoG
         //goInst.name = prefab.name;//使用Prefab的名称，避免显示(Clone)
         TElement element = goInst.GetComponent<TElement>();
 
-        //#2 如果实例有RuntimeSerialization_GameObject，则初始化其PrefabMetadata
+        //#2 如果实例有RuntimeSerialization_GameObject，则初始化其PrefabMetadata（模拟RSGO反序列化的流程，方便实时生成的物体能正常被序列化）
         if (!SteamworksTool.IsSimulator)
         {
-            TrySetPrefabMetadata(goInst, prefab);
+            TryInitPrefabMetadata(goInst, prefab);
         }
         return element;
     }
@@ -293,14 +269,15 @@ public abstract class AD_SerializableItemControllerBase<TManager, TSOPrefabInfoG
 
     #region Utility
     /// <summary>
-    /// 如果prefab是SOAssetPack中的一员，且实例含有RuntimeSerialization_GameObject组件，则初始化其PrefabMetadata字段，用于后续反序列化时重链接Prefab
+    /// 如果prefab是SOAssetPack中的一员，且实例含有RuntimeSerialization_GameObject组件，则初始化其PrefabMetadata字段，用于后续反序列化时重链接Prefab。
+    /// 还有一种用途是设置运行时所属的Scope
     /// 
     /// PS：
     /// -因为prefab物体是通过AD_SOPrefabInfoGroupBase引用，所以要在SOAssetPackManager中查询其对应的信息
     /// </summary>
     /// <param name="goInst">实例</param>
     /// <param name="prefab">所有的预制物</param>
-    static void TrySetPrefabMetadata(GameObject goInst, GameObject prefab)
+    static void TryInitPrefabMetadata(GameObject goInst, GameObject prefab)
     {
         RuntimeSerializable_GameObject runtimeSerialization_GameObject = goInst.GetComponent<RuntimeSerializable_GameObject>();
         if (runtimeSerialization_GameObject)

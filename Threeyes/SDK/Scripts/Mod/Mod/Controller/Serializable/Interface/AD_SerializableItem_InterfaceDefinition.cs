@@ -185,8 +185,7 @@ public interface IAD_SerializableItemController :
     /// <param name="prefab"></param>
     /// <param name="actRebind">针对新旧物体的替换回调，第一个参数为旧，第二个参数为新</param>
     /// <returns></returns>
-    IAD_SerializableItem ChangeElementStyle(IAD_SerializableItem oldInst, GameObject prefab, UnityAction<GameObject, GameObject> actRebind);
-    void DeleteElement(IAD_SerializableItem item);
+    IAD_SerializableItem ChangeElement(IAD_SerializableItem oldInst, GameObject prefab, UnityAction<GameObject, GameObject> actRebind);
 }
 
 public interface IAD_SerializableItemController<TBaseEleData> : IAD_SerializableItemController

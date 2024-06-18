@@ -537,7 +537,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultConfig:
-    materialIndex: 0
     listTextureShaderProperty:
     - name: _BaseMap
       defaultTexture: {fileID: 0}
@@ -599,7 +598,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultConfig:
-    materialIndex: 0
     listTextureShaderProperty: []
     listColorShaderProperty:
     - name: _EmissionColor
@@ -632,10 +630,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cacheInstanceID:
-    m_Guid: 929d08ad-d167-46c2-b6b6-700da5351f08
+    m_Guid: 
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 47ae669a305b591458aad319102a89a5
 --- !u!114 &5879479937422097102
 MonoBehaviour:
   m_ObjectHideFlags: 0

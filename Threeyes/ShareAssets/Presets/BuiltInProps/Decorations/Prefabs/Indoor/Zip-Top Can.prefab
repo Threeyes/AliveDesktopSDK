@@ -182,10 +182,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cacheInstanceID:
-    m_Guid: f6925010-d256-4dcb-a1a4-352e5b332431
+    m_Guid: 
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 6319d5d861d3a7c489c1597e4f4f76d4
 --- !u!114 &2334574104503329029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -392,7 +394,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultConfig:
-    materialIndex: 0
     listTextureShaderProperty: []
     listColorShaderProperty:
     - name: _BaseColor
@@ -414,15 +415,16 @@ MonoBehaviour:
         useRange: 1
         minValue: 0
         maxValue: 1
+    listBoolShaderProperty: []
   soOverrideConfig: {fileID: 0}
   id:
     m_Guid: 262d206a-beae-4898-97be-800d92de51ba
   runtimeEditableDisplayName: Body
   targetRenderer: {fileID: 8315390485625327134}
+  targetMaterialIndex: 0
   targetMaterial: {fileID: 0}
-  isShareMaterial: 0
+  useSharedMaterial: 0
   listRendererMaterialInfo: []
-  cloneMaterial: {fileID: 0}
 --- !u!1 &7191096853311287852
 GameObject:
   m_ObjectHideFlags: 0

@@ -32,6 +32,8 @@ namespace Threeyes.XRI
         }
         /// <summary>
         /// 
+        /// PS:
+        /// -执行方：TeleportationProvider
         /// </summary>
         /// <param name="position"></param>
         /// <param name="rotation"></param>

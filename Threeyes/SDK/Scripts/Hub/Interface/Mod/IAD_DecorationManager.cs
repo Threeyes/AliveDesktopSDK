@@ -9,4 +9,5 @@ public interface IAD_DecorationManager :
     IHubManagerModPreInitHandler,
     IHubManagerModInitHandler
 {
+    void DeleteElement(IAD_DecorationItem item);
 }

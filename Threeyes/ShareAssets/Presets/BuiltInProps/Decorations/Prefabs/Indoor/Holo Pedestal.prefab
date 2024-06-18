@@ -130,6 +130,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 
 --- !u!114 &426087335308960869
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,6 +302,12 @@ MonoBehaviour:
   isPlayWithParam: 0
   isStopWithParam: 0
   isDetectMatch: 0
+  onPlayComplete:
+    m_PersistentCalls:
+      m_Calls: []
+  onStopComplete:
+    m_PersistentCalls:
+      m_Calls: []
   goTarget: {fileID: 3835329734599291300}
   soAction: {fileID: 11400000, guid: 1ffe6c8059b86aa479be5c293af8c222, type: 2}
 --- !u!1 &4069081139369114496
@@ -666,6 +674,12 @@ MonoBehaviour:
   isPlayWithParam: 0
   isStopWithParam: 0
   isDetectMatch: 0
+  onPlayComplete:
+    m_PersistentCalls:
+      m_Calls: []
+  onStopComplete:
+    m_PersistentCalls:
+      m_Calls: []
   goTarget: {fileID: 7618261064690760825}
   soAction: {fileID: 11400000, guid: d6b5985271a77294aa7177f77f7cd55f, type: 2}
 --- !u!1 &6058362049367027137
@@ -796,10 +810,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cacheInstanceID:
-    m_Guid: 8796aaba-e346-4975-bb42-dc22de7f69c4
+    m_Guid: 
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 046e8bc10e5e02c41b3c073c6d31cc98
 --- !u!114 &3669712025558169606
 MonoBehaviour:
   m_ObjectHideFlags: 0

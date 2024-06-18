@@ -132,7 +132,7 @@ public abstract class AD_XRBaseInteractable<TContainer, TConfig, TPropertyBag> :
         }
         DeserializeFunc(propertyBag);
     }
-    public virtual void DeserializeBase(IComponentPropertyBag basePropertyBag, IDeserializationOption baseOption = null)
+    public virtual void DeserializeBase(IPropertyBag basePropertyBag, IDeserializationOption baseOption = null)
     {
         if (basePropertyBag is TPropertyBag realPropertyBag)
         {

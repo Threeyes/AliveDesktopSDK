@@ -395,6 +395,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 
 --- !u!1 &2407471123070600598
 GameObject:
   m_ObjectHideFlags: 0
@@ -1292,10 +1294,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cacheInstanceID:
-    m_Guid: 76521580-91e5-4acc-81d4-01de50082bac
+    m_Guid: 
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: b65a967b96e9ca146b693d23a63f3fe1
 --- !u!114 &2587385534332000431
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1556,7 +1560,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultConfig:
-    materialIndex: 0
     listTextureShaderProperty: []
     listColorShaderProperty:
     - name: _EmissionColor
@@ -1566,11 +1569,13 @@ MonoBehaviour:
         useHDR: 1
     listIntShaderProperty: []
     listFloatShaderProperty: []
+    listBoolShaderProperty: []
   soOverrideConfig: {fileID: 0}
   id:
     m_Guid: bbd9013a-11e0-46e7-b399-cc5cd531be25
   runtimeEditableDisplayName: Monitor
   targetRenderer: {fileID: 4142892381620055246}
+  targetMaterialIndex: 0
   targetMaterial: {fileID: 0}
   useSharedMaterial: 0
   listRendererMaterialInfo: []
@@ -1587,7 +1592,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultConfig:
-    materialIndex: 0
     listTextureShaderProperty:
     - name: _BaseMap
       defaultTexture: {fileID: 0}
@@ -1616,11 +1620,13 @@ MonoBehaviour:
         useRange: 1
         minValue: 0
         maxValue: 1
+    listBoolShaderProperty: []
   soOverrideConfig: {fileID: 0}
   id:
     m_Guid: b3e2a472-8722-431a-ac17-fc54483a88ee
   runtimeEditableDisplayName: A
   targetRenderer: {fileID: 3810028914543361860}
+  targetMaterialIndex: 0
   targetMaterial: {fileID: 0}
   useSharedMaterial: 0
   listRendererMaterialInfo: []
@@ -1637,7 +1643,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultConfig:
-    materialIndex: 0
     listTextureShaderProperty:
     - name: _BaseMap
       defaultTexture: {fileID: 0}
@@ -1666,11 +1671,13 @@ MonoBehaviour:
         useRange: 1
         minValue: 0
         maxValue: 1
+    listBoolShaderProperty: []
   soOverrideConfig: {fileID: 0}
   id:
     m_Guid: 9e24e6b3-6a98-447f-b0c7-98a9c6cee483
   runtimeEditableDisplayName: B
   targetRenderer: {fileID: 8578734663023725543}
+  targetMaterialIndex: 0
   targetMaterial: {fileID: 0}
   useSharedMaterial: 0
   listRendererMaterialInfo: []
@@ -1687,7 +1694,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultConfig:
-    materialIndex: 0
     listTextureShaderProperty:
     - name: _BaseMap
       defaultTexture: {fileID: 0}
@@ -1716,11 +1722,13 @@ MonoBehaviour:
         useRange: 1
         minValue: 0
         maxValue: 1
+    listBoolShaderProperty: []
   soOverrideConfig: {fileID: 0}
   id:
     m_Guid: 36c30d6c-d639-4e2f-babb-55f3397d0ad8
   runtimeEditableDisplayName: C
   targetRenderer: {fileID: 1374062190375788614}
+  targetMaterialIndex: 0
   targetMaterial: {fileID: 0}
   useSharedMaterial: 0
   listRendererMaterialInfo: []
@@ -1737,7 +1745,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultConfig:
-    materialIndex: 0
     listTextureShaderProperty:
     - name: _BaseMap
       defaultTexture: {fileID: 0}
@@ -1766,11 +1773,13 @@ MonoBehaviour:
         useRange: 1
         minValue: 0
         maxValue: 1
+    listBoolShaderProperty: []
   soOverrideConfig: {fileID: 0}
   id:
     m_Guid: a2e1d42c-08ee-4604-962c-cafd1df8d0e5
   runtimeEditableDisplayName: D
   targetRenderer: {fileID: 7583458711731717577}
+  targetMaterialIndex: 0
   targetMaterial: {fileID: 0}
   useSharedMaterial: 0
   listRendererMaterialInfo: []
@@ -2392,6 +2401,8 @@ MonoBehaviour:
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: 
 --- !u!1 &6995310876268516063
 GameObject:
   m_ObjectHideFlags: 0

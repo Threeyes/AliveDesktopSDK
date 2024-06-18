@@ -178,10 +178,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cacheInstanceID:
-    m_Guid: 408bff67-4c03-4ba6-bcb4-3004c2c8d3c7
+    m_Guid: 
   cachePrefabID:
     m_Guid: 
   cacheScope: 
+  persistentPrefabID:
+    m_Guid: d5605f29002329147992bdc8ff0e0875
 --- !u!114 &3805775506679645512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,7 +211,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultConfig:
-    materialIndex: 0
     listTextureShaderProperty:
     - name: _BaseMap
       defaultTexture: {fileID: 0}
@@ -238,11 +239,13 @@ MonoBehaviour:
         useRange: 1
         minValue: 0
         maxValue: 1
+    listBoolShaderProperty: []
   soOverrideConfig: {fileID: 0}
   id:
     m_Guid: 4187eb9f-3b49-4b05-b151-7a2f95e65333
   runtimeEditableDisplayName: 
   targetRenderer: {fileID: 5990015653279218430}
+  targetMaterialIndex: 0
   targetMaterial: {fileID: 0}
   useSharedMaterial: 0
   listRendererMaterialInfo: []
