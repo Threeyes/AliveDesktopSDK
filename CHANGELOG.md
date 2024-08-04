@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.7.0]
+- Remove CurvedTextMeshPro Plugin.
+- Remove support for ZibraLiquids Plugin.
+- Remove wasted materials.
+
 ## [0.6.4]
 - RuntimeSerializable_GameObject add persistentPrefabID.
 
