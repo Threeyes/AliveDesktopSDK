@@ -1,3 +1,5 @@
+#if USE_ZibraLiquid
+#if !UNITY_ANDROID
 using com.zibra.liquid.Manipulators;
 using Newtonsoft.Json;
 using System;
@@ -63,3 +65,5 @@ namespace Threeyes.Steamworks
         #endregion
     }
 }
+#endif
+#endif

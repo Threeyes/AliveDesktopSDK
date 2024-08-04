@@ -1164,13 +1164,25 @@ namespace Threeyes.Steamworks
         //    }
         //}
         static bool isBuildingMod = false;
+
+        ///// <summary>
+        ///// 2.9.7新增了序列化SO，会在打包时修改SO，可能导致打包后无法链接到原SO文件
+        ///// 相关链接：https://discussions.unity.com/t/released-umod-2-0-modding-support-made-easy/651116/314
+        ///// </summary>
+        //static bool isUMod297OrHigher
+        //{
+        //    get
+        //    {
+        //        return true;//PS：直接指定
+        //       //ModVersion modVersion296 = new ModVersion(2, 9, 6);
+        //        //bool isUMod297OrHigher = !UMod.UModVersion.IsSameVersionOrLower(modVersion296);//该判断有效，但是打包后用户无法访问，暂时注释
+        //        //Debug.LogError("Test Version: " + modVersion296 + " " + isUMod297OrHigher);
+        //        //return isUMod297OrHigher;
+        //    }
+        //}
         static bool BuildItemFunc(TSOItemInfo sOWorkshopItemInfo, out string errorLog)
         {
-            //bool isUMod297OrHigher = true;
-            ////ModVersion modVersion296 = new ModVersion(2, 9, 6);
-            ////isUMod297OrHigher = !UMod.UModVersion.IsSameVersionOrLower(modVersion296);//该判断有效，但是打包后用户无法访问，暂时注释
-            ////Debug.LogError("Test Version: " + modVersion296 + " " + isUMod297OrHigher);
-            ////#针对uMod 2.9.7或更高版本:Cache
+            ////#针对uMod 2.9.7或更高版本：Cache当前Item的信息
             //string curSOInfoPath = AssetDatabase.GetAssetPath(curSOWorkshopItemInfo);
             //string sOInfoPath = AssetDatabase.GetAssetPath(sOWorkshopItemInfo);
 
@@ -1215,8 +1227,9 @@ namespace Threeyes.Steamworks
                     activeExportSettings.SetActiveExportProfile(GetActiveExportProfileSettings(sOWorkshopItemInfo));
                     ModBuildResult result = ModToolsUtil.StartBuild(activeExportSettings);
 
-                    ////#针对uMod 2.9.7或更高版本（经测试有效，但因UMod打包失败会导致SO发生变化而暂时不升级到此版本）:
-                    ////-调用StartBuild后该版本增加了对自定义SO的支持，因此会对SO进行修改(临时变为LinkScriptableObjectV2，之后才会改回原状)。因此需要刷新后重新链接
+                    /////#针对uMod 2.9.7或更高版本:
+                    ///// -注释原因：经测试有效，但因UMod打包失败会导致SO发生变化而暂时不升级到此版本。经测试，2.9.8仍有Mod中的SO失效的Bug
+                    ///// -原理：该版本增加了对自定义SO的支持，因此调用StartBuild后会对SO进行修改(临时变为LinkScriptableObjectV2，之后才会改回原状)。因此需要在刷新后重新链接
                     //if (isUMod297OrHigher)
                     //{
                     //    AssetDatabase.Refresh();
@@ -1321,7 +1334,13 @@ namespace Threeyes.Steamworks
 
                 //ToAdd:ChangeLog
                 string cacheChangeLog = textFieldChangeLog.value;
-                string itemUploadErrorLog = await WorkshopItemUploader.RemoteUploadItem(soWorkshopItemInfo, SetUploadProcessInfo, cacheChangeLog);
+                string itemUploadErrorLog =
+#if UNITY_ANDROID
+                    "Can't Upload on Android platform!";
+                await Task.Yield();
+#else
+                    await WorkshopItemUploader.RemoteUploadItem(soWorkshopItemInfo, SetUploadProcessInfo, cacheChangeLog);
+#endif
 
                 //刷新UI，进度条会默认隐藏
                 InitUIWithCurInfo();

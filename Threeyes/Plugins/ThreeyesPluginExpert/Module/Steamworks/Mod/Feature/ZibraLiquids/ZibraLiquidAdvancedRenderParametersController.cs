@@ -1,13 +1,13 @@
-using com.zibra.liquid.DataStructures;
+#if USE_ZibraLiquid
+#if !UNITY_ANDROID
 using Newtonsoft.Json;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Threeyes.Persistent;
 using UnityEngine;
 using UnityEngine.Events;
 using Threeyes.Config;
 
+using com.zibra.liquid.DataStructures;
 using static com.zibra.liquid.DataStructures.ZibraLiquidAdvancedRenderParameters;
 using Threeyes.Core;
 
@@ -100,3 +100,5 @@ namespace Threeyes.Steamworks
         #endregion
     }
 }
+#endif
+#endif

@@ -77,7 +77,7 @@ namespace Threeyes.Steamworks
                 if (ulong.TryParse(directoryInfo.Name, out valueID))//通过Mod文件夹名获取对应的ItemId
                     itemId = valueID;
                 else
-                    Debug.LogError($"Failed to convert ID {directoryInfo.Name} from item dir: { itemDirPath}");//可能原因：未上传文件
+                    Debug.LogError($"Failed to convert ID {directoryInfo.Name} from item dir: { itemDirPath}");//可能原因：未上传的文件，使用了名称而不是ID作为文件夹名，不算错误
             }
             return itemId;
         }

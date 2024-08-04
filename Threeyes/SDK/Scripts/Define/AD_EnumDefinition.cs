@@ -301,9 +301,11 @@ public enum AD_XRDestinationRigPart
 /// </summary>
 public enum AD_InputDeviceType
 {
+    Null,
     Keyboard_Mouse,
-    Gamepad,
-    XRController//ToUse
+    Gamepad,//硬件Gamepad
+    Gamepad_TouchScreen,//触摸屏（主要用触屏代替十字键的点击）+虚拟Gamepad
+    XRController//ToUse(通过在XRManager中切换。这里仅主要负责Simulator)
 }
 #endregion
 

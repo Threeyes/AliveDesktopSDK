@@ -537,7 +537,9 @@ namespace Threeyes.Core
                     if (type == typeof(string))
                         valueInst = "";
                     else
+                    {
                         valueInst = Activator.CreateInstance(type);//创建一个新的非空值，适用于VaueType及ClassType
+                    }
                 }
                 catch (Exception e)
                 {
@@ -703,7 +705,7 @@ namespace Threeyes.Core
                 return obj;
             }
 
-            // Array
+            // Array（ToUpdate：IsArray仅支持检测数组，不包括List等！）
             if (type.IsArray)
             {
                 Type elementType = type.GetElementType();

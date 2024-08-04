@@ -1,12 +1,12 @@
+#if !UNITY_ANDROID
 using UnityEngine;
-
 using System;
 using System.Threading.Tasks;
+using Threeyes.Core;
 
 using Steamworks;
 using Steamworks.Data;
 using UgcEditor = Steamworks.Ugc.Editor;
-using Threeyes.Core;
 
 namespace Threeyes.Steamworks
 {
@@ -187,3 +187,4 @@ namespace Threeyes.Steamworks
         }
     }
 }
+#endif

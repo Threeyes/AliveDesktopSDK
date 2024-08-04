@@ -39,7 +39,7 @@ public class AD_ManagerHolderManager : ManagerHolderManager
 
 
     /// <summary>
-    /// 当前输入设备发生变化
+    /// 输入设备发生变化
     /// </summary>
     public static event UnityAction<PlayerInput, AD_InputDeviceType> PlayerInputControlChanged;
 

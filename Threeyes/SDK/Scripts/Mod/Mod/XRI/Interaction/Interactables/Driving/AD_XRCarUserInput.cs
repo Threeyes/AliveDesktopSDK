@@ -26,17 +26,17 @@ public class AD_XRCarUserInput : AD_XRUserInput
 {
     public CarController carController;
 
-
+    Vector2 leftHandMoveInput;
     private void Update()
     {
         if (!isActive)
             return;
 
-        Vector2 leftHandMoveInput = AD_ManagerHolder.InputManager.LeftController2DAxis;
+        leftHandMoveInput = AD_ManagerHolder.InputManager.LeftController2DAxis;
         carController.SetSteering(leftHandMoveInput.x);
         carController.SetAccelerate(leftHandMoveInput.y);
-        carController.SetBoost(AD_ManagerHolder.InputManager.SpeedUpButtonPressed);
-        carController.SetBrake(AD_ManagerHolder.InputManager.JumpButtonPressed);
+        carController.SetBoost(AD_ManagerHolder.InputManager.IsSpeedUpButtonPressed);
+        carController.SetBrake(AD_ManagerHolder.InputManager.IsJumpButtonPressed);
     }
 
     #region IContextMenuProvider

@@ -26,7 +26,7 @@ namespace Threeyes.Steamworks
                 if (Application.isEditor)
                 {
                     //ToUpdate：放在SO中作为调试字段
-                    return "E:\\Unity Group\\Work Group\\App Group\\AliveCursor\\Build Group\\Threeyes\\AliveCursor\\" + appName;
+                    return $"E:\\Unity Group\\Work Group\\App Group\\{SORuntimeSettingManager.Instance.productName}\\Build Group\\Threeyes\\{SORuntimeSettingManager.Instance.productName}\\" + appName;
                 }
                 else
                 {
@@ -34,8 +34,8 @@ namespace Threeyes.Steamworks
                 }
             }
         }
-
-        public static string licenseFilePath { get { return StreamingAssetsFolder + @"\Licenses\LicenseCollection.md"; } }
+        public static string licenseFileName = "LicenseCollection.md";
+        public static string licenseFilePath { get { return StreamingAssetsFolder + @"\Licenses\" + licenseFileName; } }
 
         public static string logFilePath
         {
@@ -92,15 +92,22 @@ namespace Threeyes.Steamworks
         {
             get
             {
-                string parentDir = PathTool.ProjectDirPath;
-
-                //打包后将Data文件夹放到AC上级目录中。优点：上传程序到Steam时不会将该目录的测试文件进行上传
-                if (!Application.isEditor)
+                ///-Android平台：（基于PersistentDataPath）相对路径
+                if (PlatformTool.IsRuntimeAndroidBuild)
                 {
-                    parentDir = PathTool.GetParentDirectory(parentDir).FullName;
+                    return Application.persistentDataPath + "/" + dataFolderName;
                 }
+                else
+                {
+                    ///#Windows平台：打包后将Data文件夹放到AC上级目录中。优点：上传程序到Steam时不会将该目录的测试文件进行上传
+                    string parentDir = PathTool.ProjectDirPath;
+                    if (!Application.isEditor)
+                    {
+                        parentDir = PathTool.GetParentDirectory(parentDir).FullName;
+                    }
 
-                return parentDir + "/" + dataFolderName;
+                    return parentDir + "/" + dataFolderName;
+                }
             }
         }
         public static readonly string dataFolderName = "Data";
@@ -131,7 +138,7 @@ namespace Threeyes.Steamworks
 #if UNITY_EDITOR
                 if (UseModUploaderAsUnityExported)
                     return PathTool.ProjectDirPath + @$"\..\{productName}_ModUploader\Export\Items";
-               else if (UseModUploaderPrivateAsUnityExported)
+                else if (UseModUploaderPrivateAsUnityExported)
                     return PathTool.ProjectDirPath + @$"\..\{productName}_ModUploaderPrivate\Export\Items";
                 return ExportItemRootDirPath;//本项目路径
 #else

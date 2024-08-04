@@ -9,6 +9,6 @@ public interface IAD_InputManager
     public Vector2 LeftController2DAxis { get; }
     public Vector2 RightController2DAxis { get; }
 
-    public bool SpeedUpButtonPressed { get; }
-    public bool JumpButtonPressed { get; }
+    public bool IsSpeedUpButtonPressed { get; }
+    public bool IsJumpButtonPressed { get; }
 }

@@ -1,3 +1,5 @@
+#if USE_ZibraLiquid
+#if !UNITY_ANDROID
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,3 +14,5 @@ namespace Threeyes.Steamworks
         void UpdateSetting();
     }
 }
+#endif
+#endif

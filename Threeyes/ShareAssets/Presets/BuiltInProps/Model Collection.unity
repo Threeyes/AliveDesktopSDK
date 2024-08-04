@@ -58167,7 +58167,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1986388928
 Transform:
   m_ObjectHideFlags: 0
@@ -69097,6 +69097,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1747880910}
     m_Modifications:
+    - target: {fileID: 826843905156573893, guid: c517b443626682a4ea031c6f1c891fe4,
+        type: 3}
+      propertyPath: cacheInstanceID.m_Guid
+      value: 80c8ba63-1ce9-48c7-896d-c7a3b260ae9a
+      objectReference: {fileID: 0}
     - target: {fileID: 878780189485675953, guid: c517b443626682a4ea031c6f1c891fe4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -74043,6 +74048,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Plant 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8030185458546225988, guid: 80b81dacb0d43cb4395343e7810e5440,
+        type: 3}
+      propertyPath: cacheInstanceID.m_Guid
+      value: 5e2a4208-8fbc-4197-860f-bb7ea184984f
       objectReference: {fileID: 0}
     - target: {fileID: 8201763914160385174, guid: 80b81dacb0d43cb4395343e7810e5440,
         type: 3}

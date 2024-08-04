@@ -29,6 +29,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     public Transform TfRightController { get { return tfRightController; } }
     public ActionBasedController LeftController { get { return leftController; } }
     public ActionBasedController RightController { get { return rightController; } }
+    public Ray LeftControllerRay { get { return new Ray(tfLeftController.position, tfLeftController.forward); } }
 
     public bool EnableLocomotion { get => dynamicMoveProvider.enabled; }
     public bool EnableFly { get => dynamicMoveProvider.enableFly; protected set => dynamicMoveProvider.enableFly = value; }
@@ -51,7 +52,11 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
     [SerializeField] CharacterController characterController;
 
     //Runtime
+    static bool IsVRMode { get { return AD_ManagerHolderManager.ActivePlatformMode == AD_PlatformMode.PCVR; } }
     List<IAD_XRUserInput> listUserInput = new List<IAD_XRUserInput>();
+
+    #region RegisterUserInput
+    public virtual bool IsUserInputLocked { get { return listUserInput.Count > 0; } }
 
     /// <summary>
     /// 通过注册自定义Input，可以支持同时控制多个物体
@@ -82,7 +87,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
             Debug.LogError(ex);
         }
     }
-    void UnRegisterAllUserInput()
+    protected void UnRegisterAllUserInput()
     {
         listUserInput.Remove(null);
         while (listUserInput.Count > 0)
@@ -94,7 +99,7 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
             }
         }
     }
-
+    #endregion
 
     public virtual void SetLocomotion(bool isEnable)
     {
@@ -235,7 +240,6 @@ public abstract class AD_XRManagerBase<T> : HubManagerWithControllerBase<T, IAD_
             Detach();
     }
 
-    static bool IsVRMode { get { return AD_ManagerHolderManager.ActivePlatformMode == AD_PlatformMode.PCVR; } }
     protected virtual void Detach()
     {
         //Bug:还原时还是有问题，表现为Rig的旋转仍未重置，需要确认是否AD_XRDeviceSimulator的问题

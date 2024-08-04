@@ -1,3 +1,5 @@
+#if USE_ZibraLiquid
+#if !UNITY_ANDROID
 using com.zibra.liquid.DataStructures;
 using com.zibra.liquid.Manipulators;
 using com.zibra.liquid.Solver;
@@ -140,3 +142,5 @@ namespace Threeyes.Steamworks
         #endregion
     }
 }
+#endif
+#endif

@@ -249,7 +249,7 @@ namespace Threeyes.Steamworks
             [Range(1, 10)] public float boostScale = 2;//加速缩放
             public float breakForce;
             public float maxSteerAngle = 45;
-            [Tooltip("SteerAngle increase per second")] public float steerAngleIncreaseSpeed = 120;//(非必须，如果PC能够模拟出类似效果就不需要该值，也就是horizontalInput输入不为1或-1)
+            [Tooltip("SteerAngle increase per second")] public float steerAngleIncreaseSpeed = 120;//(非必须，如果PC能够模拟出类似效果就不需要该值，也就是horizontalInput输入不为1或-1)(PS:针对手柄，应该降低该数值)
             [Tooltip("SteerAngle decrease per second")]
             public float steerAngleDecreaseSpeed = 120;//设置为0可以避免自动回正
             public float downForce;//移动时增加下压力，以便上墙（参考StandardAssets的CarController.AddDownForce）

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+#if USE_UnityHair
+using UnityEngine;
 using Threeyes.Config;
 
 namespace Threeyes.Steamworks
@@ -7,3 +8,4 @@ namespace Threeyes.Steamworks
     public class SOHairInstanceControllerConfig : SOConfigBase<HairInstanceController.ConfigInfo> { }
 
 }
+#endif

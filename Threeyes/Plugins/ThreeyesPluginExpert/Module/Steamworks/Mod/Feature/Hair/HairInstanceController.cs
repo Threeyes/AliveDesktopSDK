@@ -1,3 +1,4 @@
+#if USE_UnityHair
 using System.Collections;
 using UnityEngine;
 using System;
@@ -18,7 +19,7 @@ namespace Threeyes.Steamworks
     public class HairInstanceController : ConfigurableComponentBase<HairInstance, SOHairInstanceControllerConfig, HairInstanceController.ConfigInfo>
 , IHubProgramActiveHandler
     {
-        #region Unity Method
+#region Unity Method
         private void Awake()
         {
             Config.actionPersistentChanged += OnPersistentChanged;
@@ -27,9 +28,9 @@ namespace Threeyes.Steamworks
         {
             Config.actionPersistentChanged -= OnPersistentChanged;
         }
-        #endregion
+#endregion
 
-        #region Callback
+#region Callback
 
         void OnPersistentChanged(PersistentChangeState persistentChangeState)
         {
@@ -95,7 +96,7 @@ namespace Threeyes.Steamworks
                 ReBuild();
         }
 
-        #endregion
+#endregion
 
         public void ReBuild()
         {
@@ -107,7 +108,7 @@ namespace Threeyes.Steamworks
             yield return null;
             gameObject.SetActive(true);
         }
-        #region Define
+#region Define
         [Serializable]
         [PersistentChanged(nameof(ConfigInfo.OnPersistentChanged))]
         public class ConfigInfo : SerializableDataBase//(PS: default values ref from struct constructor)
@@ -249,13 +250,14 @@ namespace Threeyes.Steamworks
             [Range(0.0f, 1.0f), Tooltip("Normalized fade extent (normalized distance from specified offset)")]
             public float globalFadeExtent = 0.2f;
 
-            #region Callback
+#region Callback
             void OnPersistentChanged(PersistentChangeState persistentChangeState)
             {
                 actionPersistentChanged.Execute(persistentChangeState);
             }
-            #endregion
+#endregion
         }
-        #endregion
+#endregion
     }
 }
+#endif

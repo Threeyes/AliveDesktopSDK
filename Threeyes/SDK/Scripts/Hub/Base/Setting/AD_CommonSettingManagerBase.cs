@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Threeyes.Core;
 using Threeyes.Data;
 using Threeyes.Steamworks;
 using UnityEngine;
@@ -11,20 +12,29 @@ public abstract class AD_CommonSettingManagerBase<T> : HubSettingManagerBase<T, 
     #region Data Events
     public override void InitEvent()
     {
-        Config.fileSystemSetting_TargetPhysicsSpeicalFolder.actionValueChangedEx += OnDataTargetPhysicsSpeicalFolderChangedEx;
-        Config.fileSystemSetting_CustomPhysicsSpeicalFolderPath.actionValueChangedEx += OnDataCustomPhysicsSpeicalFolderPathChangedEx;
+        if (PlatformTool.IsRuntimeMobileBuild)//安卓端
+        {
+            ///PS：
+            ///-Mobile platforms ignore QualitySettings.vSyncCount. Use Application.targetFrameRate to control the frame rate on mobile platforms.
+            Config.generalSetting_TargetFrameRate.actionValueChanged += OnDataTargetFrameRateChanged;
+            Config.generalSetting_Localization.actionValueChanged += OnDataLocalizationChanged;
+            Config.generalSetting_Quality.actionValueChanged += OnDataQualityChanged;
+        }
+        else
+        {
+            Config.fileSystemSetting_TargetPhysicsSpeicalFolder.actionValueChangedEx += OnDataTargetPhysicsSpeicalFolderChangedEx;
+            Config.fileSystemSetting_CustomPhysicsSpeicalFolderPath.actionValueChangedEx += OnDataCustomPhysicsSpeicalFolderPathChangedEx;
 
-        Config.windowSetting_CoverAllMonitor.actionValueChangedEx += OnDataCoverAllMonitorChangedEx;
-        Config.windowSetting_TargetMonitor.actionValueChangedEx += OnData_TargetMonitorChangedEx;
+            Config.windowSetting_CoverAllMonitor.actionValueChangedEx += OnDataCoverAllMonitorChangedEx;
+            Config.windowSetting_TargetMonitor.actionValueChangedEx += OnData_TargetMonitorChangedEx;
 
-
-
-        Config.generalSetting_IsRunAtStartUp.actionValueChanged += OnDataIsRunAtStartUpChanged;
-        Config.generalSetting_IsVSyncActive.actionValueChanged += OnDataIsVSyncActiveChanged;
-        Config.generalSetting_TargetFrameRate.actionValueChanged += OnDataTargetFrameRateChanged;
-        Config.generalSetting_Localization.actionValueChanged += OnDataLocalizationChanged;
-        Config.generalSetting_Quality.actionValueChanged += OnDataQualityChanged;
-        Config.generalSetting_ProcessPriority.actionValueChanged += OnDataProcessPriorityChanged;
+            Config.generalSetting_IsRunAtStartUp.actionValueChanged += OnDataIsRunAtStartUpChanged;
+            Config.generalSetting_IsVSyncActive.actionValueChanged += OnDataIsVSyncActiveChanged;
+            Config.generalSetting_TargetFrameRate.actionValueChanged += OnDataTargetFrameRateChanged;
+            Config.generalSetting_Localization.actionValueChanged += OnDataLocalizationChanged;
+            Config.generalSetting_Quality.actionValueChanged += OnDataQualityChanged;
+            Config.generalSetting_ProcessPriority.actionValueChanged += OnDataProcessPriorityChanged;
+        }
     }
 
     protected virtual void OnDataTargetPhysicsSpeicalFolderChangedEx(string speicalFolderEnumValue, BasicDataState basicDataState) { }
@@ -113,6 +123,11 @@ public class AD_CommonSettingConfigInfo : HubSettingConfigInfoBase
     public StringData generalSetting_Hotkeys_OpenBrowser = new StringData("");
     public StringData generalSetting_Hotkeys_OpenSetting = new StringData("");
 
+    [Header("Input Setting")]
+    public StringData generalSetting_InputBindings_Controller = new StringData("");
+    public StringData generalSetting_InputBindings_Simulator = new StringData("");
+    public BoolData generalSetting_InputBindings_Keyboard_Mouse_ToggleGrab = new BoolData(false);//键鼠切换抓取
+    public BoolData generalSetting_InputBindings_Gamepad_ToggleGrab = new BoolData(false);//Gamepad切换抓取
     public AD_CommonSettingConfigInfo() { }
 }
 #endregion

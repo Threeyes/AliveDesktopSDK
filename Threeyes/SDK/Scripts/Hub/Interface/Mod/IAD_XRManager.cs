@@ -17,6 +17,7 @@ public interface IAD_XRManager :
     Transform TfRightController { get; }
     ActionBasedController LeftController { get; }
     ActionBasedController RightController { get; }
+    Ray LeftControllerRay { get; }
 
     /// <summary>
     /// Last valid pose (Ignore attaching state)

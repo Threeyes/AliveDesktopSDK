@@ -14,8 +14,8 @@ namespace Threeyes.Steamworks
     public class WorkshopItemInfo
     {
         public static readonly string UModFileExtension = "umod";//Mod文件的扩展名
-
         public string ModFileUID { get { return modFileRelatePath.Replace("." + UModFileExtension, ""); } }//文件的UID（对应文件名）
+
         //#Basic Info
         [JsonProperty] public string title;
         [JsonProperty] public string description;
@@ -23,6 +23,7 @@ namespace Threeyes.Steamworks
         [JsonProperty] public string previewFileRelatePath;//局部预览图路径                                   
         [JsonProperty] public WSItemVisibility itemVisibility = WSItemVisibility.Public;
         [JsonProperty] public string[] tags;//PS:因为自定义枚举最终呈现的形式都是tags，所以不需要存储枚举，以免后续有更改
+        public Texture2D texturePreview;//【可空】自带的预览图，适用于初始化时因为UnityProject无法读取预览文件而提前设置。如果为空就需要通过previewFileRelatePath加载
 
 
         //#Runtime Info

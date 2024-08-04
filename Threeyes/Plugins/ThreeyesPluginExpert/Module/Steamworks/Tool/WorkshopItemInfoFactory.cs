@@ -1,7 +1,4 @@
 using Newtonsoft.Json;
-using Steamworks.Ugc;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Threeyes.Core;
@@ -113,37 +110,37 @@ namespace Threeyes.Steamworks
         }
 
 
-        /// <summary>
-        /// (PS:一般不需要使用，后期删掉)
-        /// 通过Mod下载后的Json文件反序列化
-        /// (因为是反序列化，所以只能通过静态方法生成）
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public virtual TItemInfo Create(Item item)
-        {
-            TItemInfo inst = null;
+        ///// <summary>
+        ///// 通过Mod下载后的Json文件反序列化
+        ///// (PS:一般不需要使用，后期删掉)
+        ///// (因为是反序列化，所以只能通过静态方法生成）
+        ///// </summary>
+        ///// <param name="item"></param>
+        ///// <returns></returns>
+        //public virtual TItemInfo Create(Item item)
+        //{
+        //    TItemInfo inst = null;
 
-            string itemDir = item.Directory;
-            string jsonPath = Path.Combine(itemDir, WorkshopItemInfo.ItemInfoFileName);
-            if (File.Exists(jsonPath))
-            {
-                var result = File.ReadAllText(jsonPath);
-                inst = JsonConvert.DeserializeObject<TItemInfo>(result);//读取Dir目录的对应json文件并反序列化
-                if (inst != null)
-                {
-                    //Set runtime
-                    inst.id = item.Id.Value;
-                    inst.dirPath = itemDir;
-                    inst.itemLocation = WSItemLocation.Downloaded;
-                }
-            }
-            else
-            {
-                Debug.LogError($"Json file not exist for item {item.Title}!");
-            }
-            return inst;
-        }
+        //    string itemDir = item.Directory;
+        //    string jsonPath = Path.Combine(itemDir, WorkshopItemInfo.ItemInfoFileName);
+        //    if (File.Exists(jsonPath))
+        //    {
+        //        var result = File.ReadAllText(jsonPath);
+        //        inst = JsonConvert.DeserializeObject<TItemInfo>(result);//读取Dir目录的对应json文件并反序列化
+        //        if (inst != null)
+        //        {
+        //            //Set runtime
+        //            inst.id = item.Id.Value;
+        //            inst.dirPath = itemDir;
+        //            inst.itemLocation = WSItemLocation.Downloaded;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Debug.LogError($"Json file not exist for item {item.Title}!");
+        //    }
+        //    return inst;
+        //}
 
     }
 }
