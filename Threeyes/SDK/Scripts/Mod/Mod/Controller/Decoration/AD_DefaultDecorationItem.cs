@@ -1,6 +1,6 @@
 using Threeyes.Config;
 using Threeyes.Data;
-using Threeyes.Steamworks;
+using Threeyes.GameFramework;
 
 public sealed class AD_DefaultDecorationItem : AD_SerializableItemWithContextMenuBase<AD_DefaultDecorationItem, AD_DefaultDecorationItem.ItemInfo, AD_DefaultDecorationItem.ItemPropertyBag>
     , IAD_DecorationItem

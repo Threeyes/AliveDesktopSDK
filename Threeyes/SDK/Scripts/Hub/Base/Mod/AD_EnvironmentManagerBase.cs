@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Threeyes.Steamworks;
+using Threeyes.GameFramework;
 using UnityEngine;
 
 public class AD_EnvironmentManagerBase<T> : EnvironmentManagerBase<T, IAD_EnvironmentController, AD_DefaultEnvironmentController, IAD_SOEnvironmentControllerConfig>

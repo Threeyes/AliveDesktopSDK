@@ -1,6 +1,6 @@
 using Threeyes.Config;
 using Threeyes.Persistent;
-using Threeyes.Steamworks;
+using Threeyes.GameFramework;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = AD_EditorDefinition.AssetMenuPrefix_Root_Mod_Controller_XR + "DefaultXRControllerConfig", fileName = "DefaultXRControllerConfig")]

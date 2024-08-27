@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.8.0]
+- Change namespace from Threeyes.Steamworks to Threeyes.GameFramework.
+
 ## [0.7.0]
 - Remove CurvedTextMeshPro Plugin.
 - Remove support for ZibraLiquids Plugin.

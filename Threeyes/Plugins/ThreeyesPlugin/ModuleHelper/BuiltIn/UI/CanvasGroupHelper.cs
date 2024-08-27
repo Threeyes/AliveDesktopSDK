@@ -107,6 +107,7 @@ namespace Threeyes.ModuleHelper
         //保留参数
         public Vector2 alphaRange = new Vector2(0, 1);
         public float tweenDuration = 0.8f;
+        public bool ignoreTimeScale = true;
 
 #if USE_DOTween
         public Ease ease = Ease.Linear;
@@ -118,7 +119,7 @@ namespace Threeyes.ModuleHelper
             if (isUseStartValue)
                 Comp.alpha = isShow ? alphaRange.x : alphaRange.y;//Init
 
-            tweener = Comp.DOFade(isShow ? alphaRange.y : alphaRange.x, tweenDuration).SetEase(ease);
+            tweener = Comp.DOFade(isShow ? alphaRange.y : alphaRange.x, tweenDuration).SetEase(ease).SetUpdate(ignoreTimeScale);
 
             if (isShow)
             {

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Threeyes.Core;
-using Threeyes.Steamworks;
+using Threeyes.GameFramework;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -52,7 +52,7 @@ public class AD_ManagerHolderManager : ManagerHolderManager
 
     protected override void InitWorkshopItemInfoFactory()
     {
-        SteamworksTool.RegisterManagerHolder(AD_WorkshopItemInfoFactory.Instance);
+        GameFrameworkTool.RegisterManagerHolder(AD_WorkshopItemInfoFactory.Instance);
     }
 
     protected override List<IHubManagerModPreInitHandler> GetListManagerModPreInitOrder()
@@ -70,7 +70,7 @@ public class AD_ManagerHolderManager : ManagerHolderManager
 
     protected override List<IHubManagerModInitHandler> GetListManagerModInitOrder()
     {
-        if (SteamworksTool.IsSimulator)
+        if (GameFrameworkTool.IsSimulator)
         {
             return new List<IHubManagerModInitHandler>()
             {

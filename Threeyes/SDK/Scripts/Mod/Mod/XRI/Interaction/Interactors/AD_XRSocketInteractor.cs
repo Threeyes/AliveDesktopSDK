@@ -9,6 +9,9 @@ using Threeyes.Core;
 /// 功能：
 /// -包含可选Key的Socket
 /// 
+/// 原理：
+/// -被抓取的物体，会在父类的StartSocketSnapping方法中与XRSocketGrabTransformer实例绑定，该实例的Process方法有持续更新物体位置并固定缩放的代码
+/// 
 /// Warning:
 /// -Layer需要设置为IgnoreRaycast，否则会捕获鼠标事件
 /// </summary>

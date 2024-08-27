@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Threeyes.Core;
-using Threeyes.Steamworks;
+using Threeyes.GameFramework;
 using UnityEngine.SceneManagement;
 public interface IAD_SerializableItemManager<TPrefabConfigInfo, TPrefabInfoCategory, TSOPrefabInfoGroup, TSOPrefabInfo>
     where TPrefabConfigInfo : AD_PrefabConfigInfo<TPrefabInfoCategory, TSOPrefabInfoGroup, TSOPrefabInfo>, new()

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Threeyes.Core;
-using Threeyes.Steamworks;
+using Threeyes.GameFramework;
 using UnityEngine;
 
 public class AD_SOWorkshopItemInfo : SOWorkshopItemInfo<AD_WorkshopItemInfo>

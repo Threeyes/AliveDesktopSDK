@@ -5,7 +5,7 @@ using Threeyes.Config;
 using Threeyes.Core;
 using Threeyes.ModuleHelper;
 using Threeyes.Persistent;
-using Threeyes.Steamworks;
+using Threeyes.GameFramework;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering;

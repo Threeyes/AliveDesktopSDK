@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Threeyes.Steamworks;
+using Threeyes.GameFramework;
 public interface IAD_EnvironmentController : IEnvironmentController
 {
     AD_SunEntityController ActiveSunEntityController { get; }

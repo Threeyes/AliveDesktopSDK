@@ -9,7 +9,7 @@ using UnityEngine.Events;
 using Threeyes.Data;
 using Threeyes.RuntimeEditor;
 using Threeyes.Core;
-using Threeyes.Steamworks;
+using Threeyes.GameFramework;
 #if USE_NaughtyAttributes
 using NaughtyAttributes;
 #endif
@@ -171,7 +171,7 @@ public abstract class AD_SerializableItemControllerBase<TManager, TSOPrefabInfoG
         TElement element = goInst.GetComponent<TElement>();
 
         //#2 如果实例有RuntimeSerialization_GameObject，则初始化其PrefabMetadata（模拟RSGO反序列化的流程，方便实时生成的物体能正常被序列化）
-        if (!SteamworksTool.IsSimulator)
+        if (!GameFrameworkTool.IsSimulator)
         {
             TryInitPrefabMetadata(goInst, prefab);
         }
@@ -235,7 +235,7 @@ public abstract class AD_SerializableItemControllerBase<TManager, TSOPrefabInfoG
         base.InitData(element, data);
 
         //#2 【非编辑模式】初始化该物体所有继承IRuntimeEditable接口的组件（包括该Element自身），会同时加载数据的对应文件及通知事件
-        if (!SteamworksTool.IsSimulator)
+        if (!GameFrameworkTool.IsSimulator)
         {
             List<IRuntimeEditable> listRuntimeEditable = element.GetComponents<IRuntimeEditable>().ToList();
             listRuntimeEditable.Remove(element);

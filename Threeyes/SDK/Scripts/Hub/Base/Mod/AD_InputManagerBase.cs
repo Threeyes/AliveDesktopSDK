@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Threeyes.InputSystem;
-using Threeyes.Steamworks;
+using Threeyes.GameFramework;
 using Threeyes.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -37,6 +37,7 @@ public class AD_InputManagerBase<T> : HubManagerBase<T>, IAD_InputManager
     #region Property
     public bool IsCurKeyboardMouseMode { get { return curInputDeviceType == AD_InputDeviceType.Keyboard_Mouse; } }
     public bool IsCurXRMode { get { return curInputDeviceType == AD_InputDeviceType.XRController; } }
+    public bool IsCurTouchScreenMode { get { return curInputDeviceType == AD_InputDeviceType.Gamepad_TouchScreen; } }
     public bool IsCurGamepadMode { get { return IsGamepadMode(curInputDeviceType); } }/// Gamepad or Gamepad_TouchScreen
     public bool IsGamepadMode(AD_InputDeviceType deviceType)
     {
@@ -397,11 +398,11 @@ public class AD_InputManagerBase<T> : HubManagerBase<T>, IAD_InputManager
             return 0;
         }
         float result = 0;
-        float mosueSensitivity = 0.05f;//参考旧版InputManager，需要针对像素值进行缩放(Ref:https://forum.unity.com/threads/mouse-jittering-with-new-inputsystem.1173761/#post-7526288)
+        float mosueSensitivity = 0.05f;//【ToTest】参考旧版InputManager，需要针对像素值进行缩放(Ref:https://forum.unity.com/threads/mouse-jittering-with-new-inputsystem.1173761/#post-7526288)
         if (axisName == "Horizontal")
-            result = ActiveGroup.inputAction_Move.ReadValue<Vector2>().x * mosueSensitivity;
+            result = ActiveGroup.inputAction_Move.ReadValue<Vector2>().x;
         else if (axisName == "Vertical")
-            result = ActiveGroup.inputAction_Move.ReadValue<Vector2>().y * mosueSensitivity;
+            result = ActiveGroup.inputAction_Move.ReadValue<Vector2>().y;
         else if (axisName == "Mouse X")
             result = ActiveGroup.inputAction_Look.ReadValue<Vector2>().x * mosueSensitivity;
         else if (axisName == "Mouse Y")

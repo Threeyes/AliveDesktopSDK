@@ -59,17 +59,34 @@ namespace Threeyes.Core
             }
         }
 
-
+        public static bool GetEditorMode(bool extraBool, string validDebugTips = null)
+        {
+            //编辑器模式/打包后的DebugBuild模式
+            bool isMode = Application.isEditor && extraBool;
+            if (isMode && validDebugTips != null)
+            {
+                Debug.Log("[EditorMode] " + validDebugTips);
+            }
+            return isMode;
+        }
 
         /// <summary>
         /// 检查当前是否为Debug状态（满足条件：前提是isDebug为true，然后是编辑器 || 真机+DebugBuild）
         /// </summary>
-        /// <param name="isDebug"></param>
+        /// <param name="extraBool"></param>
+        /// <param name="validDebugTips">进入debug模式时的提示</param>
         /// <returns></returns>
-        public static bool GetDebugMode(bool isDebug)
+        public static bool GetDebugMode(bool extraBool, string validDebugTips = null)
         {
             //编辑器模式/打包后的DebugBuild模式
-            return (Application.isEditor || !Application.isEditor && IsDebugBuild) && isDebug;
+            bool isDebugMode = (Application.isEditor || !Application.isEditor && IsDebugBuild) && extraBool;
+
+            if (isDebugMode && validDebugTips != null)
+            {
+                Debug.Log("[DebugMode] " + validDebugTips);
+            }
+
+            return isDebugMode;
         }
     }
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Threeyes.Core;
 using Threeyes.RuntimeSerialization;
-using Threeyes.Steamworks;
+using Threeyes.GameFramework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -27,7 +27,7 @@ public class AD_RuntimeEditorManagerSimulator : InstanceBase<AD_RuntimeEditorMan
     protected override void SetInstanceFunc()
     {
         base.SetInstanceFunc();
-        SteamworksTool.RegisterManagerHolder(this);
+        GameFrameworkTool.RegisterManagerHolder(this);
 
         // 添加SDK目录下的SOAssetPack（只初始化一次）
         sOAssetPackInfo = new SOAssetPackInfo(AssetPackScope, soAssetPack_SDK);
